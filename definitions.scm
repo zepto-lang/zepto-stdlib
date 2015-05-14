@@ -4,6 +4,8 @@
 (define ceil ceiling)
 (define head car)
 (define tail list-tail)
+(define char-downcase char-lower-case)
+(define char-upcase char-upper-case)
 
 (define (ok? x) "is arg ok"
   (eq x :ok))
