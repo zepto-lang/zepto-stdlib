@@ -11,7 +11,7 @@
 (define (indexed-tail l k) "get tail of a list starting at index"
     (if (zero? k)
       l
-      (list-tail (cdr l) (- k 1))))
+      (indexed-tail (cdr l) (- k 1))))
 
 (define (list-ref l k) "get reference to list element at certain point"
     (car (list-tail l k)))
