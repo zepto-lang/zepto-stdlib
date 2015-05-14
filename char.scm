@@ -2,7 +2,7 @@
      (cmp (char->integer a) (char->integer b)))
 
 (define (char-ci-cmp? cmp a b) "compares two chars case insensitive with a compare option cmp"
-     (cmp (char->integer (char-downcase a)) (char->integer (char-downcase b)))) 
+     (cmp (char->integer (char-lowercase a)) (char->integer (char-lowercase b)))) 
 
 (define (char=? a b) "are chars equal" (char-cmp? = a b))
 (define (char<? a b) "is char less than" (char-cmp? < a b))
