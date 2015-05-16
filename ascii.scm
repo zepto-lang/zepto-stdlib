@@ -1,11 +1,11 @@
-(define (cowsay what) "what does the cow say?"
+(ƒ (cowsay what) "what does the cow say?"
 
-  (define (cow-interpolate-fill l what)
+  (ƒ (cow-interpolate-fill l what)
     (if (< l 30)
         (cow-interpolate-fill (+ l 1) (string-append what " "))
         what))
 
-  (define (cow-good-substring what)
+  (ƒ (cow-good-substring what)
     (let ((l (- (string-length what) 1))
           (x (string-ref what (- (string-length what) 1))))
       (if (> (string-find what #\space) -1)
@@ -14,7 +14,7 @@
           (cow-good-substring (substring what 0 l)))
         what)))
 
-  (define (cow-interpolate what)
+  (ƒ (cow-interpolate what)
     (let ((x (cow-good-substring (substring what 0 30)))
           (l (string-length what))
           (xl (string-length (cow-good-substring (substring what 0 30)))))
@@ -43,7 +43,7 @@
     (display "             ||     ||")))
 
 ;; The smiley was found on http://loveascii.com/smilies.html
-(define (smiley) "be happy"
+(ƒ (smiley) "be happy"
   (begin
     (display "    .-'\"\"\"\"\"'-.\n")
     (display "  .'           `.\n")
@@ -55,7 +55,7 @@
     (display "  `.           .'\n")
     (display "    `-._____.-'")))
 
-(define (standard-fish . direction) "everyone ought to have one; or so I heard"
+(define (ƒ . direction) "everyone ought to have one; or so I heard"
   (define (left-fish)
     (begin
       (display " _J\"\"-.\n")
@@ -85,7 +85,7 @@
         (else (display (list "Unrecognized option: " direction)))))
 
 ;; The goose was found on http://www.retrojunkie.com/asciiart/animals/ducks.htm
-(define (non-standard-fish) "this might not be what you expect"
+(ƒ (non-standard-fish) "this might not be what you expect"
   (begin
     (display "                        __\n")
     (display "                      /` ,\\__\n")
