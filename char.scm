@@ -9,6 +9,7 @@
 (define (char>? a b) "is char greater than" (char-cmp? > a b))
 (define (char<=? a b) "is char less than or equal to" (char-cmp? <= a b))
 (define (char>=? a b) "is char greater than or equal to" (char-cmp? >= a b))
+(define (char/=? a b) "is char not equal to" (char-cmp? /= a b))
 
 (define (char-ci=? a b) "are chars equal; case insensitive" 
   (char-ci-cmp? = a b))
@@ -20,3 +21,5 @@
   (char-ci-cmp? <= a b))
 (define (char-ci>=? a b) "is char greater than or equal to; case insensitive" 
   (char-ci-cmp? >= a b))
+(define (char-ci/=? a b) "is char not equal to; case insensitive" 
+  (char-ci-cmp? /= a b))
