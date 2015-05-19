@@ -69,10 +69,15 @@
                    ...
                    (let () body1 body2 ...)))))
 
-;; This is the only homebrew definition
+;; These are the only homebrew definitions
 (define-syntax unless
   (syntax-rules ()
                 ((unless test result1 ...)
                  (if (not test)
                    result1
                    ...))))
+
+(define-syntax for
+  (syntax-rules ()
+                ((for num action)
+                 (do ((i 0 (+ i 1))) ((= i num)) action))))

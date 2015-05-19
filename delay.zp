@@ -8,7 +8,7 @@
     (syntax-rules ()
         ((delay expression)
             (make-promise (lambda () expression)))))
-            
+
 (define make-promise
     (lambda (proc)
         (let ((result-ready? #f)
