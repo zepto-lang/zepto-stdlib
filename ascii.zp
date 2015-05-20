@@ -33,7 +33,7 @@
   (begin
     (display " ___________________________________\n")
     (display "/                                   \\\n")
-    (display (cow-interpolate what))
+    (display (cow-interpolate (string-substitute what "\n" " "))
     (display "\\                                   /\n")
     (display " -----------------------------------\n")
     (display "     \\   ^__^\n")
