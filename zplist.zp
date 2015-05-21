@@ -6,8 +6,9 @@
 (define (list-index l el) "get index of el in l; otherwise get -1"
   (if (null? l)
     -1
-    (if (eq? (car l) e)
+    (if (eq? (car l) el)
       0
-      (if (= (list-index e (cdr l)) -1) 
+      (let ((res (list-index (cdr l) el)))
+        (if (= res -1) 
         -1
-        (+ 1 (list-index e (cdr l)))))))
+        (+ 1 res))))))
