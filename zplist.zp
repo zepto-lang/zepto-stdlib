@@ -1,0 +1,13 @@
+(define (in? pred? l) "check whether there is an element in l that matches the predicate pred?"
+  (cond ((null? l) #f)
+  ((pred? (car l)) #t)
+  (else (in? pred? (cdr l)))))
+
+(define (list-index l el) "get index of el in l; otherwise get -1"
+  (if (null? l)
+    -1
+    (if (eq? (car l) e)
+      0
+      (if (= (list-index e (cdr l)) -1) 
+        -1
+        (+ 1 (list-index e (cdr l)))))))
