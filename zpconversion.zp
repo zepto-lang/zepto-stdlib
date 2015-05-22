@@ -1,0 +1,35 @@
+(define (string->integer x) 
+  (let ((num (string->number x)))
+    (cond
+      ((integer? num) num)
+      ((float? num) (round num))
+      ((rational? num) (round num))
+      ((complex? num) (round (real num)))
+      (else #f))))
+
+(define (string->float x) 
+  (let ((num (string->number x)))
+    (cond
+      ((integer? num) (* 1.0 num))
+      ((float? num) num)
+      ((rational? num) (exact->inexact num))
+      ((complex? num) (real num))
+      (else #f))))
+
+(define (string->rational x) 
+  (let ((num (string->number x)))
+    (cond
+      ((integer? num) (/ 2 1/1))
+      ((float? num) (round num))
+      ((rational? num) (round num))
+      ((complex? num) (/ (round (real num)) 1/1))
+      (else #f))))
+
+(define (string->complex x) 
+  (let ((num (string->number x)))
+    (cond
+      ((integer? num) (* num 1+0i))
+      ((float? num) (* num 1+0i))
+      ((rational? num) (* num 1+0i))
+      ((complex? num) num)
+      (else #f))))
