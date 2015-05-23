@@ -33,3 +33,9 @@
       ((rational? num) (* num 1+0i))
       ((complex? num) num)
       (else #f))))
+
+(define (string->boolean x)
+  (cond
+    ((string=? x "true") #t)
+    ((string=? x "false") #f)
+    (else :err)))

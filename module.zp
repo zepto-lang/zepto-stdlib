@@ -10,6 +10,7 @@
 (load "pairs.zp")
 (load "random.zp")
 (load "util.zp")
+(load "zpconversion.zp")
 (load "zplist.zp")
 
 (load "definitions.zp")
