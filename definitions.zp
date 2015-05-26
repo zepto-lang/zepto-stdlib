@@ -8,13 +8,13 @@
 (define char-upcase char-upper-case)
 
 (define (ok? x) "is arg ok"
-  (eq x :ok))
+  (eq? x :ok))
 
 (define (error? x) "is arg error"
-  (eq x :error))
+  (eq? x :error))
 
 (define (yes? x) "is arg yes"
-  (eq x :yes))
+  (eq? x :yes))
 
 (define (no? x) "is arg no"
-  (eq x :no))
+  (eq? x :no))
