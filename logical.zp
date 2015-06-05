@@ -1,4 +1,5 @@
 (define (and . lst) "logical and on multiple values" (fold && #t lst))
 (define (or . lst) "logical or on multiple values" (fold || #f lst))
+(define (nor . lst) "logical nor on multiple values" (fold (lambda (x y) (&& (not y) x))  #t lst))
 
 (define (not x) "logical not" (if x #f #t))
