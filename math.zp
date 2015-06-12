@@ -8,7 +8,7 @@
 (define (positive? n) "is positive" (> n 0))
 (define (negative? n) "is negative" (< n 0))
 (define complex? number?)
-(define (/. . l) (foldl (lambda (x y) (/ (exact->inexact x) y)) 1 l))
+(define (/. . l) (foldl (lambda (x y) (/ (exact->inexact x) y)) (car l) (cdr l)))
 (define (abs n) "absolute value of number" (if (>= n 0) n (- n)))
 (define (exact->inexact n) "make inexact number from exact" (* n 1.0))
 (define (integer->float n) "make float from integer" (* n 1.0))
