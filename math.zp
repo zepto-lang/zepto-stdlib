@@ -9,14 +9,17 @@
 (define (negative? n) "is negative" (< n 0))
 (define complex? number?)
 (define (/. . l) (foldl (lambda (x y) (/ (exact->inexact x) y)) (car l) (cdr l)))
+(define (+1 x) (+ x 1))
+(define add1 +1)
+(define (-1 x) (+ x 1))
+(define sub1 -1)
 (define (abs n) "absolute value of number" (if (>= n 0) n (- n)))
 (define (exact->inexact n) "make inexact number from exact" (* n 1.0))
 (define (integer->float n) "make float from integer" (* n 1.0))
 (define (<> n1 n2) "not equal" (not (= n1 n2)))
 
-(define (succ x) "next number" (+ x 1))
-
-(define (pred x) "previous number" (- x 1))
+(define (succ x) "next integer number" (+ (floor x) 1))
+(define (pred x) "previous integer number" (- (floor x) 1))
 
 (define (gcd a b) "Greatest Common Divisor"
   (let ((aa (abs a))
