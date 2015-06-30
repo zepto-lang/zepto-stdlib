@@ -79,5 +79,5 @@
 
 (define-syntax for
   (syntax-rules ()
-                ((for num action)
-                 (do ((i 0 (+ i 1))) ((= i num)) action))))
+                ((for num (actions ...))
+                 (do ((i 0 (+ i 1))) ((= i num)) actions ...))))
