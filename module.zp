@@ -3,6 +3,7 @@
 (load "char.zp")
 (load "extra.zp")
 (load "delay.zp")
+(load "hash.zp")
 (load "io.zp")
 (load "logical.zp")
 (load "marsaglia.zp")

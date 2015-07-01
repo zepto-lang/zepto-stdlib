@@ -98,6 +98,11 @@
          '()
          l))
 
+(define (zip a b) "zips two lists together"
+  (if (or (null? a) (null? b))
+    []
+    (++ (list (head a) (head b)) (zip (tail a) (tail b)))))
+
 (define (foreach func l) "apply function to each element on the list"
   (foldl (lambda (x y)
            (cons (func x) y))
