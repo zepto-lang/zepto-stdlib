@@ -1,10 +1,10 @@
 (define (hash-values-map f h) "map operation on all hashmap values" (map f (hash-values h)))
-(define (hash-values-reduce f h) "reduce operation on all hashmap values" (reduce f (hash-values h)))
+(define (hash-values-reduce f acc h) "reduce operation on all hashmap values" (reduce f acc (hash-values h)))
 (define (hash-values-filter f h) "filter operation on all hashmap values" (filter f (hash-values h)))
 (define (hash-keys-map f h) "map operation on all hashmap keys" (map f (hash-keys h)))
-(define (hash-keys-reduce f h) "reduce operation on all hashmap keys" (reduce f (hash-keys h)))
+(define (hash-keys-reduce f acc h) "reduce operation on all hashmap keys" (reduce f acc (hash-keys h)))
 (define (hash-keys-filter f h) "filter operation on all hashmap keys" (filter f (hash-keys h)))
-(define (hash-map-filter-by-keys f h) "filter operation on hashmap keys; returns hashmap"
+(define (hash-filter-by-keys f h) "filter operation on hashmap keys; returns hashmap"
   (let* ((keys (filter f (hash-keys h)))
          (vals (map (lambda (e) (h e)) keys)))
     (make-hash (zip keys vals))))
