@@ -81,3 +81,10 @@
   (syntax-rules ()
                 ((for num (actions ...))
                  (do ((i 0 (+ i 1))) ((= i num)) actions ...))))
+
+(define-syntax <|
+  (syntax-rules ()
+    ((<| x) (x))
+    ((<| x y) (x (y)))
+    ((<| x y ...)
+     (x (<| y ...)))))
