@@ -18,3 +18,6 @@
 
 (define (no? x) "is arg no"
   (eq? x :no))
+
+(define (wrong? x) "is arg wrong"
+  (eq? x :wrong))
