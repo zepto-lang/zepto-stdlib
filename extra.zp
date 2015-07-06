@@ -89,9 +89,17 @@
     ((<| x y ...)
      (x (<| y ...)))))
 
-(define-syntax |>
-  (syntax-rules ()
-    ((|> x) (x))
-    ((|> y x) (x (y)))
-    ((|> ... y x)
-     (x (|> ... y)))))
+
+(define (|> y . x)
+  (begin
+    (define (last l)
+              (if (null? (cdr l))
+                (car l)
+                (last (cdr l))))
+    (define (all-but acc l)
+              (if (null? (cdr l))
+                acc
+                (all-but (+= acc (car l)) (cdr l))))
+    (if (null? x)
+      (y)
+      ((last x) (apply |> (cons y (all-but [] x)))))))

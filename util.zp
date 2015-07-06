@@ -137,7 +137,7 @@
 (define all? every?)
 
 (define (case x . cs) 
-         if (== cs ())
+         if (null? cs)
             ("No Case Found")
             (if (== x (caar cs))  
                 (cadar cs) 
