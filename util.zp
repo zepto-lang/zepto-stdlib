@@ -136,6 +136,17 @@
 
 (define all? every?)
 
+(define (range x . l)
+  (begin
+    (define build (lambda (x) (if (> x 0) (cons x (build (- x 1))) [])))
+    (define from-to (lambda (x y) (if (>= x y) [] (cons x (from-to (+ x 1) y)))))
+    (define step (lambda (x y z) (if (>= x y) [] (cons x (step (+ x z) y z)))))
+    (if (null? l)
+          (build x)
+          (cond ((= 1 (length l)) (from-to x (car l)))
+                ((= 2 (length l)) (step x (car l) (cadr l)))
+                (else (error "usage: range [from] to [step]"))))))
+
 (define (case x . cs) 
          if (null? cs)
             ("No Case Found")
