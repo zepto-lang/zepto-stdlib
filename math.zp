@@ -20,6 +20,11 @@
 (define (succ x) "next integer number" (+ (floor x) 1))
 (define (pred x) "previous integer number" (- (floor x) 1))
 
+(define (safe-div x y) "performs division; in case of division by zero it returns inf/-inf"
+  (if (= y 0)
+        (if (> x 0) (inf) (- (inf)))
+        (/ x y)))
+
 (define (gcd a b) "Greatest Common Divisor"
   (let ((aa (abs a))
     (bb (abs b)))
