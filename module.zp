@@ -11,6 +11,7 @@
 (load "pairs.zp")
 (load "random.zp")
 (load "util.zp")
+(load "zpcont.zp")
 (load "zpconversion.zp")
 (load "zplist.zp")
 

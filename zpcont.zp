@@ -1,0 +1,16 @@
+(define (cps-prim f)
+ (lambda args
+  (let ((r (reverse args)))
+   ((car r) (apply f
+             (reverse (cdr r)))))))
+(define *& (cps-prim *))
+(define +& (cps-prim +))
+(define -& (cps-prim -))
+(define /& (cps-prim /))
+(define =& (cps-prim =))
+(define >& (cps-prim >))
+(define <& (cps-prim <))
+(define >=& (cps-prim >=))
+(define <=& (cps-prim <=))
+(define pow& (cps-prim pow))
+(define sqrt& (cps-prim sqrt))
