@@ -14,3 +14,5 @@
 (define <=& (cps-prim <=))
 (define pow& (cps-prim pow))
 (define sqrt& (cps-prim sqrt))
+
+(define (get/cc) (call/cc id))
