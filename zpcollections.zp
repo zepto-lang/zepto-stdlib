@@ -1,0 +1,20 @@
+(define (pop-left x) "generic pop function for the left side; works on vectors, lists and strings"
+  (cond
+    ((vector? x) (vector-ref x 0))
+    ((list? x) (car x))
+    ((string? x) (car (string->list (substring x 0 1))))
+    (else (nil))))
+
+(define (pop-right x) "generic pop function for the right side; works on vectors and strings"
+  (cond
+    ((vector? x) (vector-ref x (- (vector-length x) 1)))
+    ((string? x) (let
+                  ((l (string-length x)))
+                  (car (string->list (substring x (- l 1) l)))))
+    (else (nil))))
+
+(define (append-left x el) "generic append function for the left side; works on vectors, lists and strings"
+  (cond
+    ((vector? x) (vector-extend (vector el) x))
+    ((list? x) (cons el x))
+    ((string? x) (string-append (string el) x))))
