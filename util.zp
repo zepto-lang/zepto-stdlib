@@ -19,9 +19,6 @@
 (define (list-tail l) "get tail of a list"
   (cdr l))
 
-(define (append i a) "append something to a list"
-    (foldr (lambda (ax ix) (cons ax ix)) a i))
-
 (define (curry func arg1) "curry a function"
   (lambda (arg)
     (func arg1 arg)))
