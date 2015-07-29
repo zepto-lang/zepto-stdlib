@@ -21,3 +21,12 @@
 
 (define append +=)
 (define extend ++)
+
+(define (length x) "generic length function; works on vectors, lists, strings and hashmaps"
+  (cond
+    ((vector? x) (vector-length x))
+    ((list? x) (list-length x))
+    ((string? x) (string-length x))
+    ((hash-map? x) (list-length (hash-keys x)))
+    (else (nil))))
+

@@ -60,7 +60,7 @@
         first
         l))
 
-(define (length l) "length of list"
+(define (list-length l) "length of list"
   (fold (lambda (x y)
                 (+ x 1))
         0
