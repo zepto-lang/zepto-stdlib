@@ -1,0 +1,2 @@
+(define (exit-failure) (exit 1))
+(define (exit-success) (exit 0))

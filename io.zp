@@ -8,6 +8,12 @@
     (write x s)
     #f))
 
+(define (newline . port) "print newline to port or stdout if none is given"
+  (cond
+    ((null? port) (display #\newline))
+    ((eq? (length port) 1) (display #\newline (car port)))
+    (else #f)))
+
 (define (call-with-input-file s p) "open an input file s and apply a function to it, then close the file"
      (let ((inport (open-input-file s)))
           (if (eq? inport #f)

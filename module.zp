@@ -17,4 +17,10 @@
 (load "zplist.zp")
 (load "zpstring.zp")
 
+(load "srfi/srfi-55.zp")
+(register-extension '(srfi 1) (lambda () (load "srfi/srfi-1.zp")))
+(register-extension '(srfi 39) (lambda () (load "srfi/srfi-39.zp")))
+
+
+
 (load "definitions.zp")
