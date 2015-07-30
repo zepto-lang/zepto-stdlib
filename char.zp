@@ -23,3 +23,21 @@
   (char-ci-cmp? >= a b))
 (define (char-ci/=? a b) "is char not equal to; case insensitive" 
   (char-ci-cmp? /= a b))
+
+(define (char-upper? c) "is char uppercase"
+  (let ((x (char->integer c)))
+    (and (> x 64) (< x 91))))
+
+(define (char-lower? c) "is char lowercase"
+  (let ((x (char->integer c)))
+    (and (> x 96) (< x 123))))
+
+(define (char-alpha? c) "is char alphabetical"
+  (or (char-upper? c) (char-lower? c)))
+
+(define (char-num? c) "is char numerical"
+  (let ((x (char->integer c)))
+    (and (> x 47) (< x 58))))
+
+(define (char-alphanum? c) "is char alphanumerical"
+  (or (char-alpha? c) (char-num? c)))
