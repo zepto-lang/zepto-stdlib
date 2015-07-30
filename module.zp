@@ -23,6 +23,6 @@
 (register-extension '(srfi 13) (lambda () (global-load "srfi/srfi-13.zp")))
 (register-extension '(srfi 39) (lambda () (global-load "srfi/srfi-39.zp")))
 
-
-
 (load "definitions.zp")
+
+"Prelude loaded!\n"
