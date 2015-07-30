@@ -21,14 +21,7 @@
           (lookup (cdr exts))))))
   (lookup available-extensions))
 
-(define-syntax require-extension 
-  (syntax-rules (srfi)
-    ((_ "internal" (srfi id ...))
-     (begin (find-extension (srfi id) ...)))
-    ((_ "internal" id)
-     (find-extension id))
-    ((_ clause ...)
-     (begin (require-extension "internal" clause) ...))))
+(define require-extension find-extension)
 
 ; Example of registering extensions:
 ;

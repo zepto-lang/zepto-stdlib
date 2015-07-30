@@ -16,3 +16,7 @@
 (define sqrt& (cps-prim sqrt))
 
 (define (get/cc) (call/cc id))
+
+(define values list)
+(define (call-with-values producer consumer)
+  (apply consumer (producer)))
