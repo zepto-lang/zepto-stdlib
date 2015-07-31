@@ -1,1 +1,7 @@
 (define string-extend string-append)
+(define (string-join l . delim) "join list of strings to string; optional delimiter"
+  (if (null? l)
+    ""
+    (if (or (null? delim) (= (length l) 1))
+      (++ "" (car l) (string-join (cdr l)))
+      (++ "" (car l) delim (string-join (cdr l))))))
