@@ -8,3 +8,7 @@
   (let* ((keys (filter f (hash-keys h)))
          (vals (map (lambda (e) (h e)) keys)))
     (make-hash (zip keys vals))))
+
+(define (hash-eqv? hash test) "tests two hash-maps for equality"
+  (and (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys hash))
+       (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys test))))
