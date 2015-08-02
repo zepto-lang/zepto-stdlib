@@ -13,8 +13,10 @@
       l
       (indexed-tail (cdr l) (- k 1))))
 
-(define (list-ref l k) "get reference to list element at certain point"
-    (car (indexed-tail l k)))
+(define (list-ref l . k) "get reference to list element at certain point"
+    (if (= 1 (length k))
+        (car (indexed-tail l (car k)))
+        (reverse (indexed-tail (reverse (indexed-tail l (car k))) (- (length l) (cadr k))))))
 
 (define (list-tail l) "get tail of a list"
   (cdr l))
