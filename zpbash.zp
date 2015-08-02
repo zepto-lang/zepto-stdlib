@@ -1,0 +1,7 @@
+(define (ls) (cadr (system "ls")))
+(define (cd dir) (car (system "cd" (list dir))))
+(define (pwd) (cadr (system "pwd")))
+(define (ps . args) (cadr (system "ps" args)))
+
+(define (bash-unix-timestamp) (string->number (cadr (system "date" ["+%s"]))))
+(define (bash-date) (cadr (system "date")))
