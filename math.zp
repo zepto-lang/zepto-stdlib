@@ -16,6 +16,8 @@
 (define (integer->float n) "make float from integer" (* n 1.0))
 (define (<> n1 n2) "not equal" (not (= n1 n2)))
 (define (divmod n d) "divmod operation" (list (/ n d) (mod n d)))
+(define (>> n d) "right shift" (arithmetic-shift n (- d)))
+(define (<< n d) "left shift" (arithmetic-shift n (- d)))
 
 (define (list-sum x) "calculate the sum of all elements in list"
   (reduce (lambda (acc x) (+ acc x)) 0 x))
