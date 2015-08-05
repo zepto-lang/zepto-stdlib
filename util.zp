@@ -51,16 +51,16 @@
   (fold * 1 l))
 
 (define (max first . l) "maximum of values"
-  (fold (lambda (old new)
-                (if (> old new) old new))
-        first
-        l))
+  (fold (lambda (old new) (if (> old new) old new)) first l))
 
 (define (min first . l) "minimum of values"
-  (fold (lambda (old new)
-          (if (< old new) old new))
-        first
-        l))
+  (fold (lambda (old new) (if (< old new) old new)) first l))
+
+(define (min-list l) "minimum in list"
+  (fold (lambda (old new) (if (< old new) old new)) (car l) (cdr l)))
+
+(define (max-list l) "maximum in list"
+  (fold (lambda (old new) (if (> old new) old new)) (car l) (cdr l)))
 
 (define (list-length l) "length of list"
   (fold (lambda (x y)
