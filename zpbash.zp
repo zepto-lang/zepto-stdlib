@@ -1,9 +1,29 @@
-(define (bash:command x) (cadr (system x)))
+(define (bash:command x) "runs a bash command x and returns its' stdout" (cadr (system x)))
 (define (bash:ls) (bash:command "ls"))
 (define (bash:pwd) (bash:command "pwd"))
 (define (bash:uname) (bash:command "uname"))
 (define (bash:date) (bash:command "date"))
 
-(define (bash:cd . dir) (car (system "cd" dir)))
-(define (bash:ps . args) (cadr (system "ps" args)))
-(define (bash:unix-timestamp) (string->number (cadr (system "date" ["+%s"]))))
+(define (bash:cd . dir) "returns the value of `cd`" (car (system "cd" dir)))
+(define (bash:ps . args) "returns the output of `ps` as a string" (cadr (system "ps" args)))
+
+(define (bash:unix-timestamp)
+  "returns the current unix timestamp as a number"
+  (string->number (cadr (system "date" ["+%s"]))))
+
+(define (bash:unix-timestamp-with-nano)
+  "returns a list constituting of the unix timestamp and current nanoseconds;
+   only works if the bash date (or gdate) command supports the %N option"
+  (let* ((stamp (cadr (system "date" ["+%s%N"])))
+         (stampl (- (length stamp) 1))
+         (divide (- stampl 9)))
+    (if (char-ci=? (string-ref stamp (- stampl 1)) #\N)
+      (if (> (length (cadr (system "which" ["gdate"]))) 2)
+        (let* ((stamp (cadr (system "gdate" ["+%s%N"])))
+               (stampl (- (length stamp) 1))
+               (divide (- stampl 9)))
+            (map string->number (list (substring stamp 0 divide)
+                                      (substring stamp divide stampl))))
+         #f)
+      (map string->number (list (substring stamp 0 divide)
+                                (substring stamp divide stampl))))))
