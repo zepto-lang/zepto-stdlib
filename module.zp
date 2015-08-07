@@ -1,5 +1,7 @@
 (load "let.zp")
 
+(load "zplist.zp")
+
 (load "char.zp")
 (load "extra.zp")
 (load "delay.zp")
@@ -14,7 +16,6 @@
 (load "zpcollections.zp")
 (load "zpcont.zp")
 (load "zpconversion.zp")
-(load "zplist.zp")
 (load "zpstring.zp")
 
 (load "srfi/srfi-55.zp")
