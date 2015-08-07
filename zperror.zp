@@ -1,2 +1,4 @@
-(define (exit-failure) (exit 1))
-(define (exit-success) (exit 0))
+(define (exit-failure . code) "ends zepto program with status code 1 or a supplied error code"
+  (if (null? code) (exit 1) (exit (car code))))
+(define (exit-success) "ends zepto program with status code 0"
+  (exit 0))
