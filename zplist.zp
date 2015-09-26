@@ -31,6 +31,9 @@
 (define (max-list l) "maximum in list"
   (fold (lambda (old new) (if (> old new) old new)) (car l) (cdr l)))
 
+(define (list-in l el) "returns boolean signifying whether element is in list"
+  (>= 0 (list-index l el)))
+
 (define (indexed-tail l k) "get tail of a list starting at index"
     (if (zero? k)
       l
