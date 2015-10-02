@@ -1,6 +1,11 @@
 (define (id obj) "returns an object"
   obj)
 
+(define (inf? obj) "ist object infinite?"
+  (if (and (number? obj) (inexact? obj))
+    (= obj (* obj 10))
+    #f))
+
 (define (flip func) "flips two arguments for a function"
   (lambda (arg1 arg2)
     (func arg2 arg1)))
