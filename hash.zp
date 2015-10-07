@@ -8,7 +8,14 @@
   (let* ((keys (filter f (hash-keys h)))
          (vals (map (lambda (e) (h e)) keys)))
     (make-hash (zip keys vals))))
+(define (hash-filter-by-vals f h) "filter operation on hashmap vals; returns hashmap"
+  (let* ((keys (filter (lambda (k) (f (h k))) (hash-keys h)))
+         (vals (map (lambda (e) (h e)) keys)))
+    (make-hash (zip keys vals))))
 
 (define (hash-eqv? hash test) "tests two hash-maps for equality"
   (and (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys hash))
        (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys test))))
+
+(define (hash-remove-empty hash) "removes empty values from a hash map"
+  (hash-filter-by-vals (lambda (x) (truthy? x)) hash))

@@ -68,3 +68,17 @@
          (cars (car unz))
          (cdrs (cdr unz)))
         (apply proc cars) (apply map (cons proc cdrs))))))
+
+(define (falsy? val) "is object falsy: empty if collection, 0 if number, #f if boolean"
+  (cond
+    ((boolean? val) (not val))
+    ((hash-map? val) (null? (hash-keys val)))
+    ((list? val) (null? val))
+    ((vector? val) (eqv? {} val))
+    ((byte-vector? val) (eqv? #() val))
+    ((string? val) (eqv? "" val))
+    ((number? val) (eqv? 0 val))
+    (else #t)))
+
+(define (truthy? val) "is object truthy: not empty if collection, !0 if number #t if boolean"
+  (not (falsy? val)))
