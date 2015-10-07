@@ -41,3 +41,25 @@
     ((string? l) (list-in (string->list l) el))
     ((hash-map? l) (hash-contains? l el))
     (else (nil))))
+
+(define (get-from collec elem . dflt)
+  "generic element getter function; if the element is in the list, it is returned,
+   otherwise the default is returned (which is either nil or user-defined)"
+  (let ((dflt (if (null? dflt) (nil) (list-ref dflt 0))))
+  (cond
+    ((vector? collec)
+      (if (> (length collec) elem)
+        (collec elem)
+        dflt))
+    ((list? collec)
+      (if (> (length collec) elem)
+        (list-ref collec elem)
+        dflt))
+    ((hash-map? collec)
+      (if (hash-contains? collec elem)
+        (collec elem)
+        dflt))
+    ((string? collec)
+      (if (> (length collec) elem)
+        (string-ref collec elem)
+        dflt)))))
