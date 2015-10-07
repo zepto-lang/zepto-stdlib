@@ -5,3 +5,15 @@
     (if (or (null? delim) (= (length l) 1))
       (++ "" (car l) (string-join (cdr l)))
       (++ "" (car l) (car delim) (string-join (cdr l) (car delim))))))
+
+(define (string-split s delim)
+  "splits a string s on a certain delimiter, returning a list; 
+   the delimiter is lost"
+  (let ((x (string-find s delim))
+        (l (length s)))
+    (if (or (= x -1) (= l 1))
+      (list s)
+      (let ((sub (substring s (+ x 1) l)))
+        (if (= 0 (length sub))
+          (list (substring s 0 x))
+          (++ (list (substring s 0 x)) (string-split (substring s (+ x 1) l) delim)))))))
