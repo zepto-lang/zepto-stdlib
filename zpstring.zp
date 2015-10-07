@@ -17,3 +17,7 @@
         (if (= 0 (length sub))
           (list (substring s 0 x))
           (++ (list (substring s 0 x)) (string-split (substring s (+ x 1) l) delim)))))))
+
+(define (string-tail s)
+  "gets tail of a string, i.e. everything except for the first element"
+  (substring s 1 (length s)))
