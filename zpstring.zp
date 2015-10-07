@@ -21,3 +21,34 @@
 (define (string-tail s)
   "gets tail of a string, i.e. everything except for the first element"
   (substring s 1 (length s)))
+
+(define (string:remove-non-ascii s)
+  "removes all non-ascii characters from a string"
+  (let ((s (string->list s)))
+    (list->string [x | x <- s, (< (char->integer x) 128)])))
+
+(define (string:marquee s . args)
+  "returns marqueed string; default width 30 chars, default symbol -"
+  (let* ((args (get-from args 0 (make-hash)))
+         (width (get-from args "width" 30))
+         (symbol (get-from args "symbol" "-"))
+         (side (replicate (/ (- width (length s) 2) (length symbol)) symbol)))
+    (++ side " " s " " side)))
+
+(define (string:box s . args)
+  "returns boxed string; default width 30 chars, default symbol -"
+  (let* ((args (get-from args 0 (make-hash)))
+         (width (get-from args "width" 30))
+         (symbol (get-from args "symbol" "-"))
+         (len (/ (- width (length s) 2) 2 (length symbol)))
+         (side (replicate len symbol))
+         (top (replicate (+ (* len 2) 2 (length s)) symbol)))
+    (++ top "\n" side " " s " " side "\n" top)))
+
+(define (string:indent s . args)
+  "indent lines in a string by padding (default 2) with symbol (default whitespace)"
+  (let* ((args (get-from args 0 (make-hash)))
+         (width (get-from args "padding" 2))
+         (symbol (get-from args "symbol" " "))
+         (padding (replicate width symbol)))
+  (++ padding (string-join (string-split s #\newline) (++ "\n" padding)))))

@@ -116,3 +116,7 @@
 
 (define iota range)
 
+(define (replicate n el) "build a list of length n with only el in it"
+  (if (< n 1)
+    ""
+    (++ el (replicate (- n 1) el))))
