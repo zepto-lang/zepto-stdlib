@@ -1,4 +1,4 @@
-(ƒ (cowsay what) "what does the cow say?"
+(ƒ (ascii:cowsay what) "what does the cow say?"
 
   (ƒ (cow-interpolate-fill l what)
     (if (< l 30)
@@ -43,7 +43,7 @@
     (display "             ||     ||")))
 
 ;; The smiley was found on http://loveascii.com/smilies.html
-(ƒ (smiley) "be happy"
+(ƒ (ascii:smiley) "be happy"
   (begin
     (display "    .-'\"\"\"\"\"'-.\n")
     (display "  .'           `.\n")
@@ -55,7 +55,7 @@
     (display "  `.           .'\n")
     (display "    `-._____.-'")))
 
-(define (ƒ . direction) "everyone ought to have one; or so I heard"
+(define (ascii:standard-fish . direction) "everyone ought to have one; or so I heard"
   (define (left-fish)
     (begin
       (display " _J\"\"-.\n")
@@ -85,7 +85,7 @@
         (else (display (list "Unrecognized option: " direction)))))
 
 ;; The goose was found on http://www.retrojunkie.com/asciiart/animals/ducks.htm
-(ƒ (non-standard-fish) "this might not be what you expect"
+(ƒ (ascii:non-standard-fish) "this might not be what you expect"
   (begin
     (display "                        __\n")
     (display "                      /` ,\\__\n")
