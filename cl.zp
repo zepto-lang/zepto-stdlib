@@ -219,8 +219,8 @@
 	       (car args)))))
 
 ;;;@ From: hugh@ear.mit.edu (Hugh Secker-Walker)
-(define (cl:nreverse rev-it)
 ;;; Reverse order of elements of LIST by mutating cdrs.
+(define (cl:nreverse rev-it)
   (cond ((null? rev-it) rev-it)
 	((not (list? rev-it))
 	 (error "nreverse: Not a list in arg1" rev-it))
@@ -239,8 +239,7 @@
   (if (zero? n) lst (cl:nthcdr (+ -1 n) (cdr lst))))
 ;@
 (define (cl:butnthcdr k lst)
-  (cond ((negative? k) lst) ;(slib:error "negative argument to butnthcdr" k)
-					; SIMSYNCH FIFO8 uses negative k.
+  (cond ((negative? k) lst)
 	((or (zero? k) (null? lst)) '())
 	(else (let ((ans (list (car lst))))
 		(do ((lst (cdr lst) (cdr lst))
