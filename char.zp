@@ -1,43 +1,43 @@
-(define (char-cmp? cmp a b) "compares two chars with a compare option cmp"
+(define (char:cmp? cmp a b) "compares two chars with a compare option cmp"
      (cmp (char->integer a) (char->integer b)))
 
-(define (char-ci-cmp? cmp a b) "compares two chars case insensitive with a compare option cmp"
-     (cmp (char->integer (char-lower-case a)) (char->integer (char-lower-case b)))) 
+(define (char:ci-cmp? cmp a b) "compares two chars case insensitive with a compare option cmp"
+     (cmp (char->integer (char:lower-case a)) (char->integer (char:lower-case b)))) 
 
-(define (char=? a b) "are chars equal" (char-cmp? = a b))
-(define (char<? a b) "is char less than" (char-cmp? < a b))
-(define (char>? a b) "is char greater than" (char-cmp? > a b))
-(define (char<=? a b) "is char less than or equal to" (char-cmp? <= a b))
-(define (char>=? a b) "is char greater than or equal to" (char-cmp? >= a b))
-(define (char/=? a b) "is char not equal to" (char-cmp? /= a b))
+(define (char=? a b) "are chars equal" (char:cmp? = a b))
+(define (char<? a b) "is char less than" (char:cmp? < a b))
+(define (char>? a b) "is char greater than" (char:cmp? > a b))
+(define (char<=? a b) "is char less than or equal to" (char:cmp? <= a b))
+(define (char>=? a b) "is char greater than or equal to" (char:cmp? >= a b))
+(define (char/=? a b) "is char not equal to" (char:cmp? /= a b))
 
 (define (char-ci=? a b) "are chars equal; case insensitive" 
-  (char-ci-cmp? = a b))
+  (char:ci-cmp? = a b))
 (define (char-ci<? a b) "is char less than; case insensitive" 
-  (char-ci-cmp? < a b))
+  (char:ci-cmp? < a b))
 (define (char-ci>? a b) "is char greater than; case insensitive" 
-  (char-ci-cmp? > a b))
+  (char:ci-cmp? > a b))
 (define (char-ci<=? a b) "is char less than or equal to; case insensitive" 
-  (char-ci-cmp? <= a b))
+  (char:ci-cmp? <= a b))
 (define (char-ci>=? a b) "is char greater than or equal to; case insensitive" 
-  (char-ci-cmp? >= a b))
+  (char:ci-cmp? >= a b))
 (define (char-ci/=? a b) "is char not equal to; case insensitive" 
-  (char-ci-cmp? /= a b))
+  (char:ci-cmp? /= a b))
 
-(define (char-upper? c) "is char uppercase"
+(define (char:upper? c) "is char uppercase"
   (let ((x (char->integer c)))
     (and (> x 64) (< x 91))))
 
-(define (char-lower? c) "is char lowercase"
+(define (char:lower? c) "is char lowercase"
   (let ((x (char->integer c)))
     (and (> x 96) (< x 123))))
 
-(define (char-alpha? c) "is char alphabetical"
-  (or (char-upper? c) (char-lower? c)))
+(define (char:alpha? c) "is char alphabetical"
+  (or (char:upper? c) (char:lower? c)))
 
-(define (char-num? c) "is char numerical"
+(define (char:num? c) "is char numerical"
   (let ((x (char->integer c)))
     (and (> x 47) (< x 58))))
 
-(define (char-alphanum? c) "is char alphanumerical"
-  (or (char-alpha? c) (char-num? c)))
+(define (char:alphanum? c) "is char alphanumerical"
+  (or (char:alpha? c) (char:num? c)))

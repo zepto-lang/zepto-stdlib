@@ -17,7 +17,7 @@
   (let* ((stamp (cadr (system "date" ["+%s%N"])))
          (stampl (- (length stamp) 1))
          (divide (- stampl 9)))
-    (if (char-ci=? (string-ref stamp (- stampl 1)) #\N)
+    (if (char-ci=? (string:ref stamp (- stampl 1)) #\N)
       (if (> (length (cadr (system "which" ["gdate"]))) 2)
         (let* ((stamp (cadr (system "gdate" ["+%s%N"])))
                (stampl (- (length stamp) 1))

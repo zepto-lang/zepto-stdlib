@@ -1,51 +1,51 @@
 (define (pop-left x) "generic pop function for the left side; works on vectors, lists and strings"
   (cond
-    ((vector? x) (vector-ref x 0))
-    ((byte-vector? x) (byte-vector-ref x 0))
+    ((vector? x) (vector:ref x 0))
+    ((byte-vector? x) (byte-vector:ref x 0))
     ((list? x) (car x))
     ((string? x) (car (string->list (substring x 0 1))))
     (else (nil))))
 
 (define (pop-right x) "generic pop function for the right side; works on vectors, bytevectors and strings"
   (cond
-    ((vector? x) (vector-ref x (- (vector-length x) 1)))
-    ((byte-vector? x) (byte-vector-ref x (- (byte-vector-length x) 1)))
+    ((vector? x) (vector:ref x (- (vector:length x) 1)))
+    ((byte-vector? x) (byte-vector:ref x (- (byte-vector:length x) 1)))
     ((string? x) (let
-                  ((l (string-length x)))
+                  ((l (string:length x)))
                   (car (string->list (substring x (- l 1) l)))))
     (else (nil))))
 
 (define (append-left x el) "generic append function for the left side; works on vectors, bytevectors, lists and strings"
   (cond
-    ((vector? x) (vector-extend (vector el) x))
-    ((byte-vector? x) (byte-vector-extend (byte-vector el) x))
+    ((vector? x) (vector:extend (vector el) x))
+    ((byte-vector? x) (byte-vector:extend (byte-vector el) x))
     ((list? x) (cons el x))
-    ((string? x) (string-append (string el) x))))
+    ((string? x) (string:append (string el) x))))
 
 (define append +=)
 (define extend ++)
 
 (define (length x) "generic length function; works on vectors, lists, strings and hashmaps"
   (cond
-    ((vector? x) (vector-length x))
-    ((byte-vector? x) (byte-vector-length x))
-    ((list? x) (list-length x))
-    ((string? x) (string-length x))
-    ((hash-map? x) (list-length (hash-keys x)))
+    ((vector? x) (vector:length x))
+    ((byte-vector? x) (byte-vector:length x))
+    ((list? x) (list:length x))
+    ((string? x) (string:length x))
+    ((hash-map? x) (list:length (hash:keys x)))
     (else (nil))))
 
 (define (in l el) "generic element function; returns boolean signifying if element is in list; works on vectors, lists, strings and hashmaps"
   (cond
-    ((vector? l) (list-in (vector->list l) el))
-    ((list? l) (list-in l el))
-    ((string? l) (list-in (string->list l) el))
-    ((hash-map? l) (hash-contains? l el))
+    ((vector? l) (list:in (vector->list l) el))
+    ((list? l) (list:in l el))
+    ((string? l) (list:in (string->list l) el))
+    ((hash-map? l) (hash:contains? l el))
     (else (nil))))
 
 (define (get-from collec elem . dflt)
   "generic element getter function; if the element is in the list, it is returned,
    otherwise the default is returned (which is either nil or user-defined)"
-  (let ((dflt (if (null? dflt) (nil) (list-ref dflt 0))))
+  (let ((dflt (if (null? dflt) (nil) (list:ref dflt 0))))
   (cond
     ((vector? collec)
       (if (> (length collec) elem)
@@ -53,13 +53,13 @@
         dflt))
     ((list? collec)
       (if (> (length collec) elem)
-        (list-ref collec elem)
+        (list:ref collec elem)
         dflt))
     ((hash-map? collec)
-      (if (hash-contains? collec elem)
+      (if (hash:contains? collec elem)
         (collec elem)
         dflt))
     ((string? collec)
       (if (> (length collec) elem)
-        (string-ref collec elem)
+        (string:ref collec elem)
         dflt)))))

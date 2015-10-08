@@ -1,24 +1,24 @@
-(define string-extend string-append)
-(define (string-join l . delim) "join list of strings to string; optional delimiter"
+(define string:extend string:append)
+(define (string:join l . delim) "join list of strings to string; optional delimiter"
   (if (null? l)
     ""
     (if (or (null? delim) (= (length l) 1))
-      (++ "" (car l) (string-join (cdr l)))
-      (++ "" (car l) (car delim) (string-join (cdr l) (car delim))))))
+      (++ "" (car l) (string:join (cdr l)))
+      (++ "" (car l) (car delim) (string:join (cdr l) (car delim))))))
 
-(define (string-split s delim)
+(define (string:split s delim)
   "splits a string s on a certain delimiter, returning a list; 
    the delimiter is lost"
-  (let ((x (string-find s delim))
+  (let ((x (string:find s delim))
         (l (length s)))
     (if (or (= x -1) (= l 1))
       (list s)
       (let ((sub (substring s (+ x 1) l)))
         (if (= 0 (length sub))
           (list (substring s 0 x))
-          (++ (list (substring s 0 x)) (string-split (substring s (+ x 1) l) delim)))))))
+          (++ (list (substring s 0 x)) (string:split (substring s (+ x 1) l) delim)))))))
 
-(define (string-tail s)
+(define (string:tail s)
   "gets tail of a string, i.e. everything except for the first element"
   (substring s 1 (length s)))
 
@@ -51,4 +51,13 @@
          (width (get-from args "padding" 2))
          (symbol (get-from args "symbol" " "))
          (padding (replicate width symbol)))
-  (++ padding (string-join (string-split s #\newline) (++ "\n" padding)))))
+  (++ padding (string:join (string:split s #\newline) (++ "\n" padding)))))
+
+(define (string:starts-with s sub)
+  "check whether a string starts with another string"
+  (eqv? sub (substring s 0 (length sub))))
+
+(define (string:ends-with s sub)
+  "check whether a string ends with another string"
+  (let ((len (length s)))
+  (eqv? sub (substring s (- len (length sub)) len))))

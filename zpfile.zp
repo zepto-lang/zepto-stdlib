@@ -1,12 +1,12 @@
 (define file:OS_DELIM #\/) ; TODO: I need a real way to get that
 
 (define (file:extension fname) "get extension from filename"
-  (let ((flist (string-split fname #\.)))
-    (list-ref flist (- (length flist) 1))))
+  (let ((flist (string:split fname #\.)))
+    (list:ref flist (- (length flist) 1))))
 
 (define (file:filename fname) "get filename from path"
-  (let ((flist (string-split fname file:OS_DELIM)))
-    (list-ref flist (- (length flist) 1))))
+  (let ((flist (string:split fname file:OS_DELIM)))
+    (list:ref flist (- (length flist) 1))))
 
 (define (file:dirname fname) "get dirname from path"
   (let ((len (length (file:filename fname))))

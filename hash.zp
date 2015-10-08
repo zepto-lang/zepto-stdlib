@@ -1,21 +1,21 @@
-(define (hash-values-map f h) "map operation on all hashmap values" (map f (hash-values h)))
-(define (hash-values-reduce f acc h) "reduce operation on all hashmap values" (reduce f acc (hash-values h)))
-(define (hash-values-filter f h) "filter operation on all hashmap values" (filter f (hash-values h)))
-(define (hash-keys-map f h) "map operation on all hashmap keys" (map f (hash-keys h)))
-(define (hash-keys-reduce f acc h) "reduce operation on all hashmap keys" (reduce f acc (hash-keys h)))
-(define (hash-keys-filter f h) "filter operation on all hashmap keys" (filter f (hash-keys h)))
-(define (hash-filter-by-keys f h) "filter operation on hashmap keys; returns hashmap"
-  (let* ((keys (filter f (hash-keys h)))
+(define (hash:values-map f h) "map operation on all hashmap values" (map f (hash:values h)))
+(define (hash:values-reduce f acc h) "reduce operation on all hashmap values" (reduce f acc (hash:values h)))
+(define (hash:values-filter f h) "filter operation on all hashmap values" (filter f (hash:values h)))
+(define (hash:keys-map f h) "map operation on all hashmap keys" (map f (hash:keys h)))
+(define (hash:keys-reduce f acc h) "reduce operation on all hashmap keys" (reduce f acc (hash:keys h)))
+(define (hash:keys-filter f h) "filter operation on all hashmap keys" (filter f (hash:keys h)))
+(define (hash:filter-by-keys f h) "filter operation on hashmap keys; returns hashmap"
+  (let* ((keys (filter f (hash:keys h)))
          (vals (map (lambda (e) (h e)) keys)))
     (make-hash (zip keys vals))))
-(define (hash-filter-by-vals f h) "filter operation on hashmap vals; returns hashmap"
-  (let* ((keys (filter (lambda (k) (f (h k))) (hash-keys h)))
+(define (hash:filter-by-vals f h) "filter operation on hashmap vals; returns hashmap"
+  (let* ((keys (filter (lambda (k) (f (h k))) (hash:keys h)))
          (vals (map (lambda (e) (h e)) keys)))
     (make-hash (zip keys vals))))
 
-(define (hash-eqv? hash test) "tests two hash-maps for equality"
-  (and (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys hash))
-       (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash-keys test))))
+(define (hash:eqv? hash test) "tests two hashmaps for equality"
+  (and (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash:keys hash))
+       (reduce (lambda (acc x) (and acc (eq? (hash x) (test x)))) #t (hash:keys test))))
 
-(define (hash-remove-empty hash) "removes empty values from a hash map"
-  (hash-filter-by-vals (lambda (x) (truthy? x)) hash))
+(define (hash:remove-empty hash) "removes empty values from a hashmap"
+  (hash:filter-by-vals (lambda (x) (truthy? x)) hash))
