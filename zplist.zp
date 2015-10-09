@@ -44,6 +44,11 @@
         (car (indexed-tail l (car k)))
         (reverse (indexed-tail (reverse (indexed-tail l (car k))) (- (length l) (cadr k))))))
 
+(define (list:remove-n l n) "deletes nth element from list"
+  (if (= n 0) 
+      (cdr l)
+      (++ (list (car l)) (list:remove-n (cdr l) (- n 1)))))
+
 (define (list:tail l) "get tail of a list"
   (cdr l))
 

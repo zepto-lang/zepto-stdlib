@@ -103,3 +103,9 @@
     (if (null? x)
       (y)
       ((last x) (apply |> (cons y (all-but [] x)))))))
+
+;; Probably broken
+(define-syntax identifier->symbol
+  (syntax-rules ()
+    ((identifier->symbol x)
+     'x)))

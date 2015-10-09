@@ -4,7 +4,15 @@
     #t
     (and (ord (car seq) (cadr seq)) (sort:sorted? (cdr seq) ord)))))
 
-(define (sort:merge a b . ord) "merge two sorted lists; optionally takes an order function, default is <"
+(define (sort:_split l)
+  (define (_split l ls1 ls2)
+                      (if (< (length l) 2)
+                        (cons (reverse ls2) ls1))
+                        (_split (cddr l) (cdr ls1) (cons (car ls1) ls2)))
+    (_split l l '()))
+
+(define (sort:merge a b . ord) 
+  "merge two sorted lists; optionally takes an order function, default is <"
   (let ((ord (if (null? ord) < (list:ref ord 0))))
   (cond
     ((null? a) b)
@@ -22,14 +30,28 @@
             (cons x (cons y b))
             (cons x (loop (car a) (cdr a) y b)))))))))
 
-(define (sort:quick-sort l . ord) "sort a list with quick sort scheme; optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+(define (sort:quicksort l . ord)
+  "sort a list with quicksort scheme; optionally takes an order function, default is <;
+   as the pivot is always the first element, it has very bad behaviour on already sorted lists"
+  (let ((ord (if (null? ord) < (list:ref ord 0)))
+        (i (randint 0 (length l))))
   (if (< (length l) 2) 
     l
-    (let loop ((left []) (right [])
-               (h (car l)) (t (cdr l)))
+    (let loop ((left []) (right []) (h (list:ref l i)) (t (list:remove-n l i)))
       (if (null? t)
-        (++ (++ (sort:quick-sort left ord) (list h)) (sort:quick-sort right ord))
+        (++ (++ (sort:quicksort left ord) (list h)) (sort:quicksort right ord))
         (if (ord (car t) h)
           (loop (++ left (list (car t))) right h (cdr t))
           (loop left (++ right (list (car t))) h (cdr t))))))))
+
+(define (sort:mergesort l . ord)
+  "sort a list with mergesort scheme destructively; optionally takes an order function, default is <"
+  (let ((ord (if (null? ord) < (list:ref ord 0))))
+  (if (< (length l) 2)
+    l
+    (let ((splits (sort:_split l)))
+      (sort:merge
+        (sort:mergesort (car splits) ord)
+        (sort:mergesort (cdr splits) ord) ord)))))
+
+(define sort:sort sort:quicksort)
