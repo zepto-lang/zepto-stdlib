@@ -27,4 +27,6 @@
 
 (load "definitions.zp")
 
+(load "module/module.zp")
+
 "Prelude loaded!\n"
