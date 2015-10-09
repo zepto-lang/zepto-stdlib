@@ -1,0 +1,4 @@
+(define (Y h) "the Y combinator" (lambda a (apply (h (Y h)) a)))
+(define (s x) "the s combinator" (lambda (y) (lambda (z) ((x z) (y z)))))
+(define (k x) "the k combinator" (lambda (y) x))
+(define (i x) "the i combinator" x)
