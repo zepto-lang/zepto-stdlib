@@ -2,15 +2,24 @@
 ;; http://stackoverflow.com/questions/14674165/scheme-generate-random
 ;; It is not to be used in cryptography or related fields.
 (define random
-  (let ((a 69069) (c 1) (m (expt 2 32)) (seed 19380110.0))
-    (lambda (new-seed)
+  (let ((a 69069.0) (c 1) (m (expt 2 32)) (seed 19380110))
+    (lambda new-seed
       (if (pair? new-seed)
-        (begin (set! seed (car new-seed)))
-        (begin (set! seed (modulo (+ (* seed a) c) m))))
+          (set! seed (car new-seed))
+          (set! seed (modulo (+ (* seed a) c) m)))
       (/ seed m))))
 
-(define (randint . args) "generate a random integer between the given args(the lower range is optional)"
+
+(define (randint . args) "generate a random integer between the given args (the lower range is optional)"
   (cond ((= (length args) 1) (randint 0 (car args)))
         ((= (length args) 2)
          (+ (car args) (floor (* (random) (- (cadr args) (car args))))))
         (else (write "usage: (randint [lo] hi)"))))
+
+(define (random-list n lo . hi)
+  "generate a list of random integers between the given args (the lower range is optional)"
+  (if (< n 1)
+    '()
+    (if (truthy? hi)
+      (++ (list (randint lo (car hi))) (random-list (- n 1) lo (car hi)))
+      (++ (list (randint lo)) (random-list (- n 1) lo)))))
