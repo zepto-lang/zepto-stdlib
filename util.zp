@@ -72,7 +72,7 @@
 (define (falsy? val) "is object falsy: empty if collection, 0 if number, #f if boolean"
   (cond
     ((boolean? val) (not val))
-    ((hash-map? val) (null? (hash-keys val)))
+    ((hash-map? val) (null? (hash:keys val)))
     ((list? val) (null? val))
     ((vector? val) (eqv? {} val))
     ((byte-vector? val) (eqv? #() val))
