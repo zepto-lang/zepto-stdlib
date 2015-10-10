@@ -19,3 +19,6 @@
 [submodule "querystring"]
 	path = querystring
 	url = https://github.com/zepto-lang/querystring
+[submodule "minitest"]
+	path = minitest
+	url = https://github.com/zepto-lang/minitest
