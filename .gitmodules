@@ -1,3 +1,21 @@
 [submodule "module"]
 	path = module
 	url = https://github.com/zepto-lang/module
+[submodule "argparse"]
+	path = argparse
+	url = https://github.com/zepto-lang/argparse
+[submodule "bench"]
+	path = bench
+	url = https://github.com/zepto-lang/bench
+[submodule "datetime"]
+	path = datetime
+	url = https://github.com/zepto-lang/datetime
+[submodule "json"]
+	path = json
+	url = https://github.com/zepto-lang/json
+[submodule "slugify"]
+	path = slugify
+	url = https://github.com/zepto-lang/slugify
+[submodule "querystring"]
+	path = querystring
+	url = https://github.com/zepto-lang/querystring
