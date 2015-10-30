@@ -81,4 +81,5 @@
     ((list? collec)
       (list:index collec el))
     ((string? collec)
-      (string:find collec el))))
+      (string:find collec el))
+    (else (nil))))
