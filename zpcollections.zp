@@ -62,4 +62,23 @@
     ((string? collec)
       (if (> (length collec) elem)
         (string:ref collec elem)
-        dflt)))))
+        dflt)
+    (else (nil))))))
+
+(define (gsum collec)
+  "sum all elements in collection"
+  (cond
+    ((vector? collec)
+      (math:list-sum (vector->list collec)))
+    ((list? collec)
+      (math:list-sum collec))))
+
+(define (index-of collec el)
+  "get first index of element in collection"
+  (cond
+    ((vector? collec)
+      (list:index (vector->list collec) el))
+    ((list? collec)
+      (list:index collec el))
+    ((string? collec)
+      (string:find collec el))))

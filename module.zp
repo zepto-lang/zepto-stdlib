@@ -12,6 +12,7 @@
 (load "math.zp")
 (load "pairs.zp")
 (load "random.zp")
+(load "sort.zp")
 (load "util.zp")
 (load "zpcollections.zp")
 (load "zpcont.zp")

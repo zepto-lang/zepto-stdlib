@@ -19,6 +19,9 @@
 (define (list:after l el) "returns sublist of l after first occurrence of element el"
   (indexed-tail l (+ (list:index l el) 1)))
 
+(define (list:count l el) "returns number of occurences of el in l"
+  (reduce (lambda (acc now) (if (eqv? now el) (+ acc 1) acc)) 0 l))
+
 (define (max first . l) "maximum of values"
   (fold (lambda (old new) (if (> old new) old new)) first l))
 
