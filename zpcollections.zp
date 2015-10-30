@@ -63,3 +63,12 @@
       (if (> (length collec) elem)
         (string:ref collec elem)
         dflt)))))
+
+(define (gsum collec)
+  "generic sum function over a collection (vector or list)"
+  (cond
+    ((vector? collec)
+      (math:list-sum (vector->list collec)))
+    ((list? collec)
+      (math:list-sum collec))
+    ((else) (nil))))

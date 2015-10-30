@@ -22,6 +22,9 @@
 (define (math:list-sum x) "calculate the sum of all elements in list"
   (reduce (lambda (acc x) (+ acc x)) 0 x))
 
+(define (math:list-sum x) "calculate the sum of all elements in list"
+  (reduce (lambda (acc x) (+ acc x)) 0 x))
+
 (define (succ x) "next integer number" (+ (floor x) 1))
 (define (pred x) "previous integer number" (- (floor x) 1))
 
