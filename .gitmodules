@@ -22,3 +22,6 @@
 [submodule "minitest"]
 	path = minitest
 	url = https://github.com/zepto-lang/minitest
+[submodule "statistics"]
+	path = statistics
+	url = https://github.com/zepto-lang/statistics

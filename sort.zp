@@ -31,11 +31,10 @@
             (cons x (loop (car a) (cdr a) y b)))))))))
 
 (define (sort:quicksort l . ord)
-  "sort a list with quicksort scheme; optionally takes an order function, default is <;
-   as the pivot is always the first element, it has very bad behaviour on already sorted lists"
+  "sort a list with quicksort scheme; optionally takes an order function, default is <"
   (let ((ord (if (null? ord) < (list:ref ord 0)))
         (i (randint 0 (length l))))
-  (if (< (length l) 2) 
+  (if (< (length l) 2)
     l
     (let loop ((left []) (right []) (h (list:ref l i)) (t (list:remove-n l i)))
       (if (null? t)
