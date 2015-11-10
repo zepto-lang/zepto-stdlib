@@ -47,7 +47,7 @@
 
   (define (mod8 n) (modulo n 256))
   (define (mod32 n) (modulo n 4294967296))
-  (define (ref i) (vector-ref t (mod8 i)))
+  (define (ref i) (vector:ref t (mod8 i)))
 
   (set! mwc (lambda ()
     (set! z (mod32 (+ (* 36969 (logand z 65535)) (ash z -16))))
@@ -70,7 +70,7 @@
 
   (set! lfib4 (lambda ()
     (set! c (mod8 (+ c 1)))
-    (vector-set! t c (mod32 (+ (ref c) (ref (+ c 58))
+    (vector:set! t c (mod32 (+ (ref c) (ref (+ c 58))
       (ref (+ c 119)) (ref (+ c 178))))) (ref c)))
 
   (set! swb (lambda ()
@@ -78,8 +78,8 @@
     (let ((bro (if (< x y) 1 0)))
       (set! x (mod32 (ref (+ c 34))))
       (set! y (mod32 (+ (ref (+ c 19)) bro)))
-      (vector-set! t c (mod32 (- x y)))
-      (vector-ref t c))))
+      (vector:set! t c (mod32 (- x y)))
+      (vector:ref t c))))
 
   (set! uni (lambda ()
     (* (kiss) 2.328306e-10)))
@@ -91,7 +91,7 @@
     (set! z i1) (set! w i2) (set! jsr i3) (set! jcong i4)
     (set! a i5) (set! b i6) (set! x 0) (set! y 0) (set! c 0)
     (do ((i 0 (+ i 1))) ((= i 256))
-      (vector-set! t i (kiss))))))
+      (vector:set! t i (kiss))))))
 
 (define-syntax rng-assert
   (syntax-rules ()

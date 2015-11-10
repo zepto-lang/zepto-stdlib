@@ -28,10 +28,11 @@
     accum
     (foldl func (func accum (car l)) (cdr l))))
 
-(define (generate func init pred)
-  (if (pred init)
-    (cons init '())
-    (cons init (unfold func (func init) pred))))
+(define (foldr1 func l) "fold right, assume first element is accumulator"
+  (foldr func (car l) (cdr l)))
+
+(define (foldl1 func l) "fold left, assume first element is accumulator"
+  (foldl func (car l) (cdr l)))
 
 (define (sum . l) "sum of values"
   (fold + 0 l))
@@ -56,18 +57,20 @@
         (cdr1 (cdar lists)))
     (unzip1-with-cdr-iterative 
      (cdr lists) 
-     (append cars (list car1))
-     (append cdrs (list cdr1))))))
+     (append cars car1)
+     (append cdrs cdr1)))))
 
 (define (for-each proc . lists) "applies a function to a bunch of arguments"
   (if (null? lists)
-      (apply proc)
-      (if (null? (car lists))
       #t
-      (let* ((unz (apply unzip1-with-cdr lists))
-         (cars (car unz))
-         (cdrs (cdr unz)))
-        (apply proc cars) (apply map (cons proc cdrs))))))
+      (if (any? null? lists)
+        #t
+        (let* ((unz (apply unzip1-with-cdr lists))
+               (cars (car unz))
+               (cdrs (cdr unz)))
+          (begin
+            (apply proc cars)
+            (apply for-each (cons proc cdrs)))))))
 
 (define (falsy? val) "is object falsy: empty if collection, 0 if number, #f if boolean"
   (cond

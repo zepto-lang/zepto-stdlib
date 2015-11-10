@@ -13,15 +13,15 @@
        (constructor constructor-tag ...)
        predicate
        (field-tag accessor . more) ...)
-     (begin
+       (begin
        (define type
-         (make-record-type 'type '(field-tag ...)))
-       (define constructor
-         (record-constructor type '(constructor-tag ...)))
-       (define predicate
-         (record-predicate type))
-       (define-record-field type field-tag accessor . more)
-       ...))))
+          (make-record-type 'type '(field-tag ...)))
+        (define constructor
+          (record-constructor type '(constructor-tag ...)))
+        (define predicate
+          (record-predicate type))
+        (define-record-field type field-tag accessor . more)
+        ...))))
 
 ; An auxilliary macro for define field accessors and modifiers.
 ; This is needed only because modifiers are optional.
@@ -76,22 +76,23 @@
 ;;
 ;;; Definitions of the record procedures.
 ;;
-;;(define (record? x)
-;;  (and (real-vector? x)
-;;       (< 0 (vector-length x))
-;;       (eq? (vector-ref x 0)
-;;            record-marker)))
+(define (record? x)
+  (short-and `(vector? (quote ,x)) `(< 0 (length (quote ,x)))
+       `(eq? (symbol->string (vector:ref (quote ,x) 0)) "record-marker")))
 
 (define (make-record size)
   (let ((new (make-vector (+ size 1))))
-    (vector-set! new 0 (string->symbol "  record-marker  "))
-    new))
+    (begin
+      (vector:set! new 0 (string->symbol "record-marker"))
+      new)))
 
 (define (record-ref record index)
-  (vector-ref record (+ index 1)))
+  (vector:ref record (+ index 1)))
 
-(define (record-set! record index value)
-  (vector-set! record (+ index 1) value))
+(define-syntax record-set!
+  (syntax-rules ()
+    ((record-set! record index value)
+      (vector:set! record (+ index 1) value))))
 
 ;;;;
 ;;;; Record types section
@@ -137,10 +138,11 @@
 
 (define (make-record-type name field-tags)
   (let ((new (make-record 3)))
+  (begin
     (record-set! new 0 %record-type)
     (record-set! new 1 name)
     (record-set! new 2 field-tags)
-    new))
+    new)))
 
 ; Accessors for record types.
 
@@ -156,7 +158,7 @@
 (define (field-index type tag)
   (let loop ((i 1) (tags (record-type-field-tags type)))
     (cond ((null? tags)
-           (error "record type has no such field" type tag))
+           (begin (error (string:join (list "record type has no such field" (inspect type) (symbol->string tag)))) (exit)))
           ((eq? tag (car tags))
            i)
           (else
@@ -177,18 +179,15 @@
              arg-count)
           (let ((new (make-record (+ size 1))))
             (record-set! new 0 type)
-            (for-each (lambda (arg i)
-            (record-set! new i arg))
-                      args
-                      indexes)
+            (for arg-count ((record-set! new (list:ref indexes i) (list:ref args i))))
             new)
-          (error "wrong number of arguments to constructor" type args)))))
+          (error (list "wrong number of arguments to constructor" type args))))))
 
 (define (record-predicate type)
   (lambda (thing)
-    (and (record? thing)
-         (eq? (record-type thing)
-              type))))
+    (short-and `(record? (quote ,thing))
+         `(eq? (record-type (quote ,thing))
+              ,type))))
 
 (define (record-accessor type tag)
   (let ((index (field-index type tag)))

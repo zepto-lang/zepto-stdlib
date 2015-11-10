@@ -1,6 +1,7 @@
 (load "let.zp")
 (load "extra.zp")
 
+(load "util.zp")
 (load "zplist.zp")
 
 (load "char.zp")
@@ -13,7 +14,6 @@
 (load "pairs.zp")
 (load "random.zp")
 (load "sort.zp")
-(load "util.zp")
 (load "zpcollections.zp")
 (load "zpcont.zp")
 (load "zpconversion.zp")

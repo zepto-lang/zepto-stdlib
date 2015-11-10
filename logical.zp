@@ -5,13 +5,13 @@
 (define (fold-short func accum l short) "fold left with shortcut condition"
   (if (|| (null? l) (eq? short accum))
     accum
-    (if (procedure? (car l))
-      (fold-short func (func accum ((car l))) (cdr l) short)
+    (if (list? (car l))
+      (fold-short func (func accum (eval (car l))) (cdr l) short)
       (fold-short func (func accum (car l)) (cdr l) short))))
 
 (define (short-and . lst) "logical and on multiple values; shortcuts if one condition is false" 
   (fold-short && #t lst #f))
 (define (short-or . lst) "logical or on multiple values; shortcuts if one condition is true" 
-  (fold-short || #f lst #f))
+  (fold-short || #f lst #t))
 
 (define (not x) "logical not" (if x #f #t))

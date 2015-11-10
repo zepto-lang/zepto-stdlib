@@ -42,6 +42,8 @@
       l
       (indexed-tail (cdr l) (- k 1))))
 
+(define list:drop (flip indexed-tail))
+
 (define (list:ref l . k) "get reference to list element at certain point"
     (if (= 1 (length k))
         (car (indexed-tail l (car k)))
@@ -84,6 +86,12 @@
 (define (map func l) "map function to list"
   (foldr (lambda (x y) (cons (func x) y)) [] l))
 
+(define (indexed-map func l) "indexed map function to list"
+  (cdr (foldr (lambda (x y) 
+    (let ((i (car y)))
+      (cons (+ i 1) (cons (func x i) (cdr y)))))
+    [0] l)))
+
 (define (zip a b) "zips two lists together"
   (if (or (null? a) (null? b)) [] (++ (list (head a) (head b)) (zip (tail a) (tail b)))))
 
@@ -113,14 +121,13 @@
 
 (define (range x . l)
   (begin
-    (define build (lambda (x) (if (> x 0) (cons x (build (- x 1))) [])))
+    (define build (lambda (c) (if (< c x) (cons c (build (+ c 1))) [])))
     (define from-to (lambda (x y) (if (>= x y) [] (cons x (from-to (+ x 1) y)))))
     (define step (lambda (x y z) (if (>= x y) [] (cons x (step (+ x z) y z)))))
-    (if (null? l)
-          (build x)
-          (cond ((= 1 (length l)) (from-to x (car l)))
-                ((= 2 (length l)) (step x (car l) (cadr l)))
-                (else (error "usage: range [from] to [step]"))))))
+    (cond ((null? l) (build 0))
+          ((= 1 (length l)) (from-to x (car l)))
+          ((= 2 (length l)) (step x (car l) (cadr l)))
+          (else (error "usage: range [from] to [step]")))))
 
 (define iota range)
 
