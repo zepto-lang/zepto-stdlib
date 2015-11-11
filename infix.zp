@@ -1,0 +1,65 @@
+; The following code is largely based on
+; https://www.cs.berkeley.edu/~bh/ssch18/trees.html
+(define-syntax infix
+  (syntax-rules ()
+    ((infix x)
+      (infix:compute (infix:parse 'x)))))
+
+(define (infix:parse expr)
+  (infix:_parse-helper expr '() '()))
+
+(define (infix:_parse-helper expr operators operands)
+  (cond ((null? expr)
+	 (if (null? operators)
+	     (car operands)
+	     (infix:_handle-op '() operators operands)))
+	((number? (car expr))
+	 (infix:_parse-helper (cdr expr)
+		       operators
+		       (cons (infix:tree:make-node (car expr) '()) operands)))
+	((list? (car expr))
+	 (infix:_parse-helper (cdr expr)
+		       operators
+		       (cons (infix:parse (car expr)) operands)))
+	(else (if (short-or `(null? (quote ,operators))
+		      `(> (infix:precedence (car (quote ,expr)))
+			 (infix:precedence (car (quote ,operators)))))
+		  (infix:_parse-helper (cdr expr)
+				(cons (car expr) operators)
+				operands)
+		  (infix:_handle-op expr operators operands)))))
+
+(define (infix:_handle-op expr operators operands)
+  (infix:_parse-helper expr
+		(cdr operators)
+		(cons (infix:tree:make-node (car operators)
+				 (list (cadr operands) (car operands)))
+		      (cddr operands))))
+
+(define (infix:precedence oper)
+  (cond
+    ((list:in? '(+ -) oper) 1)
+    ((eq? '** oper) 3)
+    (else 2)))
+
+(define (infix:compute tree)
+  (if (number? (infix:tree:datum tree))
+      (infix:tree:datum tree)
+      ((infix:_function-named-by (infix:tree:datum tree))
+         (infix:compute (car (infix:tree:children tree)))
+         (infix:compute (cadr (infix:tree:children tree))))))
+
+(define (infix:_function-named-by oper)
+  (cond ((equal? oper '+) +)
+	((equal? oper '-) -)
+	((equal? oper '*) *)
+	((equal? oper '^) **)
+	((equal? oper '/) /)
+	(else (error "no such operator as" oper))))
+
+(define (infix:tree:make-node datum children)
+  (list 'node datum children))
+
+(define (infix:tree:datum node) (list:ref node 1))
+
+(define (infix:tree:children node) (list:ref node 2))
