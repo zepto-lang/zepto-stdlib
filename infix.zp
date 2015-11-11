@@ -39,7 +39,7 @@
 (define (infix:precedence oper)
   (cond
     ((list:in? '(+ -) oper) 1)
-    ((eq? '** oper) 3)
+    ((eq? '^ oper) 3)
     (else 2)))
 
 (define (infix:compute tree)
