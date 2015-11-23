@@ -50,6 +50,17 @@
     (if (< n 2) a (fact-aux (- n 1) (* n a))))
     (fact-aux n 1))
 
+(define (math:fib n) "A version of fibonacci that runs in logarithmic time"
+  (define (fib-aux a b p q count)
+    (cond ((= count 0) b)
+          ((math:even? count) (fib-aux a b (+ (pow p 2) (pow q 2)) (+ (* 2 p q) (pow q 2)) (/ count 2)))
+          (else (fib-aux (+ (* b q) (* a q) (* a p))
+                          (+ (* b p) (* a q))
+                          p
+                          q
+                          (- count 1)))))
+  (fib-aux 1 0 0 1 n))
+
 (define (math:ncr n r) "Calculate nCr"
   (truncate (/ (math:fact n) (math:fact r) (math:fact (- n r)))))
 
