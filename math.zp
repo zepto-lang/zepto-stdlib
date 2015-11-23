@@ -92,7 +92,6 @@
   "calculates the approximate integral of function f with limits a and b
   where n is the approximation (the higher the better); uses simpson's rule"
   (let ((h (/. (- b a) n)))
-    (define (inc x) (+ x 1))
     (define (y k)
       (f (+ a (* k h))))
     (define (term k)
@@ -100,4 +99,4 @@
                ((or (= k 0) (= k n)) 1)
                (else 2))
          (y k)))
-    (/. (* h (math:sigma term 0 inc n +)) 3)))
+    (/. (* h (math:sigma term 0 add1 n +)) 3)))
