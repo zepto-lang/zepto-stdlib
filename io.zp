@@ -10,8 +10,8 @@
 
 (define (newline . port) "print newline to port or stdout if none is given"
   (cond
-    ((null? port) (display #\newline))
-    ((eq? (length port) 1) (display #\newline (car port)))
+    ((null? port) (write ""))
+    ((eq? (length port) 1) (write "" (car port)))
     (else #f)))
 
 (define (call-with-input-file s p) "open an input file s and apply a function to it, then close the file"
@@ -52,3 +52,14 @@
                          (set-output-port prev-outport)
                          res)))))
 
+(define (error reason . args) "prints an error to stderr"
+  (let ((err (lambda (x) (display x :stderr))))
+    (begin
+      (err "Error: ")
+      (err reason)
+      (for-each (lambda (arg) 
+                  (begin
+                    (err " ")
+                    (err arg)))
+      args)
+      (newline :stderr))))
