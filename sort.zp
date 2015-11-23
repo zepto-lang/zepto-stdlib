@@ -44,7 +44,7 @@
           (loop left (++ right (list (car t))) h (cdr t))))))))
 
 (define (sort:mergesort l . ord)
-  "sort a list with mergesort scheme destructively; optionally takes an order function, default is <"
+  "sort a list with mergesort scheme; optionally takes an order function, default is <"
   (let ((ord (if (null? ord) < (list:ref ord 0))))
   (if (< (length l) 2)
     l
@@ -52,5 +52,22 @@
       (sort:merge
         (sort:mergesort (car splits) ord)
         (sort:mergesort (cdr splits) ord) ord)))))
+
+(define (sort:_insert x lst . ord)
+  (let ((ord (if (null? ord) < (list:ref ord 0))))
+    (if (null? lst)
+        (list x)
+        (let ((y (car lst))
+              (ys (cdr lst)))
+          (if (ord x y)
+              (cons x lst)
+              (cons y (insert x ys)))))))
+
+(define (sort:insertionsort lst . ord)
+  "sort a list with insertionsort scheme (slow!); optionally takes an order function, default is <"
+  (let ((ord (if (null? ord) < (list:ref ord 0))))
+    (if (null? lst)
+        '()
+        (sort:_insert (car lst) (sort:insertionsort (cdr lst)) ord))))
 
 (define sort:sort sort:quicksort)

@@ -1,10 +1,10 @@
 (define (list . objs) "creates a list from objects"
   objs)
 
-(define (in? pred? l) "check whether there is an element in l that matches the predicate pred?"
+(define (list:matches? pred? l) "check whether there is an element in l that matches the predicate pred?"
   (cond ((null? l) #f)
   ((pred? (car l)) #t)
-  (else (in? pred? (cdr l)))))
+  (else (list:matches? pred? (cdr l)))))
 
 (define (list:index l el) "get index of el in l; otherwise get -1"
   (if (null? l)
@@ -34,7 +34,7 @@
 (define (list:max l) "maximum in list"
   (fold (lambda (old new) (if (> old new) old new)) (car l) (cdr l)))
 
-(define (list:in l el) "returns boolean signifying whether element is in list"
+(define (list:in? l el) "returns boolean signifying whether element is in list"
   (<= 0 (list:index l el)))
 
 (define (indexed-tail l k) "get tail of a list starting at index"
@@ -97,8 +97,11 @@
 
 (define foreach map)
 
-(define (filter pred l) "filter list through preidcate"
+(define (filter pred l) "filter list with predicate"
   (foldr (lambda (x y) (if (pred x) (cons x y) y)) [] l))
+
+(define (remp pred l) "filter list with predicate (inverse to filter)"
+  (foldr (lambda (x y) (if (not (pred x)) (cons x y) y)) [] l))
 
 (define (any? pred lst) "does anything in the list satisfy the predicate?"
   (let any* ((l (map pred lst)))

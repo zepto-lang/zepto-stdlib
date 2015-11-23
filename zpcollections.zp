@@ -34,11 +34,11 @@
     ((hash-map? x) (list:length (hash:keys x)))
     (else (nil))))
 
-(define (in l el) "generic element function; returns boolean signifying if element is in list; works on vectors, lists, strings and hashmaps"
+(define (in? l el) "generic element function; returns boolean signifying if element is in list; works on vectors, lists, strings and hashmaps"
   (cond
-    ((vector? l) (list:in (vector->list l) el))
-    ((list? l) (list:in l el))
-    ((string? l) (list:in (string->list l) el))
+    ((vector? l) (list:in? (vector->list l) el))
+    ((list? l) (list:in? l el))
+    ((string? l) (list:in? (string->list l) el))
     ((hash-map? l) (hash:contains? l el))
     (else (nil))))
 
