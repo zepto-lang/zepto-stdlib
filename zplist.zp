@@ -7,14 +7,12 @@
   (else (list:matches? pred? (cdr l)))))
 
 (define (list:index l el) "get index of el in l; otherwise get -1"
-  (if (null? l)
-    -1
-    (if (eq? (car l) el)
-      0
-      (let ((res (list:index (cdr l) el)))
-        (if (= res -1) 
-        -1
-        (+ 1 res))))))
+  (define (internal l el c)
+    (cond
+      ((null? l) -1)
+      ((eq? (car l) el) c)
+      (else (internal (tail l) el (add1 c)))))
+  (internal l el 0))
 
 (define (list:after l el) "returns sublist of l after first occurrence of element el"
   (indexed-tail l (+ (list:index l el) 1)))
@@ -43,6 +41,16 @@
       (indexed-tail (cdr l) (- k 1))))
 
 (define list:drop (flip indexed-tail))
+
+(define (list:sublist l from to) "get sublist of list from element from (inclusive) to element to (exclusive)"
+  (define (_internal l new f t)
+    (cond
+      ((or (= 0 t) (null? l)) new)
+      ((>= 0 f) (_internal (tail l) (++ new (head l)) (sub1 f) (sub1 t)))
+      (else (_internal (tail l) new (sub1 f) (sub1 t)))))
+  (if (< from to)
+    (_internal l [] from to)
+    []))
 
 (define (list:ref l . k) "get reference to list element at certain point"
     (if (= 1 (length k))

@@ -1,0 +1,59 @@
+(define (vector:head v) "gets vector head"
+  (v 0))
+
+(define (vector:tail v) "gets vector tail"
+  (vector:subvector v 1 (sub1 (vector:length v))))
+
+(define (vector:empty? v) "is vector empty?"
+  (eq? v #()))
+
+(define (vector:matches? pred? v) "check whether there is an element in v that matches the predicate pred?"
+  (cond
+    ((vector:empty? v) #f)
+    ((pred? (vector:head v)) #t)
+    (else (vector:matches? pred? (vector:tail v)))))
+
+(define (vector:index v el) "get index of el in l; otherwise get -1"
+  (define (internal v el c)
+    (cond 
+      ((vector:empty? v) -1)
+      ((eq? (vector:head v) el) c)
+      (else (internal (vector:tail v) el (+ c 1)))))
+  (internal v el 0))
+
+(define (vector:after v el) "returns subvector of v after first occurrence of element el"
+  (vector:subvector v (+ (vector:index v el) 1) (sub1 (vector:length v))))
+
+(define (vector:count v el) "returns number of occurences of el in v"
+  (define (internal v el c)
+    (cond
+      ((vector:empty? v) c)
+      ((eq? (vector:head v) el) (internal (vector:tail v) el (+ c 1)))
+      (else (internal (vector:tail v) el c))))
+  (internal v el 0))
+
+(define (vector:min v) "minimum in vector"
+  (define (internal v m)
+    (cond 
+      ((vector:empty? v) m)
+      ((< (vector:head v) m) (internal (vector:tail v) (vector:head v)))
+      (else (internal (vector:tail v) m))))
+  (internal (vector:tail v) (vector:head v)))
+
+(define (vector:max v) "maximum in vector"
+  (define (internal v m)
+    (cond 
+      ((vector:empty? v) m)
+      ((> (vector:head v) m) (internal (vector:tail v) (vector:head v)))
+      (else (internal (vector:tail v) m))))
+  (internal (vector:tail v) (vector:head v)))
+
+(define (vector:in? v el) "returns boolean signifying whether element is in vector"
+  (<= 0 (vector:index v el)))
+
+(define (vector:indexed-tail v k) "get tail of a list starting at index"
+    (if (zero? k)
+      v
+      (vector:indexed-tail (vector:tail v) (- k 1))))
+
+(define vector:drop (flip vector:indexed-tail))
