@@ -21,4 +21,4 @@
   (hash:filter-by-vals (lambda (x) (truthy? x)) hash))
 
 (define (hash:reverse-hash hash) "reverses the hash-map, i.e. reversing the relationship of all key-value pairs"
-  (make-hash (hash:map-keys (lambda (key) (list (hash key) key)) hash)))
+  (make-hash (hash:keys-map (lambda (key) (list (hash key) key)) hash)))
