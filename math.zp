@@ -83,10 +83,11 @@
         ((fermat n) (math:prob-prime? n (- times 1)))
         (else #f)))
 
+; TODO: make tail recursive
 (define (math:sigma term a n b op)
   "make a sigma sum (specified by op) produced by the values from a to b (as produced by n) applied to term;
    for a use case type (inspect math:integral-approx)"
-  (if (> a b) 0 (op (term a) (math:sigma term (n a) n b +))))
+  (if (> a b) 0 (op (term a) (math:sigma term (n a) n b op))))
 
 (define (math:simpson f a b n)
   "calculates the approximate integral of function f with limits a and b
