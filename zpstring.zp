@@ -18,6 +18,10 @@
           (list (substring s 0 x))
           (++ (list (substring s 0 x)) (string:split (substring s (+ x 1) l) delim)))))))
 
+(define (string:head s)
+  "gets head of a string, i.e. first character (as character, not string)"
+  (head (string->list (substring s 0 1))))
+
 (define (string:tail s)
   "gets tail of a string, i.e. everything except for the first element"
   (substring s 1 (length s)))
