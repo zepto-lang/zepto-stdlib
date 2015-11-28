@@ -68,6 +68,11 @@
 (define (list:length l) "length of list"
   (fold (lambda (x y) (+ x 1)) 0 l))
 
+(define (list:last l) "get last element in l"
+  (if (null? l)
+    (nil)
+    (list:ref l (- (length l) 1))))
+
 (define (reverse l) "reverse list"
   (fold (flip cons) '() l))
 
