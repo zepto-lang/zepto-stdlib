@@ -48,6 +48,11 @@
       (else (internal (vector:tail v) m))))
   (internal (vector:tail v) (vector:head v)))
 
+(define (vector:last v) "get last element of v"
+  (if (vector:empty? v)
+    (nil)
+    (vector:ref v (- (vector:length v) 1))))
+
 (define (vector:in? v el) "returns boolean signifying whether element is in vector"
   (<= 0 (vector:index v el)))
 
