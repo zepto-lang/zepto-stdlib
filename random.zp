@@ -14,7 +14,7 @@
   (cond ((= (length args) 1) (randint 0 (car args)))
         ((= (length args) 2)
          (+ (car args) (floor (* (random) (- (cadr args) (car args))))))
-        (else (write "usage: (randint [lo] hi)"))))
+        (else (error "randint" "usage: (randint [lo] hi)"))))
 
 (define (random-list n lo . hi)
   "generate a list of random integers between the given args (the lower range is optional)"
@@ -23,3 +23,22 @@
     (if (truthy? hi)
       (++ (list (randint lo (car hi))) (random-list (- n 1) lo (car hi)))
       (++ (list (randint lo)) (random-list (- n 1) lo)))))
+
+; This has been taken from https://github.com/ashinn/chibi-scheme/blob/23ac772e3ac347d01647952621fbc83b4293448b/lib/chibi/math/prime.scm
+(define (random-prime lo hi)
+  "Returns a random prime between lo (inclusive) and hi (exclusive)."
+  (if (> lo hi)
+      (error "random-prime" "bad range: " lo hi))
+  (let* ((n (bitwise-or 1 (+ lo (randint (- hi lo)))))
+         (x (math:prime-above n hi)))
+        (if (truthy? x)
+          x
+          (math:prime-above lo n))))
+
+(define (random-prime-distinct-from lo hi p)
+  "Variant of random-prime which ensures the result is
+   istinct from p."
+  (let ((q (random-prime lo hi)))
+    (if (= q p)
+        (random-prime-distinct-from lo hi p)
+        q)))

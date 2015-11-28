@@ -5,7 +5,7 @@
 (define math:e 438351041/161260336)
 (define (inexact? x) "is inexact number" (and (real? x) (not (integer? x))))
 (define (math:even? n) "is even" (= (remainder n 2) 0))
-(define (math:odd? n) "is odd" (not (= (remainder n 2) 0)))
+(define (math:odd? n) "is odd" (not (math:even? n)))
 (define (zero? n) "is zero" (= n 0))
 (define (positive? n) "is positive" (> n 0))
 (define (negative? n) "is negative" (< n 0))
@@ -101,3 +101,76 @@
                (else 2))
          (y k)))
     (/. (* h (math:sigma term 0 add1 n +)) 3)))
+
+; Those definitions are from https://github.com/ashinn/chibi-scheme/blob/23ac772e3ac347d01647952621fbc83b4293448b/lib/chibi/math/prime.scm
+(define (math:modular-inverse a b)
+  "Returns the multiplicative inverse of a modulo b."
+  (let lp ((a1 a) (b1 b) (x 0) (y 1) (last-x 1) (last-y 0))
+    (if (zero? b1)
+        (if (negative? last-x) (+ last-x b) last-x)
+        (let ((q (quotient a1 b1)))
+          (lp b1 (remainder a1 b1)
+              (- last-x (* q x)) (- last-y (* q y))
+              x y)))))
+
+(define (math:coprime? n m)
+  "Returns true iff n and m are coprime."
+  (= 1 (math:gcd n m)))
+
+(define (math:prime-below n)
+  "Returns the first prime less than or equal to n, or #f if
+   there are no such primes."
+  (if (>= n 3)
+    (let lp ((n (if (math:even? n) (- n 1) n)))
+      (if (math:prime? n) n (lp (- n 2))))
+    #f))
+
+(define (math:prime-above n . o)
+  "Returns the first prime greater than or equal to n. If the
+   optional limit is given and not false, returns #f
+   if no such primes exist below limit."
+  (let ((limit (if (pair? o) (car o) #f)))
+    (let lp ((n (if (math:even? n) (+ n 1) n)))
+      (cond
+       ((short-and limit `(>= ,n ,limit)) #f)
+       ((math:prime? n) n)
+       (else (lp (+ n 2)))))))
+
+(define math:prime-table
+  #(2   3   5   7   11  13  17  19  23  29  31  37  41  43  47  53  59
+    61  67  71  73  79  83  89  97  101 103 107 109 113 127 131 137 139
+    149 151 157 163 167 173 179 181 191 193 197 199 211 223 227 229 233
+    239 241 251 257 263 269 271 277 281 283 293 307 311 313 317 331 337
+    347 349 353 359 367 373 379 383 389 397 401 409 419 421 431 433 439
+    443 449 457 461 463 467 479 487 491 499 503 509 521 523 541 547 557
+    563 569 571 577 587 593 599 601 607 613 617 619 631 641 643 647 653
+    659 661 673 677 683 691 701 709 719 727 733 739 743 751 757 761 769
+    773 787 797 809 811 821 823 827 829 839 853 857 859 863 877 881 883
+    887 907 911 919 929 937 941 947 953 967 971 977 983 991 997))
+
+(define (math:prov-prime? n)
+  "Returns true iff n is definitely prime. May take an
+   impossibly long time for large values."
+  (if (or (math:even? n) (<= n 2))
+      (= 2 n)
+      (let ((limit (ceiling (sqrt (* n 1/1)))))
+        (define (by-twos d)
+          (cond ((> d limit) #t)
+                ((zero? (remainder n d)) #f)
+                (else (by-twos (+ d 2)))))
+        (let ((len (vector:length math:prime-table)))
+          (let lp ((i 0))
+            (if (>= i len)
+                (by-twos (vector:ref math:prime-table (- len 1)))
+                (let ((d (vector:ref math:prime-table i)))
+                  (cond
+                   ((> d limit) #t)
+                   ((zero? (remainder n d)) #f)
+                   (else (lp (+ i 1)))))))))))
+
+(define (math:prime? n)
+  (if (> n 1)
+       (if (< n 1e10)
+           (math:prov-prime? n)
+           (math:prob-prime? n 10))
+      (error "prime" "prime procedure only works on postive integers")))
