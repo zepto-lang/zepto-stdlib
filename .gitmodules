@@ -25,3 +25,12 @@
 [submodule "statistics"]
 	path = statistics
 	url = https://github.com/zepto-lang/statistics
+[submodule "rsa"]
+	path = rsa
+	url = https://github.com/zepto-lang/rsa
+[submodule "monads"]
+	path = monads
+	url = https://github.com/zepto-lang/monads
+[submodule "parsecomb"]
+	path = parsecomb
+	url = https://github.com/zepto-lang/parsecomb
