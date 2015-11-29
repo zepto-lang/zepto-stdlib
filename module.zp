@@ -19,10 +19,10 @@
 (load "zpconversion.zp")
 (load "zpstring.zp")
 
+(load "srfi/srfi-9.zp")
 (load "srfi/srfi-55.zp")
 (register-extension '(srfi 1) (lambda () (global-load "srfi/srfi-1.zp")))
 (register-extension '(srfi 8) (lambda () (global-load "srfi/srfi-8.zp")))
-(register-extension '(srfi 9) (lambda () (global-load "srfi/srfi-9.zp")))
 (register-extension '(srfi 13) (lambda () (global-load "srfi/srfi-13.zp")))
 (register-extension '(srfi 39) (lambda () (global-load "srfi/srfi-39.zp")))
 
