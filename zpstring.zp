@@ -65,3 +65,12 @@
   "check whether a string ends with another string"
   (let ((len (length s)))
   (eqv? sub (substring s (- len (length sub)) len))))
+
+(define (string:find-right str el)
+  "finds element in string, begin at its end"
+  (define (internal str el i)
+    (cond
+      ((< i 0) -1)
+      ((eq? (string:ref str i) el) i)
+      (else (internal str el (sub1 i)))))
+  (internal str el (sub1 (string:length str))))
