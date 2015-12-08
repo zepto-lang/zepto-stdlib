@@ -49,6 +49,9 @@
          (top (replicate (+ (* len 2) 2 (length s)) symbol)))
     (++ top "\n" side " " s " " side "\n" top)))
 
+(define (string:count s c) "returns number of occurences of c in s"
+  (list:count (string->list s) c))
+
 (define (string:indent s . args)
   "indent lines in a string by padding (default 2) with symbol (default whitespace)"
   (let* ((args (get-from args 0 (make-hash)))
@@ -74,3 +77,8 @@
       ((eq? (string:ref str i) el) i)
       (else (internal str el (sub1 i)))))
   (internal str el (sub1 (string:length str))))
+
+(define (string:replicate count char)
+  "make string of length count containing only character char"
+  (define (internal acc count) (if (< count 1) acc (internal (++ acc char) (sub1 count))))
+  (internal (string char) (sub1 count)))
