@@ -82,10 +82,11 @@
   (continue '() l n))
  
 (define (list:shuffle l) "shuffle l"
-  (if (null? l)
-      '()
-      (let ((prim (list:semireverse l (randint (length l)))))
-        (cons (car prim) (list:shuffle (cdr prim))))))
+  (do ((v (list->vector l)) (n (length l) (- n 1)))
+      ((zero? n) (vector->list v))
+    (let* ((r (randint n)) (t (vector:ref v r)))
+      (vector:set! v r (vector:ref v (- n 1)))
+      (vector:set! v (- n 1) t))))
 
 (define (reverse l) "reverse list"
   (fold (flip cons) '() l))

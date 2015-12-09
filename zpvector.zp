@@ -63,7 +63,13 @@
 
 (define vector:drop (flip vector:indexed-tail))
 
-(define (vector:swap vec i j)
-  (let ((temp (vector:ref vec i)))
-    (vector:set! vec i (vector:ref vec j))
-    (vector:set! vec j temp)))
+(define (vector:swap v i j) "swap elements in v at positions i and j"
+  (let ((temp (vector:ref v i)))
+    (vector:set! v i (vector:ref v j))
+    (vector:set! v j temp)))
+
+(define (vector:shuffle v) "shuffle v's order"
+  (do ((n (length v) (- n 1))) ((zero? n) v)
+    (let* ((r (randint n)) (t (vector:ref v r)))
+      (vector:set! v r (vector:ref v (- n 1)))
+      (vector:set! v (- n 1) t))))
