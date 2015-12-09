@@ -62,3 +62,15 @@
       (vector:indexed-tail (vector:tail v) (- k 1))))
 
 (define vector:drop (flip vector:indexed-tail))
+
+(define (vector:shuffle v) "randomizes a vector's order"
+  (define (internal vec new)
+    (let* ((l (length vec))
+           (rand (randint 0 l))
+           (cur (sub1 l))
+           (tmp (vec cur)))
+      (if (zero? l)
+        new
+        (internal (vector:subvector vec 0 cur)
+                  (vector:set! (vector:set! vec cur (vec rand)) rand tmp)))))
+  (internal v v))
