@@ -73,6 +73,20 @@
     (nil)
     (list:ref l (- (length l) 1))))
 
+(define (list:semireverse l n) "reverse n elements of l"
+  (define (continue front back n)
+    (cond
+      ((null? back) front)
+      ((zero? n) (cons (car back) (++ front (cdr back))))
+      (else (continue (cons (car back) front) (cdr back) (- n 1)))))
+  (continue '() l n))
+ 
+(define (list:shuffle l) "shuffle l"
+  (if (null? l)
+      '()
+      (let ((prim (list:semireverse l (randint (length l)))))
+        (cons (car prim) (list:shuffle (cdr prim))))))
+
 (define (reverse l) "reverse list"
   (fold (flip cons) '() l))
 
@@ -151,3 +165,8 @@
   (if (< n 1)
     ""
     (++ el (replicate (- n 1) el))))
+
+(define (countdown n)
+  (if (zero? n)
+      '()
+      (cons n (countdown (- n 1)))))
