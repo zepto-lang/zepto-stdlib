@@ -2,7 +2,8 @@
   (cond
     ((nil? el) "")
     ((hash-map? el)
-      (++ (hash:keys-reduce (lambda (acc x) (++ acc " " (->string x) ": " (->string (el x)) ", ")) "{" el) "}"))
+      (let ((s (hash:keys-reduce (lambda (acc x) (++ acc (->string x) ": " (->string (el x)) ", ")) "{" el)))
+        (++ (substring s 0 (- (length s) 2)) "}")))
     ((string? el) el)
     ((number? el) (number->string el))
     ((list? el)
