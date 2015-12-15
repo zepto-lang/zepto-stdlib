@@ -1,6 +1,25 @@
 (define (vector:head v) "gets vector head"
   (v 0))
 
+(define (byte-vector:map f v) "map f over vector b"
+  (let loop ((i 0)
+             (len (vector:length v))
+             (new (vector)))
+    (if (> len i)
+      (loop (add1 i) len (+= new (f (v i))))
+      new)))
+
+(define (vector:reduce f acc v) "reduces with f over vector v; using accumulator acc"
+  (let loop ((i 0)
+             (len (vector:length v))
+             (acc acc))
+    (if (> len i)
+      (loop (add1 i) len (f acc (v i)))
+      acc)))
+
+(define (vector->byte-vector v) "converts vector into bytevector"
+  (vector:reduce (lambda (acc x) (++ acc x)) b{} v))
+
 (define (vector:tail v) "gets vector tail"
   (vector:subvector v 1 (sub1 (vector:length v))))
 
@@ -73,3 +92,31 @@
     (let* ((r (randint n)) (t (vector:ref v r)))
       (vector:set! v r (vector:ref v (- n 1)))
       (vector:set! v (- n 1) t))))
+
+(define (byte-vector:map f b) "map f over bytevector b"
+  (let loop ((i 0)
+             (len (byte-vector:length b))
+             (new (byte-vector)))
+    (if (> len i)
+      (loop (add1 i) len (+= new (f (byte-vector:ref b i))))
+      new)))
+
+(define (byte-vector:reduce f acc b) "map f over bytevector b using accumulator acc"
+  (let loop ((i 0)
+             (len (byte-vector:length b))
+             (acc acc))
+    (if (> len i)
+      (loop (add1 i) len (f acc (byte-vector:ref b i)))
+      acc)))
+
+(define (byte-vector->list b) "converts bytevector into list"
+  (byte-vector:reduce (lambda (acc x) (++ acc x)) [] b))
+
+(define (byte-vector->vector b) "converts bytevector into vector"
+  (byte-vector:reduce (lambda (acc x) (++ acc x)) {} b))
+
+(define (byte-vector:head b) "gets first element of bytevector"
+  (byte-vector:ref b 0))
+
+(define (byte-vector:tail b) "gets rest of bytevector"
+  (vector->byte-vector (vector:tail (byte-vector->vector b))))

@@ -17,6 +17,7 @@
 (load "zpcollections.zp")
 (load "zpcont.zp")
 (load "zpconversion.zp")
+(load "zpgenerics.zp")
 (load "zpstring.zp")
 (load "zpvector.zp")
 

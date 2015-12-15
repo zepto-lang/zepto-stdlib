@@ -1,0 +1,28 @@
+(define (->string el) "converts almost any element to a string;"
+  (cond
+    ((nil? el) "")
+    ((hash-map? el)
+      (++ (hash:keys-reduce (lambda (acc x) (++ acc " " (->string x) ": " (->string (el x)) ", ")) "{" el) "}"))
+    ((string? el) el)
+    ((number? el) (number->string el))
+    ((list? el)
+      (++ "[" (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el)) "]"))
+    ((vector? el)
+      (++ "{"
+          (vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (vector:head el)) (vector:tail el)) 
+          "}"))
+    ((simple-list? el)
+      (let ((el (from-simple-list el)))
+        (++ "simple["
+            (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el))
+            "]")))
+    ((byte-vector? el)
+      (++ "byte{"
+          (byte-vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (byte-vector:head el)) (byte-vector:tail el)) 
+          "}"))
+    ((atom? el) (symbol->string el))
+    ((symbol? el) (symbol->string el))
+    ((port? el) "<port>")
+    ((char? el) (string el))
+    ((boolean? el) (if el "true" "false"))
+    (else "???")))
