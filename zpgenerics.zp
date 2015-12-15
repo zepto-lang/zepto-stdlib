@@ -7,20 +7,31 @@
     ((string? el) el)
     ((number? el) (number->string el))
     ((list? el)
-      (++ "[" (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el)) "]"))
+      (if (null? el)
+        "[]"
+        (++ "[" (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el)) "]")))
     ((vector? el)
-      (++ "{"
-          (vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (vector:head el)) (vector:tail el)) 
-          "}"))
+      (if (vector:empty? el)
+        "{}"
+        (++ "{"
+            (vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (vector:head el)) (vector:tail el)) 
+            "}")))
     ((simple-list? el)
       (let ((el (from-simple-list el)))
-        (++ "simple["
-            (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el))
-            "]")))
+        (if (null? el)
+          "simple[]"
+          (++ "simple["
+              (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el))
+              "]"))))
     ((byte-vector? el)
-      (++ "byte{"
-          (byte-vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (byte-vector:head el)) (byte-vector:tail el)) 
-          "}"))
+      (if (byte-vector:empty? el)
+        "byte{}"
+        (++ "byte{"
+            (byte-vector:reduce
+              (lambda (acc x) (++ acc ", " (->string x)))
+              (->string (byte-vector:head el))
+              (byte-vector:tail el))
+            "}")))
     ((atom? el) (symbol->string el))
     ((symbol? el) (symbol->string el))
     ((port? el) "<port>")

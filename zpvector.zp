@@ -120,3 +120,6 @@
 
 (define (byte-vector:tail b) "gets rest of bytevector"
   (vector->byte-vector (vector:tail (byte-vector->vector b))))
+
+(define (byte-vector:empty? b) "is bytevector empty?"
+  (eq? (bytevector:length b) 0))
