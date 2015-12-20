@@ -39,3 +39,9 @@
     ((string=? x "true") #t)
     ((string=? x "false") #f)
     (else :err)))
+
+(define (name x) "converts symbol or atom to a string"
+  (cond
+    ((atom? x) (string:tail (symbol->string x)))
+    ((symbol? x) (symbol->string x))
+    (else #f)))
