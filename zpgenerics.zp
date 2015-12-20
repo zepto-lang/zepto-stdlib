@@ -1,39 +1,45 @@
-(define (->string el) "converts almost any element to a string;"
-  (cond
-    ((nil? el) "")
-    ((hash-map? el)
-      (let ((s (hash:keys-reduce (lambda (acc x) (++ acc (->string x) ": " (->string (el x)) ", ")) "{" el)))
-        (++ (substring s 0 (- (length s) 2)) "}")))
-    ((string? el) (++ "\"" el "\""))
-    ((number? el) (number->string el))
-    ((list? el)
-      (if (null? el)
-        "[]"
-        (++ "[" (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el)) "]")))
-    ((vector? el)
-      (if (vector:empty? el)
-        "{}"
-        (++ "{"
-            (vector:reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (vector:head el)) (vector:tail el)) 
-            "}")))
-    ((simple-list? el)
-      (let ((el (from-simple-list el)))
+(define (->string el . with-quotes) "converts almost any element to a string"
+  (let ((to-str (if (> (length with-quotes) 0)
+                  (if (truthy? (car with-quotes))
+                    (lambda (str) (++ "\"" el "\""))
+                    id)
+                  id)))
+    (cond
+      ((nil? el) "")
+      ((hash-map? el)
+        (let ((s (hash:keys-reduce (lambda (acc x) (++ acc (->string x #t) ": " (->string (el x) #t) ", ")) "{" el)))
+          (++ (substring s 0 (- (length s) 2)) "}")))
+      ((string? el) (to-str el))
+      ((number? el) (number->string el))
+      ((list? el)
         (if (null? el)
-          "simple[]"
-          (++ "simple["
-              (reduce (lambda (acc x) (++ acc ", " (->string x))) (->string (head el)) (tail el))
-              "]"))))
-    ((byte-vector? el)
-      (if (byte-vector:empty? el)
-        "byte{}"
-        (++ "byte{"
-            (byte-vector:reduce
-              (lambda (acc x) (++ acc ", " (->string x)))
-              (->string (byte-vector:head el))
-              (byte-vector:tail el))
-            "}")))
-    ((or (atom? el) (symbol? el)) (symbol->string el))
-    ((port? el) "<port>")
-    ((char? el) (string el))
-    ((boolean? el) (if el "true" "false"))
-    (else "???")))
+          "[]"
+          (++ "[" (reduce (lambda (acc x) (++ acc ", " (->string x #t))) (->string (head el) #t) (tail el)) "]")))
+      ((vector? el)
+        (if (vector:empty? el)
+          "{}"
+          (++ "{"
+              (vector:reduce (lambda (acc x) (++ acc ", " (->string x #t)))
+                (->string (vector:head el) #t) (vector:tail el))
+              "}")))
+      ((simple-list? el)
+        (let ((el (from-simple-list el)))
+          (if (null? el)
+            "simple[]"
+            (++ "simple["
+                (reduce (lambda (acc x) (++ acc ", " (->string x #t))) (->string (head el) #t) (tail el))
+                "]"))))
+      ((byte-vector? el)
+        (if (byte-vector:empty? el)
+          "byte{}"
+          (++ "byte{"
+              (byte-vector:reduce
+                (lambda (acc x) (++ acc ", " (->string x #t)))
+                (->string (byte-vector:head el) #t)
+                (byte-vector:tail el))
+              "}")))
+      ((or (atom? el) (symbol? el)) (symbol->string el))
+      ((port? el) "<port>")
+      ((char? el) (string el))
+      ((boolean? el) (if el "true" "false"))
+      (else "???"))))
