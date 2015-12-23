@@ -1,13 +1,16 @@
 (define (vector:head v) "gets vector head"
   (v 0))
 
-(define (byte-vector:map f v) "map f over vector b"
+(define (vector:map f v) "map f over vector v"
   (let loop ((i 0)
              (len (vector:length v))
              (new (vector)))
     (if (> len i)
       (loop (add1 i) len (+= new (f (v i))))
       new)))
+
+(define (vector:mapcat f v) "maps f over and concats a vector v"
+  (apply ++ (vector:map f v)))
 
 (define (vector:reduce f acc v) "reduces with f over vector v; using accumulator acc"
   (let loop ((i 0)
@@ -123,3 +126,7 @@
 
 (define (byte-vector:empty? b) "is bytevector empty?"
   (eq? (bytevector:length b) 0))
+
+(define (byte-vector:mapcat f b) "maps f over and concats a byte-vector b"
+  (apply ++ (byte-vector:map f b)))
+

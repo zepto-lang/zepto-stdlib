@@ -114,6 +114,9 @@
 (define (map func l) "map function to list"
   (foldr (lambda (x y) (cons (func x) y)) [] l))
 
+(define (mapcat f l) "maps and concats a list"
+  (apply ++ (map f l)))
+
 (define (indexed-map func l) "indexed map function to list"
   (cdr (foldr (lambda (x y) 
     (let ((i (car y)))
