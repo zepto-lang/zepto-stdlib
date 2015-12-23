@@ -86,3 +86,5 @@
 (define (string:empty? str)
   "checks whether string is empty"
   (eq? str ""))
+
+(define string:copy id)
