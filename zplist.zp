@@ -40,6 +40,18 @@
       l
       (indexed-tail (cdr l) (- k 1))))
 
+(define (list:drop-while f l) "drops elements from l as long as f matches"
+  (if (f (car l))
+    (list:drop-while f (cdr l))
+    (cdr l)))
+
+(define (list:take-while f l) "takes elements from l as long as f matches"
+  (define (internal f l acc)
+    (if (f (car l))
+      (internal f (cdr l) (++ acc (car l)))
+      acc))
+  (internal f l []))
+
 (define list:drop (flip indexed-tail))
 
 (define (list:sublist l from to) "get sublist of list from element from (inclusive) to element to (exclusive)"

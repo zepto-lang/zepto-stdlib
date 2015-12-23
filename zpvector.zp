@@ -20,6 +20,19 @@
       (loop (add1 i) len (f acc (v i)))
       acc)))
 
+
+(define (vector:drop-while f v) "drops elements from v as long as f matches"
+  (if (f (vector:head v))
+    (vector:drop-while f (vector:tail v))
+    (vector:tail v)))
+
+(define (vector:take-while f v) "takes elements from v as long as f matches"
+  (define (internal f v acc)
+    (if (f (vector:head v))
+      (internal f (vector:tail v) (++ acc (vector:head v)))
+      acc))
+  (internal f v []))
+
 (define (vector->byte-vector v) "converts vector into bytevector"
   (vector:reduce (lambda (acc x) (++ acc x)) b{} v))
 
@@ -129,4 +142,3 @@
 
 (define (byte-vector:mapcat f b) "maps f over and concats a byte-vector b"
   (apply ++ (byte-vector:map f b)))
-
