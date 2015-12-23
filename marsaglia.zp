@@ -5,22 +5,22 @@
 
 (define (ipow b e)
   (cond ((zero? e) 1)
-        ((even? e) (ipow (* b b) (/ e 2)))
+        ((math:even? e) (ipow (* b b) (/ e 2)))
         (else (* b (ipow (* b b) (/ (- e 1) 2))))))
 
 (define (logand a b)
   (if (or (zero? a) (zero? b)) 0
     (+ (* (logand (floor (/ a 2)) (floor (/ b 2))) 2)
-       (if (or (even? a) (even? b)) 0 1))))
+       (if (or (math:even? a) (math:even? b)) 0 1))))
 
 (define (logxor a b)
   (cond ((zero? a) b)
         ((zero? b) a)
         (else
          (+ (* (logxor (floor (/ a 2)) (floor (/ b 2))) 2)
-            (if (even? a)
-                (if (even? b) 0 1)
-                (if (even? b) 1 0))))))
+            (if (math:even? a)
+                (if (math:even? b) 0 1)
+                (if (math:even? b) 1 0))))))
 
 (define (ash int cnt)
   (if (negative? cnt)
