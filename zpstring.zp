@@ -4,7 +4,7 @@
     ""
     (if (or (null? delim) (= (length l) 1))
       (++ "" (car l) (string:join (cdr l)))
-      (++ "" (car l) (car delim) (string:join (cdr l) (car delim))))))
+      (++ "" (car l) (string (car delim)) (string:join (cdr l) (car delim))))))
 
 (define (string:split s delim)
   "splits a string s on a certain delimiter, returning a list; 
