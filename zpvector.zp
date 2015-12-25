@@ -20,6 +20,15 @@
       (loop (add1 i) len (f acc (v i)))
       acc)))
 
+(define (vector:filter f v) "filters with f over vector v"
+  (let loop ((i 0)
+             (len (vector:length v))
+             (new {}))
+    (if (> len i)
+      (if (f (v i))
+        (loop (add1 i) len (++ new (v i)))
+        (loop (add1 i) len new))
+      new)))
 
 (define (vector:drop-while f v) "drops elements from v as long as f matches"
   (if (f (vector:head v))
@@ -124,6 +133,16 @@
     (if (> len i)
       (loop (add1 i) len (f acc (byte-vector:ref b i)))
       acc)))
+
+(define (byte-vector:filter f b) "filters with f over bytevector b"
+  (let loop ((i 0)
+             (len (byte-vector:length b))
+             (new b{}))
+    (if (> len i)
+      (if (f (b i))
+        (loop (add1 i) len (++ new (b i)))
+        (loop (add1 i) len new))
+      new)))
 
 (define (byte-vector->list b) "converts bytevector into list"
   (byte-vector:reduce (lambda (acc x) (++ acc x)) [] b))
