@@ -87,4 +87,5 @@
   "checks whether string is empty"
   (eq? str ""))
 
-(define string:copy id)
+(define (string:copy str) "copies string; basically a typesafe noop"
+  (if (string? str) str :no))
