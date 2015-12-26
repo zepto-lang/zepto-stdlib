@@ -6,7 +6,6 @@
 
 (load "char.zp")
 (load "delay.zp")
-(load "hash.zp")
 (load "io.zp")
 (load "logical.zp")
 (load "marsaglia.zp")
@@ -18,6 +17,7 @@
 (load "zpcont.zp")
 (load "zpconversion.zp")
 (load "zpgenerics.zp")
+(load "zphash.zp")
 (load "zpstring.zp")
 (load "zpvector.zp")
 
