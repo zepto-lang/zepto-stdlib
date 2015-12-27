@@ -153,3 +153,9 @@
   (syntax-rules ()
     ((identifier->symbol x)
      'x)))
+
+(define-syntax receive
+  (syntax-rules ()
+    ((receive formals expression body ...)
+      (call-with-values (lambda () expression)
+                        (lambda formals body ...)))))
