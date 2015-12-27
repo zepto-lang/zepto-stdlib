@@ -81,7 +81,7 @@
 (define (string:replicate count char)
   "make string of length count containing only character char"
   (define (internal acc count) (if (< count 1) acc (internal (++ acc char) (sub1 count))))
-  (internal (string char) (sub1 count)))
+  (internal "" count))
 
 (define (string:empty? str)
   "checks whether string is empty"
