@@ -130,9 +130,9 @@
   (apply ++ (map f l)))
 
 (define (indexed-map func l) "indexed map function to list"
-  (cdr (foldr (lambda (x y) 
+  (cdr (foldl (lambda (x y) 
     (let ((i (car y)))
-      (cons (+ i 1) (cons (func x i) (cdr y)))))
+      (cons (add1 i) (cons (func x i) (cdr y)))))
     [0] l)))
 
 (define (zip a b) "zips two lists together"
