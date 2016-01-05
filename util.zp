@@ -10,9 +10,9 @@
   (lambda (arg1 arg2)
     (func arg2 arg1)))
 
-(define (curry func arg1) "curry a function"
-  (lambda (arg)
-    (func arg1 arg)))
+(define (curry f . y) "curry a function"
+  (lambda z
+    (apply f (++ y z))))
 
 (define (compose f g) "compose two functions"
   (lambda (arg)
