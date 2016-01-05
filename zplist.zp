@@ -100,6 +100,9 @@
       (vector:set! v r (vector:ref v (- n 1)))
       (vector:set! v (- n 1) t))))
 
+(define (list:flatten l) "flatten l"
+  (reduce (lambda (acc x) (if (list? x) (++ acc (list:flatten x)) (++ acc x))) [] l))
+
 (define (reverse l) "reverse list"
   (fold (flip cons) '() l))
 
