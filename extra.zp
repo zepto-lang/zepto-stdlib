@@ -148,14 +148,12 @@
       (y)
       ((last x) (apply |> (cons y (all-but [] x)))))))
 
-;; Probably broken
-(define-syntax identifier->symbol
-  (syntax-rules ()
-    ((identifier->symbol x)
-     'x)))
-
 (define-syntax receive
   (syntax-rules ()
     ((receive formals expression body ...)
       (call-with-values (lambda () expression)
                         (lambda formals body ...)))))
+
+(define-syntax comment
+  (syntax-rules ()
+    ((_ ...) (nil))))
