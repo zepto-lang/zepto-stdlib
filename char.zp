@@ -41,3 +41,8 @@
 
 (define (char:alphanum? c) "is char alphanumerical"
   (or (char:alpha? c) (char:num? c)))
+
+(define (char:whitespace? c)
+  "is character whitespace?"
+  (let ((code (char->integer c)))
+    (in? '(32 9 10 11 12 13) code)))

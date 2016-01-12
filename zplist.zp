@@ -43,7 +43,7 @@
 (define (list:drop-while f l) "drops elements from l as long as f matches"
   (if (f (car l))
     (list:drop-while f (cdr l))
-    (cdr l)))
+    l))
 
 (define (list:take-while f l) "takes elements from l as long as f matches"
   (define (internal f l acc)

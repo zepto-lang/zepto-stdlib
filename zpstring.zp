@@ -89,3 +89,15 @@
 
 (define (string:copy str) "copies string; basically a typesafe noop"
   (if (string? str) str :no))
+
+(define (string:trim-front s)
+  "removes whitespace at the front of a string"
+  (list->string (list:drop-while char:whitespace? (string->list s))))
+
+(define (string:trim-back s)
+  "removes whitespace at the end of a string"
+  (list->string (reverse (list:drop-while char:whitespace? (reverse (string->list s))))))
+
+(define (string:trim s)
+  "removes whitespace at both ends of a string"
+  (string:trim-back (string:trim-front s)))
