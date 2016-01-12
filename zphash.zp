@@ -5,11 +5,11 @@
 (define (hash:keys-reduce f acc h) "reduce operation on all hashmap keys" (reduce f acc (hash:keys h)))
 (define (hash:keys-filter f h) "filter operation on all hashmap keys" (filter f (hash:keys h)))
 (define (hash:kv-map f h) "map operation on all hashmap pairs"
-  (map f (hash:keys-map (lambda (x) (list x (h x)) h))))
+  (map f (hash:keys-map (lambda (x) (list x (h x))) h)))
 (define (hash:kv-reduce f acc h) "reduce operation on all hashmap pairs"
-  (reduce f (hash:keys-map (lambda (x) (list x (h x)) h))))
+  (reduce f acc (hash:keys-map (lambda (x) (list x (h x))) h)))
 (define (hash:kv-filter f h) "filter operation on all hashmap pairs"
-  (filter f (hash:keys-map (lambda (x) (list x (h x)) h))))
+  (filter f (hash:keys-map (lambda (x) (list x (h x))) h)))
 (define (hash:filter-by-keys f h) "filter operation on hashmap keys; returns hashmap"
   (let* ((keys (filter f (hash:keys h)))
          (vals (map (lambda (e) (h e)) keys)))
