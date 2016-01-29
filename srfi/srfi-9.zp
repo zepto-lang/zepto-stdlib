@@ -77,8 +77,8 @@
 ;;; Definitions of the record procedures.
 ;;
 (define (record? x)
-  (short-and `(vector? (quote ,x)) `(< 0 (length (quote ,x)))
-       `(eq? (symbol->string (vector:ref (quote ,x) 0)) "record-marker")))
+  (and (vector? x) (< 0 (length x))
+       (eq? (symbol->string (vector:ref x 0)) "record-marker")))
 
 (define (make-record size)
   (let ((new (make-vector (+ size 1))))
@@ -185,9 +185,9 @@
 
 (define (record-predicate type)
   (lambda (thing)
-    (short-and `(record? (quote ,thing))
-         `(eq? (record-type (quote ,thing))
-              ,type))))
+    (and (record? thing)
+         (eq? (record-type thing)
+              type))))
 
 (define (record-accessor type tag)
   (let ((index (field-index type tag)))

@@ -132,7 +132,7 @@
   (let ((limit (if (pair? o) (car o) #f)))
     (let lp ((n (if (math:even? n) (+ n 1) n)))
       (cond
-       ((short-and limit `(>= ,n ,limit)) #f)
+       ((and limit (>= n limit)) #f)
        ((math:prime? n) n)
        (else (lp (+ n 2)))))))
 

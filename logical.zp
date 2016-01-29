@@ -1,17 +1,17 @@
-(define (and . lst) "logical and on multiple values" (fold && #t lst))
-(define (or . lst) "logical or on multiple values" (fold || #f lst))
 (define (nor . lst) "logical nor on multiple values" (fold (lambda (x y) (&& (not y) x))  #t lst))
 
-(define (fold-short func accum l short) "fold left with shortcut condition"
-  (if (|| (null? l) (eq? short accum))
-    accum
-    (if (list? (car l))
-      (fold-short func (func accum (eval (car l))) (cdr l) short)
-      (fold-short func (func accum (car l)) (cdr l) short))))
+(define-syntax and
+  (syntax-rules ()
+    ((and) #t)
+    ((and x y) (if x y #f))
+    ((and x y ...)
+      (if x (and y ...) #f))))
 
-(define (short-and . lst) "logical and on multiple values; shortcuts if one condition is false" 
-  (fold-short && #t lst #f))
-(define (short-or . lst) "logical or on multiple values; shortcuts if one condition is true" 
-  (fold-short || #f lst #t))
+(define-syntax or
+  (syntax-rules ()
+    ((or) #t)
+    ((or x y) (if x #t y))
+    ((or x y ...)
+      (if x #t (or y ...)))))
 
 (define (not x) "logical not" (if x #f #t))
