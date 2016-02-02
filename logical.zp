@@ -10,8 +10,8 @@
 (define-syntax or
   (syntax-rules ()
     ((or) #t)
-    ((or x y) (if x #t y))
+    ((or x y) (if x x y))
     ((or x y ...)
-      (if x #t (or y ...)))))
+      (if x x (or y ...)))))
 
 (define (not x) "logical not" (if x #f #t))
