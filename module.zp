@@ -1,3 +1,4 @@
+(load "logical.zp")
 (load "let.zp")
 (load "extra.zp")
 
@@ -7,7 +8,6 @@
 (load "char.zp")
 (load "delay.zp")
 (load "io.zp")
-(load "logical.zp")
 (load "marsaglia.zp")
 (load "math.zp")
 (load "pairs.zp")

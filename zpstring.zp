@@ -101,3 +101,27 @@
 (define (string:trim s)
   "removes whitespace at both ends of a string"
   (string:trim-back (string:trim-front s)))
+
+(define (string:map f s)
+  "map function f over string s"
+  (map f (string->list s)))
+
+(define (string:upper? s)
+  "check whether string is upper case"
+  (string:map char:upper? s))
+
+(define (string:lower? s)
+  "check whether string is lower case"
+  (string:map char:lower? s))
+
+(define (string:num? s)
+  "check whether string is numerical"
+  (string:map char:num? s))
+
+(define (string:alpha? s)
+  "check whether string is alphabetical"
+  (string:map char:alpha? s))
+
+(define (string:alphanum? s)
+  "check whether string is alphanumerical"
+  (string:map char:alphanum? s))
