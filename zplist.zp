@@ -36,20 +36,23 @@
   (<= 0 (list:index l el)))
 
 (define (indexed-tail l k) "get tail of a list starting at index"
-    (if (zero? k)
-      l
-      (indexed-tail (cdr l) (- k 1))))
+  (if (or (null? l) (zero? k))
+    l
+    (indexed-tail (cdr l) (- k 1))))
 
 (define (list:drop-while f l) "drops elements from l as long as f matches"
-  (if (f (car l))
-    (list:drop-while f (cdr l))
-    l))
+  (if (null? l)
+    l
+    (if (f (car l))
+      (list:drop-while f (cdr l))
+      l)))
 
 (define (list:take-while f l) "takes elements from l as long as f matches"
   (define (internal f l acc)
-    (if (f (car l))
-      (internal f (cdr l) (++ acc (car l)))
-      acc))
+    (if (null? l) l
+      (if (f (car l))
+        (internal f (cdr l) (++ acc (car l)))
+        acc)))
   (internal f l []))
 
 (define list:drop (flip indexed-tail))
