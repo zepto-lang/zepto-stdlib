@@ -20,6 +20,3 @@
                              ,check)
                             (define-struct "intern" id (fields ...)))))
             (eval (macro-expand (cons 'define-record-type template)) env)))))
-
-(define-struct tree (left right val))
-
