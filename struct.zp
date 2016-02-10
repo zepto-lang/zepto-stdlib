@@ -1,0 +1,25 @@
+(define-syntax build-symbol
+  (syntax-rules ()
+    ((build-symbol xs ...)
+      (string->symbol (reduce ++ "" (map ->string '(xs ...)))))))
+
+(define-syntax define-struct
+  (syntax-rules ()
+    ((define-struct "intern" id (field))
+      (list `(field ,(build-symbol id ":get-" field) ,(build-symbol id ":set-" field))))
+    ((define-struct "intern" id (field fields ...))
+      (++
+        (list `(field ,(build-symbol id ":get-" field) ,(build-symbol id ":set-" field)))
+        (define-struct "intern" id (fields ...))))
+    ((define-struct id (fields ...))
+      (let* ((env (current-env))
+             (make (build-symbol id ":make-" id))
+             (check (build-symbol id ":" id "?"))
+             (template (++ `(id
+                             (,make fields ...)
+                             ,check)
+                            (define-struct "intern" id (fields ...)))))
+            (eval (macro-expand (cons 'define-record-type template)) env)))))
+
+(define-struct tree (left right val))
+

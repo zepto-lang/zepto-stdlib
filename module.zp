@@ -32,4 +32,6 @@
 
 (load "module/module.zp")
 
+(load "struct.zp")
+
 "Prelude loaded!\n"
