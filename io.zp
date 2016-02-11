@@ -63,3 +63,10 @@
                     (err arg)))
       args)
       (newline :stderr))))
+
+(define (read-line port) "reads a line from the input port port"
+  (let loop ((line "")
+             (char (read-char port)))
+      (if (eq? char #\newline)
+        line
+        (loop (++ line char) (read-char port)))))
