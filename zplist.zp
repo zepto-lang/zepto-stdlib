@@ -73,9 +73,22 @@
         (reverse (indexed-tail (reverse (indexed-tail l (car k))) (- (length l) (cadr k))))))
 
 (define (list:remove-n l n) "deletes nth element from list"
-  (if (= n 0) 
-      (cdr l)
-      (++ (list (car l)) (list:remove-n (cdr l) (- n 1)))))
+  (define (internal il n traversed)
+    (cond
+      ((null? il) l)
+      ((= n 0) (++ traversed (tail il)))
+      (else (internal (tail il) (sub1 n) (++ traversed (car il))))))
+  (if (< n 0)
+    l
+    (internal l n [])))
+
+(define (list:remove l el) "deletes element el from list"
+  (define (internal il el traversed)
+    (cond
+      ((null? il) l)
+      ((eq? (car il) el) (++ traversed (tail il)))
+      (else (internal (tail il) el (++ traversed (car il))))))
+  (internal l el []))
 
 (define (list:tail l) "get tail of a list"
   (cdr l))
