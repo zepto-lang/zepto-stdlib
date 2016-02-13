@@ -28,3 +28,19 @@
 
 (define (hash:reverse-hash hash) "reverses the hash-map, i.e. reversing the relationship of all key-value pairs"
   (make-hash (hash:keys-map (lambda (key) (list (hash key) key)) hash)))
+
+(define (hash:set hash key value) "sets the hashmaps key value pair"
+  (make-hash hash (make-hash key value)))
+
+(define-syntax hash:set!
+  (syntax-rules ()
+    ((_ hash key value)
+      (set! hash (hash:set hash key value)))))
+
+(define (hash:update hash key f) "updates the current hash value under the key through applying f"
+  (hash:set hash key (f (hash key))))
+
+(define-syntax hash:update!
+  (syntax-rules ()
+    ((_ hash key f)
+      (set! hash (hash:update hash key f)))))
