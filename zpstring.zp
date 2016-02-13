@@ -129,3 +129,7 @@
 (define (string:alphanum? s)
   "check whether string is alphanumerical"
   (string:reduce (lambda (acc x) (and acc (char:alphanum? x))) #t s))
+
+(define-syntax string:update!
+  (syntax-rules ()
+    ((_ v i f) (string:set! v i (f (v i))))))

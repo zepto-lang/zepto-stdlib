@@ -161,3 +161,11 @@
 
 (define (byte-vector:mapcat f b) "maps f over and concats a byte-vector b"
   (apply ++ (byte-vector:map f b)))
+
+(define-syntax vector:update!
+  (syntax-rules ()
+    ((_ v i f) (vector:set! v i (f (v i))))))
+
+(define-syntax byte-vector:update!
+  (syntax-rules ()
+    ((_ v i f) (byte-vector:set! v i (f (v i))))))
