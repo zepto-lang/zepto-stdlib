@@ -4,10 +4,11 @@
 (define random
   (let ((a 69069.0) (c 1) (m (expt 2 32)) (seed 19380110))
     (lambda new-seed
-      (if (not (null? new-seed))
-          (set! seed (car new-seed)))
-          (set! seed (modulo (+ (* seed a) c) m))
-      (/ seed m))))
+      (begin
+        (if (and (not (null? new-seed)) (number? (car new-seed)))
+          (set! seed (car new-seed))
+          (set! seed (modulo (+ (* seed a) c) m)))
+        (/. seed m)))))
 
 
 (define (randint . args) "generate a random integer between the given args (the lower range is optional)"
