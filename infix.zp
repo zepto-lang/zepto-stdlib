@@ -21,9 +21,8 @@
 	 (infix:_parse-helper (cdr expr)
 		       operators
 		       (cons (infix:parse (car expr)) operands)))
-	(else (if (short-or `(null? (quote ,operators))
-		      `(> (infix:precedence (car (quote ,expr)))
-			 (infix:precedence (car (quote ,operators)))))
+	(else (if (or (null? operators) (> (infix:precedence (car expr))
+			 (infix:precedence (car operators))))
 		  (infix:_parse-helper (cdr expr)
 				(cons (car expr) operators)
 				operands)
