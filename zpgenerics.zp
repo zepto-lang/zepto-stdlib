@@ -3,10 +3,9 @@
                   (if (truthy? (car with-quotes))
                     (lambda (str) (++ "\"" el "\""))
                     id)
-                  id))
-        (nil-repr (if (> (length with-quotes) 0) (if (truthy? (car with-quotes)) "<nil>" ""))))
+                  id)))
     (cond
-      ((nil? el) nil-repr)
+      ((nil? el) "<nil>")
       ((hash-map? el)
         (let ((s (hash:keys-reduce (lambda (acc x) (++ acc (->string x #t) ": " (->string (el x) #t) ", ")) "{" el)))
           (++ (substring s 0 (- (length s) 2)) "}")))
