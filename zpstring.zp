@@ -18,6 +18,9 @@
           (list (substring s 0 x))
           (++ (list (substring s 0 x)) (string:split (substring s (+ x 1) l) delim)))))))
 
+(define (string:in? s el)
+  (/= -1 (string:find s el)))
+
 (define (string:head s)
   "gets head of a string, i.e. first character (as character, not string)"
   (head (string->list (substring s 0 1))))

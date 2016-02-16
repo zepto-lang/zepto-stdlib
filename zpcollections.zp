@@ -38,7 +38,7 @@
   (cond
     ((vector? l) (list:in? (vector->list l) el))
     ((list? l) (list:in? l el))
-    ((string? l) (list:in? (string->list l) el))
+    ((string? l) (string:in? l el))
     ((hash-map? l) (hash:contains? l el))
     (else (nil))))
 
