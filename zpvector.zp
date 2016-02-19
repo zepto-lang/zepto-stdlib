@@ -157,7 +157,7 @@
   (vector->byte-vector (vector:tail (byte-vector->vector b))))
 
 (define (byte-vector:empty? b) "is bytevector empty?"
-  (eq? (bytevector:length b) 0))
+  (eq? (byte-vector:length b) 0))
 
 (define (byte-vector:mapcat f b) "maps f over and concats a byte-vector b"
   (apply ++ (byte-vector:map f b)))
