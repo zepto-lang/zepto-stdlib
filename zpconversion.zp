@@ -45,3 +45,9 @@
     ((atom? x) (string:tail (symbol->string x)))
     ((symbol? x) (symbol->string x))
     (else #f)))
+
+(define (ascii-string->byte-vector str) "converts ascii string to byte-vector"
+  (string:reduce (lambda (acc x) (++ acc (char->integer x))) b{} str))
+
+(define (byte-vector->ascii-string b) "converts byte-vector to ascii string"
+  (byte-vector:reduce (lambda (acc x) (++ acc (integer->char x))) "" b))
