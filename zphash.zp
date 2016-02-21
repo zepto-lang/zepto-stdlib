@@ -44,3 +44,11 @@
   (syntax-rules ()
     ((_ hash key f)
       (set! hash (hash:update hash key f)))))
+
+(define (hash:merge h1 h2) "merges two hash maps"
+  (make-hash h1 h2))
+
+(define-syntax hash:merge!
+  (syntax-rules ()
+    ((_ h1 h2)
+      (set! h1 (hash:merge h1 h2)))))
