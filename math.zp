@@ -2,6 +2,7 @@
 
 (define exact? integer?)
 (define math:pi 245850922/78256779)
+(define math:tau (* 245850922/78256779 2))
 (define math:e 438351041/161260336)
 (define (inexact? x) "is inexact number" (and (real? x) (not (integer? x))))
 (define (math:even? n) "is even" (= (remainder n 2) 0))
