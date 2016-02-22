@@ -115,6 +115,10 @@
   "reduce string s using function f and accumulator acc"
   (reduce f acc (string->list s)))
 
+(define (string:filter f s)
+  "filter string s using function f"
+  (list->string (filter f (string->list s))))
+
 (define (string:upper? s)
   "check whether string is upper case"
   (string:reduce (lambda (acc x) (and acc (char:upper? x))) #t s))
@@ -138,3 +142,9 @@
 (define-syntax string:update!
   (syntax-rules ()
     ((_ v i f) (string:set! v i (f (v i))))))
+
+(define (string:remove-whitespace str) "removes all whitespace characters from a string"
+  (string:filter (lambda (x) (not (or (eq? x #\space) (eq? x #\newline)))) str))
+
+(define (string:remove-newlines str) "removes all newline characters from a string"
+  (string:filter (lambda (x) (not (eq? x #\newline))) str))
