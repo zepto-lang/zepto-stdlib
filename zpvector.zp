@@ -43,7 +43,7 @@
   (internal f v []))
 
 (define (vector->byte-vector v) "converts vector into bytevector"
-  (vector:reduce (lambda (acc x) (++ acc x)) b{} v))
+  (vector:reduce (lambda (acc x) (++ acc (->bytes x))) b{} v))
 
 (define (vector:tail v) "gets vector tail"
   (vector:subvector v 1 (sub1 (vector:length v))))
