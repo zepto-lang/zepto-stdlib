@@ -144,7 +144,7 @@
     ((_ v i f) (string:set! v i (f (v i))))))
 
 (define (string:remove-whitespace str) "removes all whitespace characters from a string"
-  (string:filter (lambda (x) (not (or (eq? x #\space) (eq? x #\newline)))) str))
+  (string:filter (lambda (x) (not (char:whitespace? x))) str))
 
 (define (string:remove-newlines str) "removes all newline characters from a string"
-  (string:filter (lambda (x) (not (eq? x #\newline))) str))
+  (string:filter (lambda (x) (not (or (eq? x #\newline) (eq? x #\carriage)))) str))
