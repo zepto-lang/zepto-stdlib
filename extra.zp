@@ -135,18 +135,13 @@
 
 
 (define (|> y . x)
-  (begin
-    (define (last l)
-              (if (null? (cdr l))
-                (car l)
-                (last (cdr l))))
-    (define (all-but acc l)
-              (if (null? (cdr l))
-                acc
-                (all-but (+= acc (car l)) (cdr l))))
-    (if (null? x)
-      (y)
-      ((last x) (apply |> (cons y (all-but [] x)))))))
+  (define (all-but acc l)
+            (if (null? (cdr l))
+              acc
+              (all-but (+= acc (car l)) (cdr l))))
+  (if (null? x)
+    (y)
+    ((ilist:last x) (apply |> (cons y (all-but [] x))))))
 
 (define-syntax receive
   (syntax-rules ()
@@ -157,3 +152,8 @@
 (define-syntax comment
   (syntax-rules ()
     ((_ ...) (nil))))
+
+(define (zepto:get-bindings str) "get the bindings that match the prefix"
+  (hash:kv-reduce (lambda (acc kv) (if (string:starts-with (car kv) str) (+= acc kv) acc))
+                  []
+                  (env->hashmap (current-env))))
