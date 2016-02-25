@@ -57,12 +57,24 @@
     ((pred? (vector:head v)) #t)
     (else (vector:matches? pred? (vector:tail v)))))
 
+(define (vector:binary-search v el) "performs binary search on a vector (must be sorted)"
+  (define (internal v el low high)
+    (if (< high low)
+      (- (add1 low))
+      (let* ((mid (/ (+ low high) 2))
+             (midv (v mid)))
+        (cond
+          ((< midv el) (internal v el (add1 mid) high))
+          ((> midv el) (internal v el low (sub1 high)))
+          (else mid)))))
+  (internal v el 0 (sub1 (length v))))
+
 (define (vector:index v el) "get index of el in l; otherwise get -1"
   (define (internal v el c)
     (cond 
       ((vector:empty? v) -1)
       ((eq? (vector:head v) el) c)
-      (else (internal (vector:tail v) el (+ c 1)))))
+      (else (internal (vector:tail v) el (add1 c)))))
   (internal v el 0))
 
 (define (vector:after v el) "returns subvector of v after first occurrence of element el"
@@ -154,13 +166,33 @@
   (byte-vector:ref b 0))
 
 (define (byte-vector:tail b) "gets rest of bytevector"
-  (vector->byte-vector (vector:tail (byte-vector->vector b))))
+  (byte-vector:subvector b 1 (sub1 (length b))))
 
 (define (byte-vector:empty? b) "is bytevector empty?"
   (eq? (byte-vector:length b) 0))
 
 (define (byte-vector:mapcat f b) "maps f over and concats a byte-vector b"
   (apply ++ (byte-vector:map f b)))
+
+(define (byte-vector:binary-search b el) "performs binary search on a byte-vector (must be sorted)"
+  (define (internal b el low high)
+    (if (< high low)
+      (- (add1 low))
+      (let* ((mid (/ (+ low high) 2))
+             (midv (b mid)))
+        (cond
+          ((< midv el) (internal b el (add1 mid) high))
+          ((> midv el) (internal b el low (sub1 high)))
+          (else mid)))))
+  (internal b el 0 (sub1 (length b))))
+
+(define (byte-vector:index b el) "get index of el in l; otherwise get -1"
+  (define (internal b el c)
+    (cond 
+      ((byte-vector:empty? b) -1)
+      ((eq? (byte-vector:head b) el) c)
+      (else (internal (byte-vector:tail b) el (add1 c)))))
+  (internal b el 0))
 
 (define-syntax vector:update!
   (syntax-rules ()
