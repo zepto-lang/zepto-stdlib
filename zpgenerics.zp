@@ -126,4 +126,3 @@
   (syntax-rules ()
     ((->symbol xs ...)
       (string->symbol (reduce ++ "" (map ->string '(xs ...)))))))
-

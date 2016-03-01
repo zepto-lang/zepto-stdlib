@@ -1,0 +1,33 @@
+(define (format str . args)
+  "A simple format function, similar to the one found in Common Lisp;
+  unlike in Common Lisp, though, the result is not directly printed, but
+  returned as a string. It is also lacking some of the more advanced features."
+  (define control #\~)
+  (define (find-first pred args)
+    (let ((x (list:drop-while (lambda (x) (not (pred x))) args)))
+      (if (null? x) (list "" (length args)) (list (car x) (- (length args) (length x) -1)))))
+  (define (internal str out nxt args)
+    (define-syntax follow
+      (syntax-rules ()
+        ((_ elem ni)
+          (let* ((len (length str))
+                 (nxt (+ nxt 2))
+                 (nnext (substring str nxt len)))
+            (internal (substring str nxt len)
+                      (++ out elem)
+                      (index-of nnext control)
+                      (list:drop ni args))))
+        ((_ elem)
+          (follow elem 0))))
+    (if (eq? -1 nxt)
+      (++ out str)
+      (let ((r (string:ref str (add1 nxt))))
+        (case r
+          ((#\n #\%) (follow #\newline))
+          ((#\c) (let ((pair (find-first char? args))) (follow (car pair) (cadr pair))))
+          ((#\s) (let ((pair (find-first string? args))) (follow (car pair) (cadr pair))))
+          ((#\d) (let ((pair (find-first integer? args))) (follow (car pair) (cadr pair))))
+          ((#\f) (let ((pair (find-first float? args))) (follow (car pair) (cadr pair))))
+          ((control) (follow control))
+          (else (follow r))))))
+    (internal str "" (index-of str control) args))
