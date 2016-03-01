@@ -106,7 +106,6 @@
     (internal (->string obj) 0 0)
     (internal-code (->string obj) 0 0))))
 
-
 (define (->bytes x) "generates byte-vector from data structure"
   (cond
     ((nil? x) b{0})
@@ -122,3 +121,9 @@
     ((boolean? x) (if x b{1} b{0}))
     ((or (atom? x) (symbol? x)) (->bytes (symbol->string x)))
     (else b{0})))
+
+(define-syntax ->symbol
+  (syntax-rules ()
+    ((->symbol xs ...)
+      (string->symbol (reduce ++ "" (map ->string '(xs ...)))))))
+
