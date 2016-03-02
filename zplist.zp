@@ -182,8 +182,6 @@
       (else
         #f))))
 
-(define all? every?)
-
 (define (range x . l)
   (begin
     (define build (lambda (c) (if (< c x) (cons c (build (+ c 1))) [])))
@@ -193,8 +191,6 @@
           ((= 1 (length l)) (from-to x (car l)))
           ((= 2 (length l)) (step x (car l) (cadr l)))
           (else (error "usage: range [from] to [step]")))))
-
-(define iota range)
 
 (define (replicate n el) "build a list of length n with only el in it"
   (if (< n 1)

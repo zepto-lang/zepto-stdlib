@@ -1,9 +1,10 @@
-(define len length)
 (define fold foldl)
 (define reduce fold)
 (define ceil ceiling)
 (define head car)
 (define tail list:tail)
+(define all? every?)
+(define iota range)
 (define char:downcase char:lower-case)
 (define char:upcase char:upper-case)
 
