@@ -13,7 +13,6 @@
 (load "pairs.zp")
 (load "random.zp")
 (load "sort.zp")
-(load "zpcollections.zp")
 (load "zpcont.zp")
 (load "zpconversion.zp")
 (load "zphash.zp")
@@ -32,6 +31,5 @@
 (load "module/module.zp")
 
 (load "struct.zp")
-(load "zpgenerics.zp")
 
 "Prelude loaded!\n"

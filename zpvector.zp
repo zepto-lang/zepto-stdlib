@@ -130,6 +130,9 @@
       (vector:set! v r (vector:ref v (- n 1)))
       (vector:set! v (- n 1) t))))
 
+(define (byte-vector:last b) "get last element from byte-vector b"
+  (byte-vector:ref x (- (byte-vector:length x) 1)))
+
 (define (byte-vector:map f b) "map f over bytevector b"
   (let loop ((i 0)
              (len (byte-vector:length b))
@@ -193,6 +196,9 @@
       ((eq? (byte-vector:head b) el) c)
       (else (internal (byte-vector:tail b) el (add1 c)))))
   (internal b el 0))
+
+(define (byte-vector:in? b el) "returns boolean signifying whether element is in byte-vector"
+  (<= 0 (byte-vector:index b el)))
 
 (define-syntax vector:update!
   (syntax-rules ()

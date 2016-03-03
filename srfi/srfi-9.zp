@@ -77,7 +77,7 @@
 ;;; Definitions of the record procedures.
 ;;
 (define (record? x)
-  (and (vector? x) (< 0 (length x))
+  (and (vector? x) (< 0 (vector:length x)) (symbol? (vector:ref x 0))
        (eq? (symbol->string (vector:ref x 0)) "record-marker")))
 
 (define (make-record size)

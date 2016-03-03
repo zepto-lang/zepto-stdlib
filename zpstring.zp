@@ -10,17 +10,21 @@
   "splits a string s on a certain delimiter, returning a list; 
    the delimiter is lost"
   (let ((x (string:find s delim))
-        (l (length s))
-        (ldelim (let ((tmp (length delim))) (if (truthy? tmp) tmp 1))))
+        (l (string:length s))
+        (ldelim (string:length (string delim))))
     (if (or (= x -1) (= l 1))
       (list s)
       (let ((sub (substring s (+ x ldelim) l))
             (fil (let ((sub (substring s 0 x))) (if (truthy? sub) (list sub) []))))
-        (if (= 0 (length sub))
+        (if (= 0 (string:length sub))
           fil
           (++ fil (string:split sub delim)))))))
 
-(define (string:in? s el)
+(define (string:last s) "get last element of string"
+  (let ((l (string:length s)))
+    (car (string->list (substring s (- l 1) l)))))
+
+(define (string:in? s el) "is element in string?"
   (/= -1 (string:find s el)))
 
 (define (string:head s)
@@ -67,7 +71,7 @@
 
 (define (string:starts-with s sub)
   "check whether a string starts with another string"
-  (eqv? sub (substring s 0 (length sub))))
+  (eqv? sub (substring s 0 (string:length (string sub)))))
 
 (define (string:ends-with s sub)
   "check whether a string ends with another string"

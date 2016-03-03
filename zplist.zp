@@ -155,7 +155,14 @@
     [0] l)))
 
 (define (zip a b) "zips two lists together"
-  (if (or (null? a) (null? b)) [] (++ (list (head a) (head b)) (zip (tail a) (tail b)))))
+  (zip-with list a b))
+
+(define (zip-with f a b) "zips two lists together, takes a function that has two arguments"
+  (define (internal f a b acc)
+    (if (or (null? a) (null? b))
+      acc
+      (internal f (cdr a) (cdr b) (++ acc (f (car a) (car b))))))
+  (internal f a b []))
 
 (define foreach map)
 

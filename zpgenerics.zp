@@ -7,20 +7,28 @@
       (let ((env (current-env))
             (str (symbol->string 'name)))
         (begin
+          (eval `(define (,(string->symbol (++ str "?")) arg)
+                   (let* ((impls (*impls* ,str))
+                          (funs (hash:kv-filter
+                                  (lambda (kv) (eval (list (string->symbol (car kv)) 'arg)))
+                                  (if (truthy? impls) impls (make-hash)))))
+                    (not (null? funs))))
+                env)
           (map
             (lambda (x)
               (define strx (symbol->string x))
-              (eval `(define (,x arg)
-                        (let ((impls (*impls* ,str)))
+              (eval `(define ,x (lambda args
+                        (let ((impls (*impls* ,str))
+                              (arg (car args)))
                           (if (nil? impls)
                             (error "No implementation specified for protocol" ,str)
                             (let ((funs (hash:kv-filter
                                           (lambda (kv) (eval (list (string->symbol (car kv)) 'arg)))
                                           impls)))
                               (if (null? funs)
-                                (error "No implementation of protocol" ,str
-                                       "found that matches" (typeof arg))
-                                (((cadar funs) ,strx) arg)))))) env))
+                                (error "No implementation of protocol" (typeof arg)
+                                       "found that matches" ,str)
+                                (apply ((cadar funs) ,strx) args))))))) env))
             'functions)
           (hash:set! *protocols* (symbol->string 'name) 'functions))))))
 
@@ -29,7 +37,7 @@
     ((_ name pred funcs)
       (let ((proto (*protocols* (symbol->string 'name)))
             (given (map car 'funcs))
-            (wrong-forms (filter (lambda (x) (/= 2 (length x))) 'funcs))
+            (wrong-forms (filter (lambda (x) (/= 2 (list:length x))) 'funcs))
             (nfuncs (map (lambda (x) (list (symbol->string (car x)) (eval (cadr x)))) 'funcs)))
         (if (null? wrong-forms)
           (if (nil? proto)
@@ -52,7 +60,7 @@
                                             (++ acc (->string x) ": " (->string (el x)) ", "))
                                        "{"
                                        el)))
-              (++ (substring s 0 (- (length s) 2)) "}"))))))
+              (++ (substring s 0 (- (string:length s) 2)) "}"))))))
 (defimpl stringify string? ((->string id)))
 (defimpl stringify number? ((->string number->string)))
 (defimpl stringify list?
@@ -107,7 +115,7 @@
    parameter :indent (width as integer) :max-width (as integer) and :data (currently unused)
    are supported"
   (let* ((dflt #{:indent 2 :max-width 80 :data #t})
-         (args (if (> (length args) 0) (make-hash dflt (car args)) dflt)))
+         (args (if (> (list:length args) 0) (make-hash dflt (car args)) dflt)))
   (define (internal-code obj i w)
     (define (soft-break i w)
       (if (>= w (args :max-width))
@@ -171,7 +179,7 @@
 (defimpl bytify string? ((->bytes string->byte-vector)))
 (defimpl bytify hash-map? ((->bytes
          (lambda (x)
-            (hash:kv-reduce (lambda (acc kv) (++ acc (->bytes (car kv) (->bytes (cadr kv))))) b{} x)))))
+            (hash:kv-reduce (lambda (acc kv) (++ acc (->bytes (car kv)) (->bytes (cadr kv)))) b{} x)))))
 (defimpl bytify list? ((->bytes (lambda (x) (reduce (lambda (acc x) (++ acc (->bytes x))) b{} x)))))
 (defimpl bytify char? ((->bytes (lambda (x) (->bytes (string x))))))
 (defimpl bytify port? ((->bytes (lambda (x) b{0}))))

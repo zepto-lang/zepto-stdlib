@@ -1,89 +1,72 @@
-(define (pop-left x) "generic pop function for the left side; works on vectors, lists and strings"
-  (cond
-    ((vector? x) (vector:ref x 0))
-    ((byte-vector? x) (byte-vector:ref x 0))
-    ((list? x) (car x))
-    ((string? x) (car (string->list (substring x 0 1))))
-    (else (nil))))
+(defprotocol left-collec pop-left append-left)
+(defimpl left-collec vector?
+         ((pop-left vector:head)
+          (append-left (lambda (v el) (++ (vector el) v)))))
+(defimpl left-collec byte-vector?
+         ((pop-left byte-vector:head)
+          (append-left (lambda (b el) (++ (byte-vector el) b)))))
+(defimpl left-collec string?
+         ((pop-left string:head)
+          (append-left (lambda (s el) (++ (string el) v)))))
+(defimpl left-collec list?
+         ((pop-left car)
+          (append-left list:append)))
 
-(define (pop-right x) "generic pop function for the right side; works on vectors, bytevectors and strings"
-  (cond
-    ((vector? x) (vector:ref x (- (vector:length x) 1)))
-    ((byte-vector? x) (byte-vector:ref x (- (byte-vector:length x) 1)))
-    ((string? x) (let
-                  ((l (string:length x)))
-                  (car (string->list (substring x (- l 1) l)))))
-    (else (nil))))
+(defprotocol right-collec pop-right)
+(defimpl right-collec vector? ((pop-right vector:last)))
+(defimpl right-collec byte-vector? ((pop-right byte-vector:last)))
+(defimpl right-collec string? ((pop-right string:last)))
 
-(define (append-left x el) "generic append function for the left side; works on vectors, bytevectors, lists and strings"
-  (cond
-    ((vector? x) (vector:extend (vector el) x))
-    ((byte-vector? x) (byte-vector:extend (byte-vector el) x))
-    ((list? x) (cons el x))
-    ((string? x) (string:append (string el) x))))
+(defprotocol extensible-collec append extend)
+(defimpl extensible-collec vector? ((append ++) (extend +=)))
+(defimpl extensible-collec byte-vector? ((append ++) (extend +=)))
+(defimpl extensible-collec string? ((append ++) (extend +=)))
+(defimpl extensible-collec list? ((append ++) (extend +=)))
 
-(define append +=)
-(define extend ++)
+(define (collec:get-from-skeleton f)
+  "a skeleton to nicely integrate your collection into the get-from world;
+   expects a function that takes the collection, an element to get and a default return element"
+  (lambda (collec elems . dflt)
+    (let* ((dflt (if (null? dflt) (nil) (car dflt)))
+           (elems (if (not (list? elems)) (list elems) elems)))
+      (if (null? elems)
+        collec
+        (let ((ret (f collec (car elems) dflt)))
+          (if (collec? ret)
+            (get-from ret (cdr elems) dflt)
+            (if (null? (cdr elems)) ret dflt)))))))
 
-(define (length x) "generic length function; works on vectors, lists, strings and hashmaps"
-  (cond
-    ((vector? x) (vector:length x))
-    ((byte-vector? x) (byte-vector:length x))
-    ((list? x) (list:length x))
-    ((string? x) (string:length x))
-    ((hash-map? x) (list:length (hash:keys x)))
-    (else (nil))))
+(defprotocol collec length in? get-from)
+(defimpl collec vector?
+         ((length vector:length)
+          (in? vector:in?)
+          (get-from (collec:get-from-skeleton (lambda (v i dflt) (if (> (length v) i) (v i) dflt))))))
+(defimpl collec byte-vector?
+         ((length byte-vector:length)
+          (in? byte-vector:in?)
+          (get-from (collec:get-from-skeleton (lambda (b i dflt) (if (> (length b) i) (b i) dflt))))))
+(defimpl collec list?
+         ((length list:length)
+          (in? list:in?)
+          (get-from (collec:get-from-skeleton (lambda (l i dflt)
+                                                (if (> (length l) i) (list:ref l i) dflt))))))
+(defimpl collec hash-map?
+         ((length (lambda (x) (list:length (hash:keys x))))
+          (in? hash:contains?)
+          (get-from (collec:get-from-skeleton (lambda (h el dflt) (if (in? h el) (h el) dflt))))))
+(defimpl collec string?
+         ((length string:length)
+          (in? string:in?) 
+          (get-from (collec:get-from-skeleton (lambda (s i dflt)
+                                                (if (> (length s) i) (string:ref s i) dflt))))))
 
-(define (in? l el) "generic element function; returns boolean signifying if element is in list; works on vectors, lists, strings and hashmaps"
-  (cond
-    ((vector? l) (list:in? (vector->list l) el))
-    ((list? l) (list:in? l el))
-    ((string? l) (string:in? l el))
-    ((hash-map? l) (hash:contains? l el))
-    (else (nil))))
+(defprotocol summable gsum)
+(defimpl summable vector? ((gsum (lambda (x) (math:list-sum (vector->list x))))))
+(defimpl summable vector? ((gsum (lambda (x) (math:list-sum (byte-vector->list x))))))
+(defimpl summable vector? ((gsum math:list-sum)))
 
-(define (get-from collec elems . dflt)
-  "generic element getter function; if the element is in the list, it is returned,
-   otherwise the default is returned (which is either nil or user-defined)"
-  (let* ((dflt (if (null? dflt) (nil) (list:ref dflt 0)))
-         (elems (if (not (list? elems)) (list elems) elems)))
-  (if (null? elems)
-    collec
-    (let ((elem (car elems)))
-      (cond
-        ((vector? collec)
-          (if (> (length collec) elem)
-            (get-from (collec elem) (cdr elems) dflt)
-            dflt))
-        ((list? collec)
-          (if (> (length collec) elem)
-            (get-from (list:ref collec elem) (cdr elems) dflt)
-            dflt))
-        ((hash-map? collec)
-          (if (hash:contains? collec elem)
-            (get-from (collec elem) (cdr elems) dflt)
-            dflt))
-        ((string? collec)
-          (if (> (length collec) elem)
-            (get-from (string:ref collec elem) (cdr elems) dflt)
-            dflt))
-        (else (nil)))))))
-
-(define (gsum collec)
-  "sum all elements in collection"
-  (cond
-    ((vector? collec)
-      (math:list-sum (vector->list collec)))
-    ((list? collec)
-      (math:list-sum collec))))
-
-(define (index-of collec el)
-  "get first index of element in collection"
-  (cond
-    ((vector? collec)
-      (list:index (vector->list collec) el))
-    ((list? collec)
-      (list:index collec el))
-    ((string? collec)
-      (string:find collec el))
-    (else (nil))))
+(defprotocol indexable index-of)
+(defimpl indexable vector? ((index-of vector:index)))
+(defimpl indexable byte-vector? ((index-of byte-vector:index)))
+(defimpl indexable list? ((index-of list:index)))
+(defimpl indexable string? ((index-of string:find)))

@@ -11,7 +11,7 @@
 (define (newline . port) "print newline to port or stdout if none is given"
   (cond
     ((null? port) (write ""))
-    ((eq? (length port) 1) (write "" (car port)))
+    ((eq? (list:length port) 1) (write "" (car port)))
     (else #f)))
 
 (define (call-with-input-file s p) "open an input file s and apply a function to it, then close the file"
@@ -57,11 +57,7 @@
     (begin
       (err "Error: ")
       (err reason)
-      (for-each (lambda (arg) 
-                  (begin
-                    (err " ")
-                    (err arg)))
-      args)
+      (map (lambda (arg) (begin (err " ") (err arg))) args)
       (newline :stderr))))
 
 (define (read-line port) "reads a line from the input port port"
