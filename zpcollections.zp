@@ -18,10 +18,10 @@
 (defimpl right-collec string? ((pop-right string:last)))
 
 (defprotocol extensible-collec append extend)
-(defimpl extensible-collec vector? ((append ++) (extend +=)))
-(defimpl extensible-collec byte-vector? ((append ++) (extend +=)))
-(defimpl extensible-collec string? ((append ++) (extend +=)))
-(defimpl extensible-collec list? ((append ++) (extend +=)))
+(defimpl extensible-collec vector? ((append +=) (extend ++)))
+(defimpl extensible-collec byte-vector? ((append +=) (extend ++)))
+(defimpl extensible-collec string? ((append +=) (extend ++)))
+(defimpl extensible-collec list? ((append +=) (extend ++)))
 
 (define (collec:get-from-skeleton f)
   "a skeleton to nicely integrate your collection into the get-from world;
