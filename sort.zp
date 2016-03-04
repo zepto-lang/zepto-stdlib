@@ -1,5 +1,5 @@
-(define (sort:sorted? seq . ord) "is sequence sorted? Optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+(define (sort:sorted? seq . ord) "is sequence sorted? Optionally takes an order function, default is lt"
+  (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (if (< (length seq) 2)
     #t
     (and (ord (car seq) (cadr seq)) (sort:sorted? (cdr seq) ord)))))
@@ -12,8 +12,8 @@
     (_split l l '()))
 
 (define (sort:merge a b . ord) 
-  "merge two sorted lists; optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+  "merge two sorted lists; optionally takes an order function, default is lt"
+  (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (cond
     ((null? a) b)
     ((null? b) a)
@@ -31,8 +31,8 @@
             (cons x (loop (car a) (cdr a) y b)))))))))
 
 (define (sort:quicksort l . ord)
-  "sort a list with quicksort scheme; optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0)))
+  "sort a list with quicksort scheme; optionally takes an order function, default is lt"
+  (let ((ord (if (null? ord) lt (list:ref ord 0)))
         (i (randint 0 (length l))))
   (if (< (length l) 2)
     l
@@ -44,8 +44,8 @@
           (loop left (++ right (list (car t))) h (cdr t))))))))
 
 (define (sort:mergesort l . ord)
-  "sort a list with mergesort scheme; optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+  "sort a list with mergesort scheme; optionally takes an order function, default is lt"
+  (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (if (< (length l) 2)
     l
     (let ((splits (sort:_split l)))
@@ -54,7 +54,7 @@
         (sort:mergesort (cdr splits) ord) ord)))))
 
 (define (sort:_insert x lst . ord)
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+  (let ((ord (if (null? ord) lt (list:ref ord 0))))
     (if (null? lst)
         (list x)
         (let ((y (car lst))
@@ -64,8 +64,8 @@
               (cons y (insert x ys)))))))
 
 (define (sort:insertionsort lst . ord)
-  "sort a list with insertionsort scheme (slow!); optionally takes an order function, default is <"
-  (let ((ord (if (null? ord) < (list:ref ord 0))))
+  "sort a list with insertionsort scheme (slow!); optionally takes an order function, default is lt"
+  (let ((ord (if (null? ord) lt (list:ref ord 0))))
     (if (null? lst)
         '()
         (sort:_insert (car lst) (sort:insertionsort (cdr lst)) ord))))
