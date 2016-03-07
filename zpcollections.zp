@@ -1,4 +1,4 @@
-(defprotocol left-collec pop-left append-left)
+(defprotocol left-collec (pop-left 1) (append-left 2))
 (defimpl left-collec vector?
          ((pop-left vector:head)
           (append-left (lambda (v el) (++ (vector el) v)))))
@@ -12,12 +12,12 @@
          ((pop-left car)
           (append-left list:append)))
 
-(defprotocol right-collec pop-right)
+(defprotocol right-collec (pop-right 1))
 (defimpl right-collec vector? ((pop-right vector:last)))
 (defimpl right-collec byte-vector? ((pop-right byte-vector:last)))
 (defimpl right-collec string? ((pop-right string:last)))
 
-(defprotocol extensible-collec append extend)
+(defprotocol extensible-collec (append :overloaded) (extend :overloaded))
 (defimpl extensible-collec vector? ((append +=) (extend ++)))
 (defimpl extensible-collec byte-vector? ((append +=) (extend ++)))
 (defimpl extensible-collec string? ((append +=) (extend ++)))
@@ -36,7 +36,7 @@
             (get-from ret (cdr elems) dflt)
             (if (null? (cdr elems)) ret dflt)))))))
 
-(defprotocol collec length in? get-from)
+(defprotocol collec (length 1) (in? 2) (get-from :overloaded))
 (defimpl collec vector?
          ((length vector:length)
           (in? vector:in?)
@@ -60,12 +60,12 @@
           (get-from (collec:get-from-skeleton (lambda (s i dflt)
                                                 (if (> (length s) i) (string:ref s i) dflt))))))
 
-(defprotocol summable gsum)
+(defprotocol summable (gsum 1))
 (defimpl summable vector? ((gsum (lambda (x) (math:list-sum (vector->list x))))))
 (defimpl summable vector? ((gsum (lambda (x) (math:list-sum (byte-vector->list x))))))
 (defimpl summable vector? ((gsum math:list-sum)))
 
-(defprotocol indexable index-of)
+(defprotocol indexable (index-of 2))
 (defimpl indexable vector? ((index-of vector:index)))
 (defimpl indexable byte-vector? ((index-of byte-vector:index)))
 (defimpl indexable list? ((index-of list:index)))

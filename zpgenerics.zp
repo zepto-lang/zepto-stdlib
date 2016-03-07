@@ -16,29 +16,33 @@
                 env)
           (map
             (lambda (x)
-              (define strx (symbol->string x))
-              (eval `(define ,x (lambda args
+              (define strx (symbol->string (car x)))
+              (begin (write x)
+              (eval `(define ,(car x) (lambda args
                         (let ((impls (*impls* ,str))
                               (arg (car args)))
-                          (if (nil? impls)
-                            (error "No implementation specified for protocol" ,str)
-                            (let ((funs (hash:kv-filter
-                                          (lambda (kv) (eval (list (string->symbol (car kv)) 'arg)))
-                                          impls)))
-                              (if (null? funs)
-                                (error "No implementation of protocol" (typeof arg)
-                                       "found that matches" ,str)
-                                (apply ((cadar funs) ,strx) args))))))) env))
+                          (if (or (eq? (list:length args) ,(cadr x)) (eq? :overloaded ,(cadr x)))
+                            (if (nil? impls)
+                              (error "No implementation specified for protocol" ,str)
+                              (let ((funs (hash:kv-filter
+                                            (lambda (kv) (eval (list (string->symbol (car kv)) 'arg)))
+                                            impls)))
+                                (if (null? funs)
+                                  (error "No implementation of protocol" (typeof arg)
+                                         "found that matches" ,str)
+                                  (apply ((cadar funs) ,strx) args))))
+                            (error ,strx "takes" ,(cadr x) "arguments, but was given" (length args))))))
+                      env)))
             'functions)
           (hash:set! *protocols* (symbol->string 'name) 'functions))))))
 
 (define-syntax defimpl
   (syntax-rules ()
     ((_ name pred funcs)
-      (let ((proto (*protocols* (symbol->string 'name)))
+      (let ((proto (map car (*protocols* (symbol->string 'name))))
             (given (map car 'funcs))
             (wrong-forms (filter (lambda (x) (/= 2 (list:length x))) 'funcs))
-            (nfuncs (map (lambda (x) (list (symbol->string (car x)) (eval (cadr x)))) 'funcs)))
+            (nfuncs (map (lambda (x) (list (symbol->string (car x)) (eval (macro-expand (cadr x))))) 'funcs)))
         (if (null? wrong-forms)
           (if (nil? proto)
             (error "protocol" 'name "not defined.")
@@ -50,7 +54,7 @@
               (error "protocol" 'name "expects" proto "to be defined, was given" given)))
           (error "wrong forms" wrong-forms "; expect forms to be of the form (name implementation)"))))))
 
-(defprotocol stringify ->string)
+(defprotocol stringify (->string 1))
 
 (defimpl stringify nil? ((->string (lambda (x) "<nil>"))))
 (defimpl stringify hash-map?
@@ -172,7 +176,7 @@
     (internal (->string obj) 0 0)
     (internal-code (->string obj) 0 0))))
 
-(defprotocol bytify ->bytes)
+(defprotocol bytify (->bytes 1))
 (defimpl bytify nil? ((->bytes (lambda (x) b{0}))))
 (defimpl bytify byte-vector? ((->bytes id)))
 (defimpl bytify number? ((->bytes number->bytes)))
