@@ -3,9 +3,9 @@
 (define-syntax and
   (syntax-rules ()
     ((and) #t)
-    ((and x y) (if x y #f))
+    ((and x y) (if x y x))
     ((and x y ...)
-      (if x (and y ...) #f))))
+      (if x (and y ...) x))))
 
 (define-syntax or
   (syntax-rules ()
