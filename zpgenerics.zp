@@ -17,7 +17,6 @@
           (map
             (lambda (x)
               (define strx (symbol->string (car x)))
-              (begin (write x)
               (eval `(define ,(car x) (lambda args
                         (let ((impls (*impls* ,str))
                               (arg (car args)))
@@ -32,7 +31,7 @@
                                          "found that matches" ,str)
                                   (apply ((cadar funs) ,strx) args))))
                             (error ,strx "takes" ,(cadr x) "arguments, but was given" (length args))))))
-                      env)))
+                      env))
             'functions)
           (hash:set! *protocols* (symbol->string 'name) 'functions))))))
 
