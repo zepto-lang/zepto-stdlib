@@ -52,3 +52,16 @@
   (syntax-rules ()
     ((_ h1 h2)
       (set! h1 (hash:merge h1 h2)))))
+
+(define (hash:deep-merge h1 h2) "merges two hash maps deeply"
+  (cond
+    ((list? h1) (++ h1 h2))
+    ((hash-map? h1)
+      (let ((not-there (apply make-hash (hash:kv-filter (lambda (kv) (not (in? h1 (car kv)))) h2)))
+            (filt (lambda (kv)
+                   (let ((fst (car kv)))
+                     (if (in? h2 fst)
+                       (list fst (hash:deep-merge (cadr kv) (h2 fst)))
+                       kv)))))
+        (apply make-hash (++ (hash:kv-map filt h1) not-there))))
+    (else h2)))
