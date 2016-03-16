@@ -3,8 +3,13 @@
 
 (define (list:matches? pred? l) "check whether there is an element in l that matches the predicate pred?"
   (cond ((null? l) #f)
-  ((pred? (car l)) #t)
-  (else (list:matches? pred? (cdr l)))))
+        ((pred? (car l)) #t)
+        (else (list:matches? pred? (cdr l)))))
+
+(define (list:find f l) "find element that matches f in l; otherwise get nil"
+  (cond ((null? l) (nil))
+        ((f (car l)) (car l))
+        (else (list:find f (cdr l)))))
 
 (define (list:index l el) "get index of el in l; otherwise get -1"
   (define (internal l el c)
