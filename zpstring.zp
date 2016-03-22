@@ -115,9 +115,11 @@
   "map function f over string s"
   (list->string (map f (string->list s))))
 
-(define (string:reduce f acc s)
+(define (string:reduce f acc . s)
   "reduce string s using function f and accumulator acc"
-  (reduce f acc (string->list s)))
+  (if (null? s)
+    (reduce f (string->list acc))
+    (reduce f acc (string->list (car s)))))
 
 (define (string:filter f s)
   "filter string s using function f"

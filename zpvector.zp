@@ -12,13 +12,16 @@
 (define (vector:mapcat f v) "maps f over and concats a vector v"
   (apply ++ (vector:map f v)))
 
-(define (vector:reduce f acc v) "reduces with f over vector v; using accumulator acc"
-  (let loop ((i 0)
-             (len (vector:length v))
-             (acc acc))
-    (if (> len i)
-      (loop (add1 i) len (f acc (v i)))
-      acc)))
+(define (vector:reduce f acc . v) "reduces with f over vector v; using accumulator acc"
+  (if (null? v)
+    (vector:reduce f (vector:head acc) (vector:tail acc))
+    (let ((v (car v)))
+      (let loop ((i 0)
+                 (len (vector:length v))
+                 (acc acc))
+        (if (> len i)
+          (loop (add1 i) len (f acc (v i)))
+          acc)))))
 
 (define (vector:filter f v) "filters with f over vector v"
   (let loop ((i 0)
@@ -141,13 +144,16 @@
       (loop (add1 i) len (+= new (f (byte-vector:ref b i))))
       new)))
 
-(define (byte-vector:reduce f acc b) "map f over bytevector b using accumulator acc"
-  (let loop ((i 0)
-             (len (byte-vector:length b))
-             (acc acc))
-    (if (> len i)
-      (loop (add1 i) len (f acc (byte-vector:ref b i)))
-      acc)))
+(define (byte-vector:reduce f acc . b) "map f over bytevector b using accumulator acc"
+  (if (null? b)
+    (byte-vector:reduce f (byte-vector:head acc) (byte-vector:tail acc))
+    (let ((b (car b)))
+      (let loop ((i 0)
+                 (len (byte-vector:length b))
+                 (acc acc))
+        (if (> len i)
+          (loop (add1 i) len (f acc (byte-vector:ref b i)))
+          acc)))))
 
 (define (byte-vector:filter f b) "filters with f over bytevector b"
   (let loop ((i 0)

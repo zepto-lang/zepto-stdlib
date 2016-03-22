@@ -1,3 +1,8 @@
+(define reduce
+  (case-lambda
+    ((f acc l) (fold f acc l))
+    ((f l) (fold f (car l) (cdr l)))))
+
 (define (list . objs) "creates a list from objects"
   objs)
 
