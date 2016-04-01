@@ -16,6 +16,7 @@
 (load "zpcont.zp")
 (load "zpconversion.zp")
 (load "zphash.zp")
+(load "zpnumbers.zp")
 (load "zpstring.zp")
 (load "zpvector.zp")
 

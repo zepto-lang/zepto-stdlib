@@ -1,0 +1,7 @@
+(define (integer:digits num)
+  (define (internal n l)
+    (let ((x (/ n 10)))
+      (if (> x 0)
+        (internal x (cons (mod n 10) l))
+        (cons (mod n 10) l))))
+  (internal num []))

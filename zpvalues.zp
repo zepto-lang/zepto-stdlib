@@ -1,4 +1,4 @@
-(defprotocol equality equal?)
+(defprotocol equality (equal? 2))
 (defimpl equality vector? ((equal? eq?)))
 (defimpl equality byte-vector? ((equal? eq?)))
 (defimpl equality list? ((equal? eq?)))
@@ -9,7 +9,7 @@
 (defimpl equality boolean? ((equal? eq?)))
 (defimpl equality port? ((equal? eq?)))
 
-(defprotocol ord compare)
+(defprotocol ord (compare 2))
 (defimpl ord number? ((compare (lambda (a b) (if (= a b) 0 (if (< a b) -1 1))))))
 
 (define (lt a b) (eq? (compare a b) -1))
