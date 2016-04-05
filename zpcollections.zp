@@ -9,7 +9,7 @@
          ((pop-left string:head)
           (append-left (lambda (s el) (++ (string el) v)))))
 (defimpl left-collec list?
-         ((pop-left car)
+         ((pop-left list:car)
           (append-left list:append)))
 
 (defprotocol right-collec (pop-right 1))
@@ -35,6 +35,21 @@
           (if (collec? ret)
             (get-from ret (cdr elems) dflt)
             (if (null? (cdr elems)) ret dflt)))))))
+
+(defprotocol traversable-collec (car 1) (cdr 1))
+(defimpl traversable-collec list? ((car list:car) (cdr list:cdr)))
+(defimpl traversable-collec vector? ((car vector:head) (cdr vector:tail)))
+(defimpl traversable-collec byte-vector? ((car byte-vector:head) (cdr byte-vector:tail)))
+(defimpl traversable-collec string? ((car string:head) (cdr string:tail)))
+
+(define head car)
+(define tail cdr)
+(define (genmap func l) 
+  (define (internal l acc)
+    (if (= (length l) 0)
+      acc
+      (internal (cdr l) (++ acc (func (car l))))))
+  (internal l []))
 
 (defprotocol collec (length 1) (in? 2) (get-from :overloaded))
 (defimpl collec vector?

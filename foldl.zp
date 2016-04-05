@@ -1,4 +1,4 @@
 (define (foldl func accum l) "fold left"
   (if (null? l)
     accum
-    (foldl func (func accum (car l)) (cdr l))))
+    (foldl func (func accum (list:car l)) (list:cdr l))))

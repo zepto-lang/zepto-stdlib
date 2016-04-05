@@ -1,7 +1,5 @@
 (define fold foldl)
 (define ceil ceiling)
-(define head car)
-(define tail list:tail)
 (define all? every?)
 (define iota range)
 (define char:downcase char:lower-case)

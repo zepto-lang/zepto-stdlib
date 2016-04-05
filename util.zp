@@ -21,7 +21,7 @@
 (define (foldr func end l) "fold right"
   (if (null? l)
     end
-    (func (car l) (foldr func end (cdr l)))))
+    (func (list:car l) (foldr func end (list:cdr l)))))
 
 (define (foldr1 func l) "fold right, assume first element is accumulator"
   (foldr func (car l) (cdr l)))
