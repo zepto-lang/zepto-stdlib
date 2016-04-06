@@ -51,6 +51,14 @@
       (internal (cdr l) (++ acc (func (car l))))))
   (internal l []))
 
+(define (take-nth n l)
+  (define (internal i acc l)
+    (if (null? l)
+      acc
+      (let ((acc (if (= (mod i n) 0) (++ acc (car l)) acc)))
+        (internal (add1 i) acc (cdr l)))))
+  (internal 0 [] l))
+
 (defprotocol collec (length 1) (in? 2) (get-from :overloaded))
 (defimpl collec vector?
          ((length vector:length)
