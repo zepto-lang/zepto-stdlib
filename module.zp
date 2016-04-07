@@ -8,7 +8,7 @@
 (load "char.zp")
 (load "delay.zp")
 (load "io.zp")
-(load "marsaglia.zp")
+;(load "marsaglia.zp")
 (load "math.zp")
 (load "pairs.zp")
 (load "random.zp")
