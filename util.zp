@@ -19,7 +19,7 @@
     (f (apply g arg))))
 
 (define (foldr func end l) "fold right"
-  (if (null? l)
+  (if (list:null? l)
     end
     (func (list:car l) (foldr func end (list:cdr l)))))
 
@@ -70,8 +70,8 @@
 (define (falsy? val) "is object falsy: empty if collection, 0 if number, #f if boolean"
   (cond
     ((boolean? val) (not val))
-    ((hash-map? val) (null? (hash:keys val)))
-    ((list? val) (null? val))
+    ((hash-map? val) (list:null? (hash:keys val)))
+    ((list? val) (list:null? val))
     ((vector? val) (eqv? {} val))
     ((byte-vector? val) (eqv? #() val))
     ((string? val) (eqv? "" val))

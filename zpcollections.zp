@@ -36,20 +36,14 @@
             (get-from ret (cdr elems) dflt)
             (if (null? (cdr elems)) ret dflt)))))))
 
-(defprotocol traversable-collec (car 1) (cdr 1))
-(defimpl traversable-collec list? ((car list:car) (cdr list:cdr)))
-(defimpl traversable-collec vector? ((car vector:head) (cdr vector:tail)))
-(defimpl traversable-collec byte-vector? ((car byte-vector:head) (cdr byte-vector:tail)))
-(defimpl traversable-collec string? ((car string:head) (cdr string:tail)))
+(defprotocol traversable-collec (car 1) (cdr 1) (null? 1))
+(defimpl traversable-collec list? ((car list:car) (cdr list:cdr) (null? list:null?)))
+(defimpl traversable-collec vector? ((car vector:head) (cdr vector:tail) (null? vector:empty?)))
+(defimpl traversable-collec byte-vector? ((car byte-vector:head) (cdr byte-vector:tail) (null? byte-vector:empty?)))
+(defimpl traversable-collec string? ((car string:head) (cdr string:tail) (null? string:empty?)))
 
 (define head car)
 (define tail cdr)
-(define (genmap func l) 
-  (define (internal l acc)
-    (if (= (length l) 0)
-      acc
-      (internal (cdr l) (++ acc (func (car l))))))
-  (internal l []))
 
 (define (take-nth n l)
   (define (internal i acc l)

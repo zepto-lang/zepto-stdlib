@@ -13,9 +13,9 @@
                           (funs (hash:kv-filter
                                   (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
                                   (if (truthy? impls) impls (make-hash)))))
-                    (not (null? funs))))
+                    (not (list:null? funs))))
                 env)
-          (map
+          (foreach
             (lambda (x)
               (define strx (symbol->string (list:car x)))
               (eval `(define ,(list:car x) (lambda args
@@ -28,7 +28,7 @@
                               (let ((funs (hash:kv-filter
                                             (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
                                             impls)))
-                                (if (null? funs)
+                                (if (list:null? funs)
                                   (error "No implementation of protocol" (typeof arg)
                                          "found that matches" ,str)
                                   (apply ((list:car (list:cdr (list:car funs))) ,strx) args))))
@@ -46,7 +46,7 @@
             (nfuncs (map (lambda (x) (list (symbol->string (list:car x))
                                            (eval (macro-expand (list:car (list:cdr x))))))
                          'funcs)))
-        (if (null? wrong-forms)
+        (if (list:null? wrong-forms)
           (if (nil? proto)
             (error "protocol" 'name "not defined.")
             (if (eq? proto given)
