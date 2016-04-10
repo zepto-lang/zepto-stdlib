@@ -5,6 +5,9 @@
 (define char:downcase char:lower-case)
 (define char:upcase char:upper-case)
 
+(define true #t)
+(define false #f)
+
 (define (ok? x) "is arg ok"
   (eq? x :ok))
 
