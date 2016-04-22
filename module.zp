@@ -18,6 +18,7 @@
 (load "zphash.zp")
 (load "zpnumbers.zp")
 (load "zpstring.zp")
+(load "zpvalues.zp")
 (load "zpvector.zp")
 
 (load "srfi/srfi-9.zp")

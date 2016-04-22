@@ -1,0 +1,34 @@
+(define-struct stream (list))
+
+(define (stream:empty)
+  (stream:make-stream (delay [])))
+
+(define (stream:empty?)
+  (eq? (stream:get-list l) []))
+
+(define-syntax stream:cons
+  (syntax-rules ()
+    ((_ a b)
+      (stream:make-stream (delay (cons (delay a) (stream:get-list b)))))))
+
+(define (stream:car l) "get the head of the stream (forced)"
+  (force (car (force (stream:get-list l)))))
+
+(define (stream:cdr l) "get the tail of the lazy list"
+  (stream:make-stream (cdr (force (stream:get-list l)))))
+
+(defimpl extensible-collec stream:stream?
+  ((append (lambda (x y)
+    (let ((x (stream:get-list x)))
+      (if (null? (force x)) y (stream:make-stream (++ x (stream:get-list y)))))))
+  (extend (lambda (x y)
+    (let ((x (stream:get-list x)))
+      (if (null? (force x)) y (stream:make-stream (+= x (stream:get-list y)))))))))
+
+(define (stream:reverse l) "reverse the stream"
+  (define (internal l r)
+    (let ((x (force (stream:get-list l))))
+      (if (null? x)
+        r
+        (internal (stream:cdr l) (stream:cons (stream:car l) r)))))
+  (internal l (stream:empty)))

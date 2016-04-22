@@ -36,7 +36,7 @@
         (i (randint 0 (length l))))
   (if (< (length l) 2)
     l
-    (let loop ((left []) (right []) (h (list:ref l i)) (t (list:remove-n l i)))
+    (let loop ((left []) (right []) (h (get-from l i)) (t (list:remove-n l i)))
       (if (null? t)
         (++ (++ (sort:quicksort left ord) (list h)) (sort:quicksort right ord))
         (if (ord (car t) h)

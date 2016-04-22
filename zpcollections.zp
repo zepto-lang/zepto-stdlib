@@ -23,6 +23,15 @@
 (defimpl extensible-collec string? ((append +=) (extend ++)))
 (defimpl extensible-collec list? ((append +=) (extend ++)))
 
+(define (collec-val:found? val)
+  (cadr val))
+(define (collec-val:val val)
+  (car val))
+(define (collec-val:found val)
+  (list val #t))
+(define (collec-val:not-found)
+  (list (nil) #f))
+
 (define (collec:get-from-skeleton f)
   "a skeleton to nicely integrate your collection into the get-from world;
    expects a function that takes the collection, an element to get and a default return element"
@@ -31,10 +40,13 @@
            (elems (if (not (list? elems)) (list elems) elems)))
       (if (null? elems)
         collec
-        (let ((ret (f collec (car elems) dflt)))
-          (if (collec? ret)
-            (get-from ret (cdr elems) dflt)
-            (if (null? (cdr elems)) ret dflt)))))))
+        (let* ((ret (f collec (car elems)))
+               (stop (not (collec-val:found? ret)))
+               (ret (collec-val:val ret)))
+          (cond
+            (stop dflt)
+            ((collec? ret) (get-from ret (cdr elems) dflt))
+            (else (if (null? (cdr elems)) ret dflt))))))))
 
 (defprotocol traversable-collec (car 1) (cdr 1) (null? 1))
 (defimpl traversable-collec list? ((car list:car) (cdr list:cdr) (null? list:null?)))
@@ -57,25 +69,37 @@
 (defimpl collec vector?
          ((length vector:length)
           (in? vector:in?)
-          (get-from (collec:get-from-skeleton (lambda (v i dflt) (if (> (length v) i) (v i) dflt))))))
+          (get-from (collec:get-from-skeleton
+                      (lambda (v i)
+                        (if (> (length v) i) (collec-val:found (v i)) (collec-val:not-found)))))))
 (defimpl collec byte-vector?
          ((length byte-vector:length)
           (in? byte-vector:in?)
-          (get-from (collec:get-from-skeleton (lambda (b i dflt) (if (> (length b) i) (b i) dflt))))))
+          (get-from (collec:get-from-skeleton
+                      (lambda (v i)
+                        (if (> (length v) i) (collec-val:found (v i)) (collec-val:not-found)))))))
 (defimpl collec list?
          ((length list:length)
           (in? list:in?)
-          (get-from (collec:get-from-skeleton (lambda (l i dflt)
-                                                (if (> (length l) i) (list:ref l i) dflt))))))
+          (get-from (collec:get-from-skeleton
+                      (lambda (l i)
+                        (if (> (length l) i)
+                          (collec-val:found (list:ref l i))
+                          (collec-val:not-found)))))))
 (defimpl collec hash-map?
          ((length (lambda (x) (list:length (hash:keys x))))
           (in? hash:contains?)
-          (get-from (collec:get-from-skeleton (lambda (h el dflt) (if (in? h el) (h el) dflt))))))
+          (get-from (collec:get-from-skeleton
+                      (lambda (h el)
+                        (if (in? h el) (collec-val:found (h el)) (collec-val:not-found)))))))
 (defimpl collec string?
          ((length string:length)
           (in? string:in?) 
-          (get-from (collec:get-from-skeleton (lambda (s i dflt)
-                                                (if (> (length s) i) (string:ref s i) dflt))))))
+          (get-from (collec:get-from-skeleton
+                      (lambda (s i)
+                        (if (> (length s) i)
+                          (collec-val:found (string:ref s i))
+                          (collec-val:not-found)))))))
 
 (defprotocol summable (gsum 1))
 (defimpl summable vector? ((gsum (lambda (x) (math:list-sum (vector->list x))))))

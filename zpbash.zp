@@ -1,5 +1,5 @@
 (define (bash:command x . args) "runs a bash command x and returns its' stdout"
-  (cadr (if (null? args) (system x) (system x args))))
+  (cadr (if (null? args) (system x) (system x (car args)))))
 (define (bash:ls . args) (apply bash:command (cons "ls" args)))
 (define (bash:pwd) (bash:command "pwd"))
 (define (bash:uname) (bash:command "uname"))
