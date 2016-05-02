@@ -1,0 +1,31 @@
+(define-syntax define-compose
+  (syntax-rules ()
+    ((_ name f ...)
+      (define name (compose f ...)))))
+
+(define-syntax arg-count
+  (syntax-rules ()
+    ((_ n expr)
+      (lambda args
+        (let ((n (length args)))
+          (apply expr args))))))
+
+(define-syntax define-arg-count
+  (syntax-rules ()
+    ((_ name n expr)
+      (define name (arg-count n expr)))))
+
+(define (until-fixpoint f)
+  (define (fixpoint-f v)
+    (let ((fv (f v)))
+      (if (eq? fv v)
+          fv
+          (fixpoint-f fv))))
+  fixpoint-f)
+
+(define (join . fs)
+  (define (app f . vs) (apply f vs))
+  (lambda vs (apply values (for-each app fs vs))))
+
+(define (join* f)
+  (lambda vs (apply values (map f vs))))

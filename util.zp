@@ -14,9 +14,11 @@
   (lambda z
     (apply f (++ y z))))
 
-(define (compose f g) "compose two functions"
-  (lambda (arg)
-    (f (apply g arg))))
+(define (compose f g . args) "compose two functions"
+  (let ((constructed (lambda args (f (apply g args)))))
+    (if (null? args)
+      constructed
+      (apply compose (cons constructed args)))))
 
 (define (foldr func end l) "fold right"
   (if (list:null? l)
@@ -57,13 +59,13 @@
 
 (define (for-each proc . lists) "applies a function to a bunch of arguments"
   (if (null? lists)
-      #t
+      []
       (if (any? null? lists)
-        #t
+        []
         (let* ((unz (apply unzip1-with-cdr lists))
                (cars (car unz))
                (cdrs (cdr unz)))
-          (begin
+          (cons
             (apply proc cars)
             (apply for-each (cons proc cdrs)))))))
 
