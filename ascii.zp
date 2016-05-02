@@ -1,102 +1,98 @@
-(ƒ (ascii:cowsay what) "what does the cow say?"
+(module "ascii"
+  (export
+    (list "cowsay" cowsay)
+    (list "standard-fish" standard-fish)
+    (list "non-standard-fish" non-standard-fish)
+    (list "smiley" smiley))
 
-  (ƒ (cow-interpolate-fill l what)
+  (cow-interpolate-fill (lambda (l what)
     (if (< l 30)
-        (cow-interpolate-fill (+ l 1) (string:append what " "))
-        what))
+        (cow-interpolate-fill (add1 l) (string:append what " "))
+        what)))
 
-  (ƒ (cow-good-substring what)
-    (let ((l (- (string:length what) 1))
-          (x (string:ref what (- (string:length what) 1))))
+  (cow-good-substring (lambda (what)
+    (let ((l (sub1 (string:length what)))
+          (x (string:last what)))
       (if (> (string:find what #\space) -1)
         (if (char=? x #\space)
           what
           (cow-good-substring (substring what 0 l)))
-        what)))
+        what))))
 
-  (ƒ (cow-interpolate what)
-    (let ((x (cow-good-substring (substring what 0 30)))
-          (l (string:length what))
-          (xl (string:length (cow-good-substring (substring what 0 30)))))
+  (cow-interpolate (lambda (what)
+    (let* ((x (cow-good-substring (substring what 0 30)))
+           (l (string:length what))
+           (xl (string:length x)))
       (if (> l  30)
-        (string:append
-          (string:append
-            (string:append "|   "
-              (cow-interpolate-fill xl x))
-            "   |\n")
-          (cow-interpolate (substring what xl l)))
-        (string:append
-          (string:append "|   "
-            (cow-interpolate-fill l what))
-          "   |\n"))))
+        (++ "|   " (cow-interpolate-fill xl x) "   |\n" (cow-interpolate (substring what xl l)))
+        (++ "|   " (cow-interpolate-fill l what) "   |\n")))))
 
-  (begin
-    (display " ___________________________________\n")
-    (display "/                                   \\\n")
-    (display (cow-interpolate (string:substitute what "\n" " ")))
-    (display "\\                                   /\n")
-    (display " -----------------------------------\n")
-    (display "     \\   ^__^\n")
-    (display "      \\  (oo)\\_______\n")
-    (display "         (__)\\       )\\/\\\n")
-    (display "             ||----w |\n")
-    (display "             ||     ||")))
+  (cowsay (lambda (what)
+    (begin
+      (display " ___________________________________\n")
+      (display "/                                   \\\n")
+      (display (cow-interpolate (string:substitute what "\n" " ")))
+      (display "\\                                   /\n")
+      (display " -----------------------------------\n")
+      (display "     \\   ^__^\n")
+      (display "      \\  (oo)\\_______\n")
+      (display "         (__)\\       )\\/\\\n")
+      (display "             ||----w |\n")
+      (display "             ||     ||"))))
 
-;; The smiley was found on http://loveascii.com/smilies.html
-(ƒ (ascii:smiley) "be happy"
-  (begin
-    (display "    .-'\"\"\"\"\"'-.\n")
-    (display "  .'           `.\n")
-    (display " /   o      o    \\\n")
-    (display ":                 :\n")
-    (display "|                 |\n")
-    (display ":   \\        /    :\n")
-    (display " \\   `.____.'    /\n")
-    (display "  `.           .'\n")
-    (display "    `-._____.-'")))
+  (smiley (lambda ()
+    (begin
+      (display "    .-'\"\"\"\"\"'-.\n")
+      (display "  .'           `.\n")
+      (display " /   o      o    \\\n")
+      (display ":                 :\n")
+      (display "|                 |\n")
+      (display ":   \\        /    :\n")
+      (display " \\   `.____.'    /\n")
+      (display "  `.           .'\n")
+      (display "    `-._____.-'"))))
 
-(define (ascii:standard-fish . direction) "everyone ought to have one; or so I heard"
-  (define (left-fish)
+  (left-fish (lambda ()
     (begin
       (display " _J\"\"-.\n")
       (display "/o )   \\ ,';\n")
       (display "\\ ,'    ;  /\n")
-      (display " \"-.__.'\"\\_;")))
+      (display " \"-.__.'\"\\_;"))))
 
-  (define (right-fish)
+  (right-fish (lambda ()
     (begin
       (display "     .-\"\"L_\n")
       (display ";`, /   ( o\\\n")
       (display "\\  ;    `, \/\n")
-      (display ";_/\"`.__.-\"")))
+      (display ";_/\"`.__.-\""))))
 
-  (define (fish-bubbles)
+  (fish-bubbles (lambda ()
     (begin
       (display "              o O\n")
       (display "     .-\"\"L_ O  o\n")
       (display ";`, /   ( o\\  o\n")
       (display "\\  ;    `, \/\n")
-      (display ";_/\"`.__.-\"")))
+      (display ";_/\"`.__.-\""))))
 
-  (cond ((null? direction) (left-fish))
-        ((eq? (car direction) :left) (left-fish))
-        ((eq? (car direction) :right) (right-fish))
-        ((eq? (car direction) :bubbles) (fish-bubbles))
-        (else (display (list "Unrecognized option: " direction)))))
+  (standard-fish (lambda direction
+    (cond ((or (null? direction) (eq? (car direction) :left)) (left-fish))
+          ((eq? (car direction) :right) (right-fish))
+          ((eq? (car direction) :bubbles) (fish-bubbles))
+          (else (display (list "Unrecognized option: " direction))))))
 
-;; The goose was found on http://www.retrojunkie.com/asciiart/animals/ducks.htm
-(ƒ (ascii:non-standard-fish) "this might not be what you expect"
-  (begin
-    (display "                        __\n")
-    (display "                      /` ,\\__\n")
-    (display "                     |    ).-'\n")
-    (display "                    / .--'\n")
-    (display "                   / /\n")
-    (display "     ,      _.==''`  \\\n")
-    (display "   .'(  _.='         |\n")
-    (display "  {   ``  _.='       |\n")
-    (display "   {    \\`     ;    /\n")
-    (display "    `.   `'=..'  .='\n")
-    (display "      `=._    .='\n")
-    (display "   jgs  '-`\\\\`__\n")
-    (display "            `-._{\n")))
+  (non-standard-fish (lambda ()
+    "The goose was found on http://www.retrojunkie.com/asciiart/animals/ducks.htm"
+    (begin
+      (display "                        __\n")
+      (display "                      /` ,\\__\n")
+      (display "                     |    ).-'\n")
+      (display "                    / .--'\n")
+      (display "                   / /\n")
+      (display "     ,      _.==''`  \\\n")
+      (display "   .'(  _.='         |\n")
+      (display "  {   ``  _.='       |\n")
+      (display "   {    \\`     ;    /\n")
+      (display "    `.   `'=..'  .='\n")
+      (display "      `=._    .='\n")
+      (display "   jgs  '-`\\\\`__\n")
+      (display "            `-._{\n")))))
