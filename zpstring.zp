@@ -154,3 +154,9 @@
 
 (define (string:remove-newlines str) "removes all newline characters from a string"
   (string:filter (lambda (x) (not (or (eq? x #\newline) (eq? x #\carriage)))) str))
+
+(define (string:drop-while f s) "drops elements from s as long as f matches"
+  (list->string (list:drop-while f (string->list s))))
+
+(define (string:take-while f s) "takes elements from s as long as f matches"
+  (list->string (list:take-while f (string->list s))))
