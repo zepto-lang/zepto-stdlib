@@ -157,3 +157,9 @@
   (hash:kv-reduce (lambda (acc kv) (if (string:starts-with (car kv) str) (+= acc kv) acc))
                   []
                   (env->hashmap (current-env))))
+
+  (define-syntax forever
+    (syntax-rules ()
+      ((_ body ...)
+        (letrec ((forever-fun (lambda () (begin body ... (forever-fun)))))
+          (forever-fun)))))
