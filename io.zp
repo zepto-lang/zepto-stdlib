@@ -66,3 +66,6 @@
       (if (or (boolean? char) (eq? char #\newline))
         line
         (loop (++ line char) (read-char port)))))
+
+(define (file-exists? file) "test whether file exists"
+  (not (boolean? (open-input-file file))))
