@@ -210,6 +210,12 @@
   (syntax-rules ()
     ((_ v i f) (vector:set! v i (f (v i))))))
 
+(define (vector:set v i x) "sets vector non-destructively"
+  (vector:set! v i x))
+
+(define (vector:update v i f) "update vector non-destructively"
+  (vector:update! v i f))
+
 (define-syntax byte-vector:update!
   (syntax-rules ()
     ((_ v i f) (byte-vector:set! v i (f (v i))))))
