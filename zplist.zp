@@ -100,6 +100,15 @@
       (else (internal (tail il) el (++ traversed (car il))))))
   (internal l el []))
 
+(define (list:insert l i el) "adds element el into list l at index i"
+  (define (internal i l acc)
+    (if (null? l)
+      (++ acc el)
+      (if (eq? 0 i)
+        (++ acc el l)
+        (internal (sub1 i) (tail l) (++ acc (head l))))))
+  (internal i l []))
+
 (define (list:tail l) "get tail of a list"
   (cdr l))
 
