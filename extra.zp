@@ -158,8 +158,20 @@
                   []
                   (env->hashmap (current-env))))
 
-  (define-syntax forever
-    (syntax-rules ()
-      ((_ body ...)
-        (letrec ((forever-fun (lambda () (begin body ... (forever-fun)))))
-          (forever-fun)))))
+(define-syntax forever
+  (syntax-rules ()
+    ((_ body ...)
+      (letrec ((forever-fun (lambda () (begin body ... (forever-fun)))))
+        (forever-fun)))))
+
+(define-syntax λ
+  (syntax-rules ()
+    ((_ args body)
+      (lambda args body))))
+
+(define-syntax ƒ
+  (syntax-rules ()
+    ((_ args body)
+      (if (list? 'args)
+        (define args body)
+        (error "function head must be a list, was" 'args)))))
