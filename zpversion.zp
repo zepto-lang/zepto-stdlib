@@ -1,0 +1,5 @@
+(define zepto:major (car (zepto:version)))
+(define zepto:minor (cadr (zepto:version)))
+(define zepto:patch (caddr (zepto:version)))
+(define zepto:version-str (string:join (map ->string (zepto:version)) "."))
+(define zepto:ghc-str (apply string (list:intercalate (string->list (->string (zepto:ghc))) #\.)))

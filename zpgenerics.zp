@@ -70,6 +70,16 @@
               (++ (substring s 0 (- (string:length s) 2)) "}"))))))
 (defimpl stringify string? ((->string id)))
 (defimpl stringify number? ((->string number->string)))
+(defimpl stringify pair?
+         ((->string
+            (lambda (el)
+              (if (null? el)
+                "pair[]"
+                (++ "pair["
+                     (reduce (lambda (acc x) (++ acc ", " (->string x)))
+                             (->string (head el))
+                             (tail el))
+                     "]"))))))
 (defimpl stringify list?
          ((->string
             (lambda (el)
@@ -116,6 +126,10 @@
 (defimpl stringify port? ((->string (lambda (x) "<port"))))
 (defimpl stringify char? ((->string string)))
 (defimpl stringify boolean? ((->string (lambda (el) (if el "true" "false")))))
+(defimpl stringify procedure? ((->string (lambda (p) (++ "<procedure: " (doc p) ">")))))
+(defimpl stringify primitive? ((->string (lambda (p) (++ "<primitive: " (doc p) ">")))))
+(defimpl stringify function? ((->string (lambda (p) (++ "<function: " (doc p) ">")))))
+(defimpl stringify env? ((->string (lambda (env) "<env>"))))
 
 (define (pprint obj . args)
   "pretty print a data object obj; the output is configurable via a hashmap args;

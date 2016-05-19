@@ -70,10 +70,13 @@
 (define (file-exists? file) "test whether file exists"
   (not (boolean? (open-input-file file))))
 
-(define (escape-sequence code . output) "sends escape sequence to output channel (default: stdout)"
-  (display (++ (string #\x1b) "[" (->string code) "m") (get-from output 0 :stdout)))
+(define (escape-sequence code str? output) "sends escape sequence to output channel (default: stdout)"
+  (let ((str (++ (string #\x1b) "[" (->string code) "m")))
+    (if str?
+      str
+      (display str output))))
 
-(define (color col . output) "colors output to output channel (default: stdout)"
+(define (color col . args) "colors output to output channel (default: stdout)"
   (define colors #{:black 30
                    :red 31
                    :green 32
@@ -97,6 +100,8 @@
                    :bg-magenta 45
                    :bg-cyan 46
                    :bg-white 47})
-  (let ((output (get-from output 0 :stdout))
-        (col (if (number? col) col (colors col))))
-      (escape-sequence col output)))
+  (let* ((args (if (truthy? args) (car args) #{}))
+         (output (get-from args :output :stdout))
+         (str? (get-from args :to-str #f))
+         (col (if (number? col) col (colors col))))
+      (escape-sequence col str? output)))

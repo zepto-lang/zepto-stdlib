@@ -20,6 +20,7 @@
 (load "zpstring.zp")
 (load "zpvalues.zp")
 (load "zpvector.zp")
+(load "zpversion.zp")
 
 (load "srfi/srfi-9.zp")
 (load "srfi/srfi-55.zp")

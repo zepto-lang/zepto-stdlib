@@ -109,6 +109,14 @@
         (internal (sub1 i) (tail l) (++ acc (head l))))))
   (internal i l []))
 
+(define (list:intercalate l el) "intercalates element el into list l"
+  (define (internal l acc)
+    (cond 
+      ((null? l) acc)
+      ((eq? (length l) 1) (++ acc (car l)))
+      (else (internal (cdr l) (++ acc (car l) el)))))
+  (internal l []))
+
 (define (list:tail l) "get tail of a list"
   (cdr l))
 

@@ -153,10 +153,10 @@
   (syntax-rules ()
     ((_ ...) (nil))))
 
-(define (zepto:get-bindings str) "get the bindings that match the prefix"
+(define (zepto:get-bindings str . env) "get the bindings that match the prefix"
   (hash:kv-reduce (lambda (acc kv) (if (string:starts-with (car kv) str) (+= acc kv) acc))
                   []
-                  (env->hashmap (current-env))))
+                  (env->hashmap (if (null? env) (current-env) (car env)))))
 
 (define-syntax forever
   (syntax-rules ()
