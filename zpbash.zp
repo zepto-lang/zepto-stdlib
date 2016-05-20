@@ -11,12 +11,12 @@
 
 (define (bash:unix-timestamp)
   "returns the current unix timestamp as a number"
-  (string->number (bash:command "date" "+%s")))
+  (string->number (bash:command "date" ["+%s"])))
 
 (define (bash:unix-timestamp-with-nano)
   "returns a list constituting of the unix timestamp and current nanoseconds;
    only works if the bash date (or gdate) command supports the %N option"
-  (let* ((stamp (bash:command "date" "+%s%N"))
+  (let* ((stamp (bash:command "date" ["+%s%N"]))
          (stampl (- (length stamp) 1))
          (divide (- stampl 9)))
     (if (char-ci=? (string:ref stamp (- stampl 1)) #\N)
