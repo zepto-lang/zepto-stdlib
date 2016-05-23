@@ -175,7 +175,7 @@
   (byte-vector:ref b 0))
 
 (define (byte-vector:tail b) "gets rest of bytevector"
-  (byte-vector:subvector b 1 (sub1 (length b))))
+  (byte-vector:subvector b 1 (length b)))
 
 (define (byte-vector:empty? b) "is bytevector empty?"
   (eq? (byte-vector:length b) 0))
