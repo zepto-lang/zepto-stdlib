@@ -67,6 +67,14 @@
 
 (define list:drop (flip indexed-tail))
 
+(define (list:take n l)
+  (define (internal l acc n)
+    (if (or (null? l) (> 1 n))
+      acc
+      (internal (cdr l) (++ acc (car l)) (sub1 n))))
+  (internal l [] n))
+
+
 (define (list:sublist l from to) "get sublist of list from element from (inclusive) to element to (exclusive)"
   (define (_internal l new f t)
     (cond
