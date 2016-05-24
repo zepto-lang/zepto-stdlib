@@ -66,7 +66,7 @@
                    :reset 0
                    :none 0
                    :bold 1
-                   italic 3
+                   :italic 3
                    :underline 4
                    :blink-slow 5
                    :blink-rapid 6
