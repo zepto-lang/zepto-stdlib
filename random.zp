@@ -14,7 +14,7 @@
 (define (randint . args) "generate a random integer between the given args (the lower range is optional)"
   (cond ((= (length args) 1) (randint 0 (car args)))
         ((= (length args) 2)
-         (+ (car args) (floor (* (random) (- (cadr args) (car args))))))
+         (+ (car args) (/ (* (floor (* 10000000000000000 (random))) (- (cadr args) (car args))) 10000000000000000)))
         (else (error "randint" "usage: (randint [lo] hi)"))))
 
 (define (random-list n lo . hi)
@@ -30,7 +30,7 @@
   "Returns a random prime between lo (inclusive) and hi (exclusive)."
   (if (> lo hi)
       (error "random-prime" "bad range: " lo hi))
-  (let* ((n (bitwise-or 1 (+ lo (randint (- hi lo)))))
+  (let* ((n (bitwise-or 1 (randint lo hi)))
          (x (math:prime-above n hi)))
         (if (truthy? x)
           x
@@ -38,7 +38,7 @@
 
 (define (random-prime-distinct-from lo hi p)
   "Variant of random-prime which ensures the result is
-   istinct from p."
+   distinct from p."
   (let ((q (random-prime lo hi)))
     (if (= q p)
         (random-prime-distinct-from lo hi p)

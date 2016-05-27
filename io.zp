@@ -38,12 +38,12 @@
       (map (lambda (arg) (begin (err " ") (err arg))) args)
       (newline :stderr))))
 
-(define (read-line port) "reads a line from the input port port"
+(define (read-line . port) "reads a line from the input port port"
   (let loop ((line "")
-             (char (read-char port)))
+             (char (apply read-char port)))
       (if (or (boolean? char) (eq? char #\newline))
         line
-        (loop (++ line char) (read-char port)))))
+        (loop (++ line char) (apply read-char port)))))
 
 (define (file-exists? file) "test whether file exists"
   (not (boolean? (open-input-file file))))
