@@ -219,3 +219,27 @@
 (define-syntax byte-vector:update!
   (syntax-rules ()
     ((_ v i f) (byte-vector:set! v i (f (v i))))))
+
+(define (integer->byte-vector n)
+  (cond
+   ((= n 0) b{0})
+   ((negative? n) (error "can't convert a negative integer to bytevector" n))
+   (else
+    (let lp ((n n) (res '()))
+      (if (= n 0)
+          (let* ((len (length res))
+                 (bv (make-byte-vector len 0)))
+            (do ((i 0 (+ i 1))
+                 (ls res (cdr ls)))
+                ((= i len) bv)
+              (byte-vector:set! bv i (make-small (car ls)))))
+          (lp (quotient n 256) (cons (remainder n 256) res)))))))
+
+(define (byte-vector->integer bv)
+  (let ((len (length bv)))
+    (let lp ((i 0) (n 0))
+      (if (>= i len)
+          n
+          (lp (add1 i)
+              (+ (arithmetic-shift n 8)
+                 (byte-vector:ref bv i)))))))

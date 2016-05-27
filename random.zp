@@ -11,11 +11,13 @@
         (/. seed m)))))
 
 
-(define (randint . args) "generate a random integer between the given args (the lower range is optional)"
-  (cond ((= (length args) 1) (randint 0 (car args)))
-        ((= (length args) 2)
-         (+ (car args) (/ (* (floor (* 10000000000000000 (random))) (- (cadr args) (car args))) 10000000000000000)))
-        (else (error "randint" "usage: (randint [lo] hi)"))))
+(define randint 
+  (let ((precomp (pow 2 1023)))
+    (lambda args "generate a random integer between the given args (the lower range is optional)"
+      (cond ((= (length args) 1) (randint 0 (car args)))
+            ((= (length args) 2)
+              (+ (car args) (/ (* (floor (* (random) precomp)) (- (cadr args) (car args))) precomp)))
+            (else (error "randint" "usage: (randint [lo] hi)"))))))
 
 (define (random-list n lo . hi)
   "generate a list of random integers between the given args (the lower range is optional)"
