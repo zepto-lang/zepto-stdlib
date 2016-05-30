@@ -1,3 +1,8 @@
+(define-syntax $
+  (syntax-rules ()
+    ((_ body ...)
+      (lambda (%) body ...))))
+
 ;; All implementations here are "borrowed" from 
 ;; husk-scheme (github.com/justinethier/husk-scheme).
 (define-syntax let
