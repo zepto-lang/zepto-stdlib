@@ -140,7 +140,7 @@
               acc
               (all-but (+= acc (car l)) (cdr l))))
   (if (null? x)
-    (y)
+    (if (procedure? y) (y) y)
     ((list:last x) (apply |> (cons y (all-but [] x))))))
 
 (define-syntax receive
