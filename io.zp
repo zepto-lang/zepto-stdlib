@@ -41,7 +41,7 @@
 (define (read-line . port) "reads a line from the input port port"
   (let loop ((line "")
              (char (apply read-char port)))
-      (if (or (boolean? char) (eq? char #\newline))
+      (if (or (boolean? char) (eq? char #\newline) (eq? char #\carriage))
         line
         (loop (++ line char) (apply read-char port)))))
 
