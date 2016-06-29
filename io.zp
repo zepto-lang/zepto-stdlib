@@ -35,7 +35,7 @@
     (begin
       (err "Error: ")
       (err reason)
-      (map (lambda (arg) (begin (err " ") (err arg))) args)
+      (map (lambda (arg) (begin (err " ") (err arg))) (reverse args))
       (newline :stderr))))
 
 (define (read-line . port) "reads a line from the input port port"

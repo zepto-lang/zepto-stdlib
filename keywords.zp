@@ -1,0 +1,33 @@
+(define (atom->symbol a)
+  (let ((s (cdr (->string a))))
+    (eval (macro-expand `(->symbol ,s)))))
+
+
+(define-syntax defkeywords
+  (syntax-rules ()
+    ((_ nargs kwargs body)
+      (defkeywords nargs kwargs "No documentation available" body))
+    ((_ nargs kwargs docs body)
+      (with-environment env
+        (begin 
+          (define (treat-keywords args)
+            (case (length args)
+              ((0 1) args)
+              (else
+                (let ((key  (car args))
+                      (meta (cadr args)))
+                  (if (eq? :default meta)
+                    (++ `((,key ,(caddr args))) (treat-keywords (cdddr args)))
+                    (++ `((,key)) (treat-keywords (cdr args))))))))
+          (eval (eval (macro-expand
+              `(define ,(reduce (flip cons) 'args (reverse 'nargs)) ,docs
+                  (begin
+                    (with-environment env
+                      (let ((dict (apply make-hash args)))
+                        (map
+                          ($ (let* ((k (car %))
+                                    (s (atom->symbol k)))
+                            (eval (+= [define] s
+                                      (if (in? dict k) (dict k) (eval (get-from k 1)))) env)))
+                          (quote ,(treat-keywords 'kwargs)))))
+                    ,'body))) env) env))))))

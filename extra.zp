@@ -175,3 +175,16 @@
       (if (list? 'args)
         (define args body)
         (error "function head must be a list, was" 'args)))))
+
+(define-syntax with-environment
+  (syntax-rules ()
+    ((with-environment var body)
+      (let ((var (current-env)))
+        body))))
+
+(define-syntax defmatch
+  (syntax-rules ()
+    ((defmatch ks vals)
+      (with-environment env
+        (map (lambda (kv) (eval `(define ,(list:car kv) ,(list:cdr kv)) env))
+             (zip-with cons 'ks vals))))))
