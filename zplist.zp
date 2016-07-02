@@ -243,3 +243,8 @@
   (if (zero? n)
       '()
       (cons n (countdown (- n 1)))))
+
+(define keep
+  (case-lambda
+    ((l) (map truthy? l))
+    ((pred l) (map pred l))))

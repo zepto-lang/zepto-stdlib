@@ -103,8 +103,8 @@
 
 (defprotocol summable (gsum 1))
 (defimpl summable vector? ((gsum (lambda (x) (math:list-sum (vector->list x))))))
-(defimpl summable vector? ((gsum (lambda (x) (math:list-sum (byte-vector->list x))))))
-(defimpl summable vector? ((gsum math:list-sum)))
+(defimpl summable byte-vector? ((gsum (lambda (x) (math:list-sum (byte-vector->list x))))))
+(defimpl summable list? ((gsum math:list-sum)))
 
 (defprotocol indexable (index-of 2))
 (defimpl indexable vector? ((index-of vector:index)))
