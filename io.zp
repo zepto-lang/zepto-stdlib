@@ -83,3 +83,17 @@
          (str? (get-from args :to-str #f))
          (col (if (number? col) col (colors col))))
       (escape-sequence col str? output)))
+
+(define-syntax with-output-to-file
+  (syntax-rules ()
+    ((_ fname fun)
+      (let ((f (open-output-file fname)))
+        (begin
+          (define d display)
+          (define w write)
+          (set! write (lambda (x) (w x f)))
+          (set! display (lambda (x) (d x f)))
+          (define res (fun))
+          (set! write w)
+          (set! display d)
+          res)))))
