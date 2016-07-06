@@ -188,3 +188,10 @@
       (with-environment env
         (map (lambda (kv) (eval `(define ,(list:car kv) ,(list:cdr kv)) env))
              (zip-with cons 'ks vals))))))
+
+(define-syntax defined?
+  (syntax-rules ()
+    ((_ name)
+      (let ((env (current-env)))
+        (env:in? env 'name)))))
+
