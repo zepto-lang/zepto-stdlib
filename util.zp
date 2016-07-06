@@ -82,3 +82,38 @@
 
 (define (truthy? val) "is object truthy: not empty if collection, !0 if number #t if boolean"
   (not (falsy? val)))
+
+(define (constantly x) "takes any number of arguments and returns the first argument"
+  (lambda args x))
+
+(define (juxt . fs)
+  "takes a set of functions and returns a function that is the juxtaposition
+of those functions. The returned function takes a variable number of args, and
+returns a vector containing the result of applying each given function to the
+args (left-to-right)."
+  (lambda args (map ($ (apply % args)) fs)))
+
+(define (memoize f)
+  "returns a memoized version of a referentially function. The
+memoized version of the function keeps a cache of the mapping from arguments
+to results and, when calls with the same arguments are repeated often, has
+higher performance at the expense of higher memory use.
+Caveat: he arguments must be simple values."
+  (let ((cache #{}))
+    (lambda args
+      (let ((sargs (make-simple-list args)))
+        (if (in? cache sargs)
+          (cache sargs)
+          (let ((res (apply f args)))
+            (begin
+              (hash:set! cache sargs res)
+              res)))))))
+
+(define (partition n c)
+  "returns a list of lists of n items each."
+  (define (internal acc tmp src)
+    (cond
+      ((null? src) acc)
+      ((eq? (length tmp) n) (internal (+= acc tmp) (list (car src)) (cdr src)))
+      (else (internal acc (++ tmp (car src)) (cdr src)))))
+  (internal [] [] c))

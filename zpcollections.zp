@@ -111,3 +111,56 @@
 (defimpl indexable byte-vector? ((index-of byte-vector:index)))
 (defimpl indexable list? ((index-of list:index)))
 (defimpl indexable string? ((index-of string:find)))
+
+(define (take n c)
+  "returns a list of the first n items in the collection c,
+or all items if there are fewer than n."
+  (define (internal i acc c)
+    (if (or (= i n) (null? c))
+      acc
+      (internal (add1 i) (++ acc (car c)) (cdr c))))
+  (internal 0 [] c))
+
+(define (drop n c)
+  "elides the first n values from the collection c."
+  (define (internal i c)
+    (if (null? c)
+      []
+      (if (= i n)
+        c
+        (internal (add1 i) (cdr c)))))
+  (internal 0 c))
+
+(define (take-while pred c)
+  "returns a list of all the first items of the collection c
+while pred is true."
+  (define (internal acc c)
+    (if (null? c)
+      acc
+      (let ((f (car c)))
+        (if (pred f)
+          (internal (++ acc f) (cdr c))
+          acc))))
+  (internal [] c))
+
+(define (drop-while pred c)
+  "elides values from the collection c as long as pred is true."
+  (define (internal c)
+    (if (and (not (null? c)) (pred (car c)))
+      (internal (cdr c))
+      c))
+  (internal c))
+
+(define (take-nth n c)
+ "returns a list of every nth item in the collection c."
+  (define (internal i acc c)
+    (if (null? c)
+      acc
+      (internal (add1 i) (++ acc (if (eq? 0 (mod i n)) (car c) [])) (cdr c))))
+  (internal 0 [] c))
+
+(define (split-at n c) "returns a list of [(take n c) (drop n c)]"
+  (list (take n c) (drop n c)))
+
+(define (split-with pred c) "returns a list of [(take-while pred c) (drop-while pred c)]"
+  (list (take-while pred c) (drop-while pred c)))

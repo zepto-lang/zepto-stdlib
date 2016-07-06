@@ -131,6 +131,9 @@
 (define (list:length l) "length of list"
   (fold (lambda (x y) (+ x 1)) 0 l))
 
+(define (list:but-last l) "returns a list of everything but the last element of the list"
+  (list:sublist l 0 (sub1 (length l))))
+
 (define (list:last l) "get last element in l"
   (if (null? l)
     (nil)
@@ -239,7 +242,7 @@
     '()
     (++ (replicate (- n 1) el) el)))
 
-(define (countdown n)
+(define (countdown n) "build a list from n to 0."
   (if (zero? n)
       '()
       (cons n (countdown (- n 1)))))
@@ -248,3 +251,33 @@
   (case-lambda
     ((l) (map truthy? l))
     ((pred l) (map pred l))))
+
+(define (dedupe c)
+  "returns a list removing consecutive duplicates in the collection c"
+  (reduce (lambda (acc x) (if (eq? (list:last acc) x) acc (++ acc x))) [] c))
+
+(define (distinct c)
+  "returns a list removing all duplicates from the collection c"
+  (reduce (lambda (acc x) (if (in? acc x) acc (++ acc x))) [] c))
+
+(define (distinct? c)
+  "returns a truth value representing whether every item in the collection c is unique"
+  (list? (reduce (lambda (acc x)
+                   (if (or (eq? #f acc) (in? acc x))
+                     #f
+                     (++ acc x)))
+                 []
+                 c)))
+
+(define (interpose sep c)
+  "returns a list of the elements of the collection c separated by sep"
+  (reduce (lambda (acc x) (++ acc sep x)) (car c) (cdr c)))
+
+(define (replace replacers c)
+  "given a map of replacement pairs and a collection, returns a
+collection with any elements = a key in smap replaced with the
+corresponding val in smap."
+  (map (lambda (el) (get-from replacers el el)) c))
+
+(define (zipmap keys vals) "returns a map with the keys mapped to the corresponding vals"
+  (apply make-hash (zip keys vals)))
