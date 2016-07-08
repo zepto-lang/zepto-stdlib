@@ -240,7 +240,7 @@
 (define (replicate n el) "build a list of length n with only el in it"
   (if (< n 1)
     '()
-    (++ (replicate (- n 1) el) el)))
+    (+= (replicate (- n 1) el) el)))
 
 (define (countdown n) "build a list from n to 0."
   (if (zero? n)
