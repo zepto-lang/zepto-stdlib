@@ -37,7 +37,7 @@
    expects a function that takes the collection, an element to get and a default return element"
   (lambda (collec elems . dflt)
     (let* ((dflt (if (null? dflt) (nil) (car dflt)))
-           (elems (if (not (list? elems)) (list elems) elems)))
+           (elems (if (list? elems) elems (list elems))))
       (if (null? elems)
         collec
         (let* ((ret (f collec (car elems)))
@@ -47,6 +47,36 @@
             (stop dflt)
             ((collec? ret) (get-from ret (cdr elems) dflt))
             (else (if (null? (cdr elems)) ret dflt))))))))
+
+(define (collec:update-in-skeleton f)
+  (lambda (collec elems uf)
+    (let ((elems (if (list? elems) elems (list elems))))
+      (cond
+        ((null? elems) collec)
+        ((null? (cdr elems))
+          (if (or (not (callable? uf)) (in? collec (car elems)))
+            (f collec (car elems) (if (callable? uf) uf (lambda args uf)))
+            collec))
+        (else
+          (let ((ret (get-from collec (car elems))))
+            (if (updatable-collec? ret)
+              (f collec (car elems) (lambda args (update-in ret (cdr elems) uf)))
+              collec)))))))
+
+(define (collec:delete-from-skeleton f)
+  (lambda (collec elems)
+    (let ((elems (if (list? elems) elems (list elems))))
+      (cond
+        ((null? elems) collec)
+        ((null? (cdr elems))
+          (if (in? collec (car elems))
+            (f collec (car elems)))
+            collec)
+        (else
+          (let ((ret (get-from collec (car elems))))
+            (if (updatable-collec? ret)
+              (update-in collec (car elems) (lambda args (delete-from ret (cdr elems))))
+              collec)))))))
 
 (defprotocol traversable-collec (car 1) (cdr 1) (null? 1))
 (defimpl traversable-collec list? ((car list:car) (cdr list:cdr) (null? list:null?)))
@@ -100,6 +130,11 @@
                         (if (> (length s) i)
                           (collec-val:found (string:ref s i))
                           (collec-val:not-found)))))))
+
+(defprotocol updatable-collec (update-in 3) (delete-from 2))
+(defimpl updatable-collec hash-map?
+         ((update-in (collec:update-in-skeleton hash:update))
+          (delete-from (collec:delete-from-skeleton hash:remove))))
 
 (defprotocol summable (gsum 1))
 (defimpl summable vector? ((gsum (lambda (x) (math:list-sum (vector->list x))))))

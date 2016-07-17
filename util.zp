@@ -117,3 +117,6 @@ Caveat: he arguments must be simple values."
       ((eq? (length tmp) n) (internal (+= acc tmp) (list (car src)) (cdr src)))
       (else (internal acc (++ tmp (car src)) (cdr src)))))
   (internal [] [] c))
+
+(define (callable? obj) "check whether obj is callable"
+  (or (function? obj) (primitive? obj)))
