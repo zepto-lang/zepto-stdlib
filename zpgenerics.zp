@@ -64,7 +64,7 @@
          ((->string
            (lambda (el)
             (let ((s (hash:keys-reduce (lambda (acc x)
-                                            (++ acc (->string x) ": " (->string (el x)) ", "))
+                                            (++ acc (->string x) " " (->string (el x)) ", "))
                                        "{"
                                        el)))
               (++ (substring s 0 (- (string:length s) 2)) "}"))))))
