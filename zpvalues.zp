@@ -8,6 +8,7 @@
 (defimpl equality number? ((equal? =)))
 (defimpl equality boolean? ((equal? eq?)))
 (defimpl equality port? ((equal? eq?)))
+(defimpl equality symbol? ((equal? eq?)))
 
 (defprotocol ord (compare 2))
 (defimpl ord number? ((compare (lambda (a b) (if (= a b) 0 (if (< a b) -1 1))))))
