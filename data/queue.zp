@@ -1,26 +1,2 @@
 (load "data/stream")
-
-(define-struct queue (f lenf r lenr))
-
-(defprotocol queue (empty? 1) (snoc 2) (qhead 1) (qtail 1))
-
-(define (queue q)
-  (if (<= (queue:get-lenr q) (queue:get-lenf q))
-    q
-    (queue:make-queue (append (queue:get-f q) (stream:reverse (queue:get-r q)))
-                      (+ (queue:get-lenf q) (queue:get-lenr q))
-                      (stream:empty)
-                      0)))
-
-(define (queue:empty)
-  (queue:make-queue (stream:empty) 0 (stream:empty) 0))
-
-(defimpl queue queue:queue?
-  ((empty? (lambda (x) (and (eq? (queue:get-f x) (stream:empty)) (eq? (queue:get-r x) (stream:empty)))))
-   (snoc (lambda (x y)
-        (queue (queue:make-queue (queue:get-f x) (queue:get-lenf x)
-                                 (stream:cons y (queue:get-r x)) (add1 (queue:get-lenr x))))))
-   (qhead (lambda (x) (stream:car (queue:get-f x))))
-   (qtail (lambda (x)
-        (queue (queue:make-queue (stream:cdr (queue:get-f x)) (sub1 (queue:get-lenf x))
-                                 (queue:get-r x) (queue:get-lenr x)))))))
+(load "data/queue.impl")

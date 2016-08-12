@@ -1,0 +1,43 @@
+(define-struct queue (f lenf r lenr))
+
+(defprotocol queue (queue:empty? 1) (queue:snoc 2) (queue:head 1) (queue:tail 1))
+
+(define (queue:balance q)
+  (define (build front back)
+    (if (null? front)
+      back
+      (build (cdr front) (stream:cons (car front) back))))
+  (if (<= (queue:get-lenr q) (queue:get-lenf q))
+    q
+    (queue:make-queue (build (stream:reverse (queue:get-f q))
+                             (stream:reverse (queue:get-r q)))
+                      (+ (queue:get-lenf q) (queue:get-lenr q))
+                      (stream:empty)
+                      0)))
+
+(define (queue:empty) (queue:make-queue (stream:empty) 0 (stream:empty) 0))
+
+(define (queue:length queue) (+ (dequeue:get-lenf dequeue)
+                                (dequeue:get-lenr dequeue)))
+
+(defimpl queue queue:queue?
+  ((queue:empty? (lambda (q) (and (null? (queue:get-f q))
+                                  (null? (queue:get-r q)))))
+   (queue:snoc (lambda (q elem)
+                (queue:balance
+                  (queue:make-queue (queue:get-f q)
+                                    (queue:get-lenf q)
+                                    (stream:cons elem (queue:get-r q))
+                                    (add1 (queue:get-lenr q))))))
+   (queue:head (lambda (q) (car (queue:get-f q))))
+   (queue:tail (lambda (q)
+                (queue:balance
+                  (queue:make-queue (cdr (queue:get-f q))
+                                    (sub1 (queue:get-lenf q))
+                                    (queue:get-r q)
+                                    (queue:get-lenr q)))))))
+(defimpl stringify queue:queue?
+  ((->string (lambda (d) (++ "<queue (" (->string (queue:length d)) ")>")))))
+(defimpl traversable-collec queue:queue? ((car   queue:head)
+                                          (cdr   queue:tail)
+                                          (null? queue:empty?)))

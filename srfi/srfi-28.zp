@@ -1,0 +1,61 @@
+;;;
+;;; Implementation of SRFI 28: Basic Format Strings
+;;; Originally taken from the reference implementation,
+;;; heavily modified for use with zepto by Veit Heller
+;;;
+;;; It implements all the codes specified in SRFI 28,
+;;; plus ~u, which prints the absolute value of a number given
+;;; to format, and ~l[DELIMITER], for instance like "~l,", which
+;;; will print a list delimited by its delimiter.
+;;;
+(define (format format-string . objects)
+  (let loop ((format-list (string->list format-string))
+             (objects objects)
+             (buffer ""))
+    (cond ((null? format-list) buffer)
+          ((char=? (car format-list) #\~)
+           (if (null? (cdr format-list))
+               (error "format" "Incomplete escape sequence")
+               (case (cadr format-list)
+                 ((#\a)
+                  (if (null? objects)
+                      (error "format" "No value for escape sequence")
+                      (loop (cddr format-list) (cdr objects)
+                            (++ buffer (->string (car objects))))))
+                 ((#\s)
+                  (if (null? objects)
+                      (error "format" "No value for escape sequence")
+                      (loop (cddr format-list) (cdr objects)
+                            (++ buffer (->string (car objects)) "\n"))))
+                 ((#\u)
+                  (cond ((null? objects)
+                          (error "format" "No value for escape sequence"))
+                        ((not (number? (car objects)))
+                          (error "format" "~u requires number, was given"
+                                 (typeof (car objects))))
+                        (else (loop (cddr format-list) (cdr objects)
+                                    (++ buffer
+                                        (->string (abs (car objects))))))))
+                 ((#\l)
+                  (cond ((null? objects)
+                          (error "format" "No value for escape sequence"))
+                        ((not (list? (car objects)))
+                          (error "format" "~u requires list, was given"
+                                 (typeof (car objects))))
+                        (else (loop (cdddr format-list) (cdr objects)
+                                    (++ buffer
+                                        (reduce (lambda (acc elem)
+                                                  (++ acc
+                                                      (->string (caddr format-list))
+                                                      (->string elem)))
+                                                (->string (caar objects))
+                                                (cdar objects)))))))
+                 ((#\%)
+                  (loop (cddr format-list) objects (++ buffer #\newline)))
+                 ((#\~)
+                  (loop (cddr format-list) objects (++ buffer #\~)))
+                 (else
+                  (error "format" "Unrecognized escape sequence:"
+                         (cadr format-list))))))
+          (else (loop (cdr format-list) objects (++ buffer
+                                                    (car format-list)))))))

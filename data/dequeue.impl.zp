@@ -1,0 +1,68 @@
+(define-struct dequeue (f lenf r lenr))
+
+(defprotocol dequeue (dequeue:empty? 1) (dequeue:cons 2) (dequeue:snoc 2)
+                     (dequeue:head 1) (dequeue:tail 1) (dequeue:last 1)
+                     (dequeue:but-last 1))
+
+(define (dequeue:balance q)
+  (define (build front back)
+    (if (null? front)
+      back
+      (build (cdr front) (stream:cons (car front) back))))
+  (if (<= (dequeue:get-lenr q) (dequeue:get-lenf q))
+    q
+    (dequeue:make-dequeue (build (stream:reverse (dequeue:get-f q))
+                                 (stream:reverse (cdr (dequeue:get-r q))))
+                      (sub1 (dequeue:length q))
+                      (stream:cons (car (dequeue:get-r q)) (stream:empty))
+                      1)))
+
+(define (dequeue:empty) (dequeue:make-dequeue (stream:empty) 0 (stream:empty) 0))
+
+(define (dequeue:length dequeue) (+ (dequeue:get-lenf dequeue)
+                                    (dequeue:get-lenr dequeue)))
+
+(defimpl dequeue dequeue:dequeue?
+  ((dequeue:empty? (lambda (d) (eq? (dequeue:length d) 0)))
+   (dequeue:cons (lambda (d elem)
+                    (dequeue:balance
+                      (dequeue:make-dequeue
+                        (stream:cons elem (dequeue:get-f d))
+                        (add1 (dequeue:get-lenf d))
+                        (dequeue:get-r d)
+                        (dequeue:get-lenr d)))))
+   (dequeue:snoc (lambda (d elem)
+                  (dequeue:balance
+                    (dequeue:make-dequeue
+                      (dequeue:get-f d)
+                      (dequeue:get-lenf d)
+                      (stream:cons elem (dequeue:get-r d))
+                      (add1 (dequeue:get-lenr d))))))
+   (dequeue:head (lambda (d)
+                  (if (null? (dequeue:get-f d))
+                    (car (dequeue:get-r d))
+                    (car (dequeue:get-f d)))))
+   (dequeue:tail (lambda (d)
+                  (if (null? (dequeue:get-f d))
+                    (dequeue:empty)
+                    (dequeue:balance
+                      (dequeue:make-dequeue (cdr (dequeue:get-f d))
+                                            (sub1 (dequeue:get-lenf d))
+                                            (dequeue:get-r d)
+                                            (dequeue:get-lenr d))))))
+   (dequeue:last (lambda (d) (car (dequeue:get-r d))))
+   (dequeue:but-last (lambda (d)
+                      (if (null? (dequeue:get-r d))
+                        (dequeue:empty)
+                        (dequeue:balance
+                          (dequeue:make-dequeue (dequeue:get-f d)
+                                                (dequeue:get-lenf d)
+                                                (cdr (dequeue:get-r d))
+                                                (sub1 (dequeue:get-lenr d)))))))))
+(defimpl stringify dequeue:dequeue?
+         ((->string (lambda (d) (++ "<dequeue ("
+                                    (->string (dequeue:length d))
+                                    ")>")))))
+(defimpl traversable-collec dequeue:dequeue? ((car   dequeue:head)
+                                              (cdr   dequeue:tail)
+                                              (null? dequeue:empty?)))

@@ -1,0 +1,3 @@
+(load "data/stream")
+(load "data/queue")
+(load "data/dequeue")
