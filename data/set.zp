@@ -1,0 +1,62 @@
+(define-struct set (elems))
+
+(defkeywords (set:empty) (:container :default {}) (set:make-set container))
+
+(defkeywords (set:set container) (:container-type :default {})
+  (begin
+    (define (rem-dup from to)
+      (if (null? from)
+        to
+        (let ((first (car from)) (rest (cdr from)))
+          (if (in? rest first)
+            (rem-dup rest to)
+            (rem-dup rest (++ to first))))))
+    (set:make-set (rem-dup container container-type))))
+
+(defimpl left-collec set:set?
+  ((pop-left (lambda (set) (pop-left (set:get-elems set))))
+   (append-left (lambda (set elem)
+                  (let ((elems (set:get-elems set)))
+                    (if (in? elems elem)
+                      set
+                      (set:make-set (append-left (set:get-elems set)
+                                                 elem))))))))
+
+(defimpl right-collec set:set?
+  ((pop-right (lambda (set) (pop-right (set:get-elems set))))))
+
+(defimpl extensible-collec set:set?
+  ((append (lambda (set . args)
+            (let ((elems (set:get-elems set))
+                  (args (filter ($ (not (in? elems elem))) args)))
+              (if (null? args)
+                set
+                (set:make-set (apply append elems args))))))
+   (extend (lambda (set . args)
+            (let* ((elems (set:get-elems set))
+                   (args (filter ($ (not (in? elems elem))) args)))
+              (if (null? args)
+                set
+                (set:make-set (apply extend elems args))))))))
+
+(defimpl traversable-collec set:set?
+  ((car (lambda (set) (car (set:get-elems set))))
+   (cdr (lambda (set) (set:make-set (cdr (set:get-elems set)))))
+   (null? (lambda (set) (null? (set:get-elems set))))))
+
+(defimpl collec set:set?
+  ((length (lambda (set) (length (set:get-elems set))))
+   (in? (lambda (set elem) (in? (set:get-elems set) elem)))
+   (get-from (lambda (set elems . dflt)
+     (apply get-from (set:get-elems set) elems dflt)))))
+
+(defimpl summable set:set?
+  ((gsum (lambda (set) (gsum (set:get-elems set))))))
+
+(defimpl indexable set:set?
+  ((index-of (lambda (set elem) (index-of (set:get-elems set) elem)))))
+
+(defimpl stringify set:set?
+  ((->string (lambda (set) (++ "<set (type " (typeof (set:get-elems set))
+                               ", length "
+                               (->string (length (set:get-elems set))) ")>")))))
