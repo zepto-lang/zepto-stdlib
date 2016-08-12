@@ -4,9 +4,11 @@
 ;;; heavily modified for use with zepto by Veit Heller
 ;;;
 ;;; It implements all the codes specified in SRFI 28,
-;;; plus ~u, which prints the absolute value of a number given
-;;; to format, and ~l[DELIMITER], for instance like "~l,", which
-;;; will print a list delimited by its delimiter.
+;;; plus
+;;; ~u - prints the absolute value of a number given to format
+;;; ~l[DELIMITER] - for instance like "~l,",  will print a list delimited by DELIMITER
+;;; ~_ - prints a space
+;;; ~t - prints a tab
 ;;;
 (define (format format-string . objects)
   (let loop ((format-list (string->list format-string))
@@ -52,6 +54,10 @@
                                                 (cdar objects)))))))
                  ((#\%)
                   (loop (cddr format-list) objects (++ buffer #\newline)))
+                 ((#\_)
+                  (loop (cddr format-list) objects (++ buffer #\space)))
+                 ((#\t)
+                  (loop (cddr format-list) objects (++ buffer #\tab)))
                  ((#\~)
                   (loop (cddr format-list) objects (++ buffer #\~)))
                  (else
