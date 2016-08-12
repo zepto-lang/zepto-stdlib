@@ -24,6 +24,7 @@
 (load "zpversion.zp")
 
 (load "srfi/srfi-9.zp")
+(load "srfi/srfi-28.zp")
 (load "srfi/srfi-55.zp")
 (register-extension '(srfi 1) (lambda () (global-load "srfi/srfi-1.zp")))
 (register-extension '(srfi 8) (lambda () (global-load "srfi/srfi-8.zp")))
