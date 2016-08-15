@@ -1,5 +1,6 @@
 ;; a lot of this is taken almost straight out of SICP
 
+(define negate ($ (- %)))
 (define exact? integer?)
 (define math:pi 245850922/78256779)
 (define math:tau (* 245850922/78256779 2))
