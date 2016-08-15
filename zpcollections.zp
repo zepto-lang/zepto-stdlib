@@ -154,7 +154,9 @@ or all items if there are fewer than n."
     (if (or (= i n) (null? c))
       acc
       (internal (add1 i) (++ acc (car c)) (cdr c))))
-  (internal 0 [] c))
+  (if (< 0 n)
+    (internal 0 [] c)
+    []))
 
 (define (drop n c)
   "elides the first n values from the collection c."
@@ -164,7 +166,9 @@ or all items if there are fewer than n."
       (if (= i n)
         c
         (internal (add1 i) (cdr c)))))
-  (internal 0 c))
+  (if (>= 0 n)
+    (internal 0 c)
+    c))
 
 (define (take-while pred c)
   "returns a list of all the first items of the collection c
