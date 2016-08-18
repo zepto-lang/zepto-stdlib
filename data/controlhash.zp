@@ -1,0 +1,47 @@
+(define-struct controlhash (fun elems))
+
+(define (controlhash:empty fun) (controlhash:make-controlhash fun #{}))
+
+(define (controlhash:set hash key val)
+  (let ((fun (controlhash:get-fun hash)))
+    (controlhash:make-controlhash fun
+      (hash:set (controlhash:get-elems hash) key (fun val)))))
+
+(define (controlhash:update hash key fun)
+  (let ((f (controlhash:get-fun hash)))
+    (controlhash:make-controlhash fun
+      (hash:update (controlhash:get-elems hash) key (compose f fun)))))
+
+(defimpl extensible-collec controlhash:controlhash?
+  ((append (lambda (h . args)
+            (if (null? args)
+              h
+              (let* ((elems (controlhash:get-elems h))
+                     (fun (controlhash:get-fun h))
+                     (args (map fun args)))
+                (controlhash:make-controlhash fun (apply append elems args))))))
+   (extend (lambda (h . args)
+            (if (null? args)
+              h
+              (let* ((elems (controlhash:get-elems h))
+                     (fun (controlhash:get-fun h))
+                     (args (map fun args)))
+                (set:make-set (apply extend elems args))))))))
+
+(defimpl traversable-collec controlhash:controlhash?
+  ((car (lambda (h) (car (controlhash:get-elems h))))
+   (cdr (lambda (h) (controlhash:make-set (controlhash:get-fun h)
+                                          (cdr (controlhash:get-elems h)))))
+   (null? (lambda (h) (null? (controlhash:get-elems set))))))
+
+(defimpl collec controlhash:controlhash?
+  ((length (lambda (h) (length (controlhash:get-elems h))))
+   (in? (lambda (h e) (in? (controlhash:get-elems h) e)))
+   (get-from (lambda (h elems . dflt)
+     (apply get-from (controlhash:get-elems h) elems dflt)))))
+
+(defimpl stringify controlhash:controlhash?
+  ((->string (lambda (h) (++ "<controlhash (fun "
+                             (->string (controlhash:get-fun h))
+                             ", hash "
+                             (->string (controlhash:get-elems h)) ")>")))))

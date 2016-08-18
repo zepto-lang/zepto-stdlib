@@ -27,8 +27,8 @@
 
 (defimpl extensible-collec set:set?
   ((append (lambda (set . args)
-            (let ((elems (set:get-elems set))
-                  (args (filter ($ (not (in? elems elem))) args)))
+            (let* ((elems (set:get-elems set))
+                   (args (filter ($ (not (in? elems elem))) args)))
               (if (null? args)
                 set
                 (set:make-set (apply append elems args))))))
