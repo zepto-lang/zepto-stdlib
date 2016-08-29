@@ -24,17 +24,26 @@
 (defimpl extensible-collec list? ((append +=) (extend ++)))
 
 (define (collec-val:found? val)
+  "do not expose"
   (cadr val))
 (define (collec-val:val val)
+  "do not expose"
   (car val))
 (define (collec-val:found val)
+  "do not expose"
   (list val #t))
 (define (collec-val:not-found)
+  "do not expose"
   (list (nil) #f))
 
 (define (collec:get-from-skeleton f)
   "a skeleton to nicely integrate your collection into the get-from world;
-   expects a function that takes the collection, an element to get and a default return element"
+   expects a function that takes the collection, an element to get and a default return element.
+
+   params:
+    - f: a functionf that accepts a collection, an index or key to find and a default return element
+   complexity: O(1) (this function only generates the get-from implementation!
+   returns: a get-from implementation"
   (lambda (collec elems . dflt)
     (let* ((dflt (if (null? dflt) (nil) (car dflt)))
            (elems (if (list? elems) elems (list elems))))
@@ -49,6 +58,7 @@
             (else (if (null? (cdr elems)) ret dflt))))))))
 
 (define (collec:update-in-skeleton f)
+  "do not expose"
   (lambda (collec elems uf)
     (let ((elems (if (list? elems) elems (list elems))))
       (cond
@@ -64,6 +74,7 @@
               collec)))))))
 
 (define (collec:delete-from-skeleton f)
+  "do not expose"
   (lambda (collec elems)
     (let ((elems (if (list? elems) elems (list elems))))
       (cond
@@ -86,14 +97,6 @@
 
 (define head car)
 (define tail cdr)
-
-(define (take-nth n l)
-  (define (internal i acc l)
-    (if (null? l)
-      acc
-      (let ((acc (if (= (mod i n) 0) (++ acc (car l)) acc)))
-        (internal (add1 i) acc (cdr l)))))
-  (internal 0 [] l))
 
 (defprotocol collec (length 1) (in? 2) (get-from :overloaded))
 (defimpl collec vector?
@@ -148,8 +151,14 @@
 (defimpl indexable string? ((index-of string:find)))
 
 (define (take n c)
-  "returns a list of the first n items in the collection c,
-or all items if there are fewer than n."
+  "returns a list of the first <par>n</par> items in the collection <par>c</par>,
+or all items if there are fewer than <par>n</par>.
+
+   params:
+    - n: the number of values
+    - c: the collection
+   complexity: O(n)
+   returns: a list of the arguments to <par>n</par>."
   (define (internal i acc c)
     (if (or (= i n) (null? c))
       acc
@@ -159,7 +168,13 @@ or all items if there are fewer than n."
     []))
 
 (define (drop n c)
-  "elides the first n values from the collection c."
+  "elides the first <par>n</par> values from the collection <par>c</par>.
+
+   params:
+    - n: the number of values
+    - c: the collection
+   complexity: O(n)
+   returns: a list of the arguments from <par>n</par> on."
   (define (internal i c)
     (if (null? c)
       []
@@ -171,8 +186,14 @@ or all items if there are fewer than n."
     c))
 
 (define (take-while pred c)
-  "returns a list of all the first items of the collection c
-while pred is true."
+  "returns a list of all the first items of the collection <par>c</par>
+while <par>pred</par> is true.
+
+  params:
+    - pred: the predicate
+    - c: the collection
+  complexity: O(n*k) where k is the complexity of <par>pred</par>
+  returns: a list of matching items"
   (define (internal acc c)
     (if (null? c)
       acc
@@ -183,7 +204,13 @@ while pred is true."
   (internal [] c))
 
 (define (drop-while pred c)
-  "elides values from the collection c as long as pred is true."
+  "elides values from the collection <par>c</par> as long as <par>pred</par> is true.
+
+   params:
+     - pred: the predicate
+     - c: the collection
+   complexity: O(n*k) where k is the complexity of <par>pred</par>
+   returns: a list of matching items"
   (define (internal c)
     (if (and (not (null? c)) (pred (car c)))
       (internal (cdr c))
@@ -191,15 +218,51 @@ while pred is true."
   (internal c))
 
 (define (take-nth n c)
- "returns a list of every nth item in the collection c."
+ "returns a list of every nth item in the collection c.
+
+  params:
+    - n: the skip counter
+    - c: the collection
+  complexity: O(n)
+  returns: a list of every <par>n</par>th item in the collection"
   (define (internal i acc c)
     (if (null? c)
       acc
       (internal (add1 i) (++ acc (if (eq? 0 (mod i n)) (car c) [])) (cdr c))))
   (internal 0 [] c))
 
-(define (split-at n c) "returns a list of [(take n c) (drop n c)]"
+(define (split-at n c)
+  "equivalent to chaining <fun>take</fun> and <fun>drop</fun>
+
+   params:
+    - pred: the predicate
+    - c: the collection
+   complexity: O(n)
+   returns: <zepto>[(take pred c) (drop pred c)]</zepto>"
   (list (take n c) (drop n c)))
 
-(define (split-with pred c) "returns a list of [(take-while pred c) (drop-while pred c)]"
+(define (split-with pred c)
+  "equivalent to chaining <fun>take-while</fun> and <fun>drop-while</fun>
+
+   params:
+    - pred: the predicate
+    - c: the collection
+   complexity: O(n)
+   returns: <zepto>[(take-while pred c) (drop-while pred c)]</zepto>"
   (list (take-while pred c) (drop-while pred c)))
+
+(define (frequencies collec)
+  "takes an iterable collection and returns a hashmap that contains
+   the count of every element in the collection.
+
+   params:
+    - collec: the collection
+   complexity: O(n)
+   returns: a hashmap that contains the count of every element in <par>collec</par>"
+  (let loop ((collec collec)
+             (acc #{}))
+    (if (null? collec)
+      acc
+      (let ((h (car collec))
+            (t (cdr collec)))
+        (loop t (hash:set acc h (add1 (get-from acc h 0))))))))
