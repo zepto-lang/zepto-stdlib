@@ -59,7 +59,6 @@
 
 (defprotocol stringify (->string 1))
 
-(defimpl stringify nil? ((->string (lambda (x) "<nil>"))))
 (defimpl stringify hash-map?
          ((->string
            (lambda (el)
@@ -130,6 +129,7 @@
 (defimpl stringify primitive? ((->string (lambda (p) (++ "<primitive: " (doc p) ">")))))
 (defimpl stringify function? ((->string (lambda (p) (++ "<function: " (doc p) ">")))))
 (defimpl stringify env? ((->string (lambda (env) "<env>"))))
+(defimpl stringify nil? ((->string (lambda (n) "nil"))))
 
 (define (pprint obj . args)
   "pretty print a data object obj; the output is configurable via a hashmap args;
