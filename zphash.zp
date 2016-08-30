@@ -45,8 +45,24 @@
     ((_ hash key f)
       (set! hash (hash:update hash key f)))))
 
-(define (hash:merge h1 h2) "merges two hash maps"
-  (make-hash h1 h2))
+(define (hash:merge . hashes) "merges multiple hash maps"
+  (apply make-hash hashes))
+
+(define (hash:merge-with fun . hashes)
+  "merges multiple hashes with a collision function.
+  
+   params:
+    - fun: the function that merges the collisions
+    - hashes: the hashes (vararg)
+   complexity: O(n*3+n*k) where k is the complexity of the collision function
+   returns: the merged hashmap"
+  (let ((all-keys (list:flatten (map hash:keys hashes)))
+        (reducer  (lambda (k)
+                    (|> hashes
+                        (curry filter ($ (in? % k)))
+                        (curry map ($ (% k)))
+                        ($ (list k (apply fun %)))))))
+    (make-hash (map reducer all-keys))))
 
 (define-syntax hash:merge!
   (syntax-rules ()

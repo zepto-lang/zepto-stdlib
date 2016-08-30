@@ -118,5 +118,20 @@ Caveat: he arguments must be simple values."
       (else (internal acc (++ tmp (car src)) (cdr src)))))
   (internal [] [] c))
 
+(define (partition-all n c)
+  "returns a list of lists of <par>n</par> items each, does not throw away the rest.
+
+   params:
+    - n: the size of the slices
+    - c: the source collection (can be any collection type)
+   complexity: O(n)
+   returns: a list of lists"
+  (define (internal acc tmp src)
+    (cond
+      ((null? src) (+= acc tmp))
+      ((eq? (length tmp) n) (internal (+= acc tmp) (list (car src)) (cdr src)))
+      (else (internal acc (++ tmp (car src)) (cdr src)))))
+  (internal [] [] c))
+
 (define (callable? obj) "check whether obj is callable"
   (or (function? obj) (primitive? obj)))
