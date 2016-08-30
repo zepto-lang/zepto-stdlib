@@ -235,10 +235,10 @@ while <par>pred</par> is true.
   "equivalent to chaining <fun>take</fun> and <fun>drop</fun>
 
    params:
-    - pred: the predicate
+    - n: the number
     - c: the collection
    complexity: O(n)
-   returns: <zepto>[(take pred c) (drop pred c)]</zepto>"
+   returns: <zepto>[(take n c) (drop n c)]</zepto>"
   (list (take n c) (drop n c)))
 
 (define (split-with pred c)
