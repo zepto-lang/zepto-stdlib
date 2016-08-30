@@ -13,7 +13,6 @@
 (define (negative? n) "is negative" (< n 0))
 (define complex? number?)
 (define (/. . l) (foldl (lambda (x y) (/ (exact->inexact x) y)) (car l) (cdr l)))
-(define (== a b) (and (eq? (typeof a) (typeof b)) (= a b)))
 (define (add1 x) (+ x 1))
 (define (sub1 x) (- x 1))
 (define (abs n) "absolute value of number" (if (>= n 0) n (- n)))

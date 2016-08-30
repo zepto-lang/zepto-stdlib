@@ -40,8 +40,8 @@
 (define (case x . cs) 
          if (null? cs)
             ("No Case Found")
-            (if (== x (caar cs))  
-                (cadar cs) 
+            (if (eq? x (caar cs))
+                (cadar cs)
                 (unpack case (join (list x) (cdr cs)))))
 
 (define (unzip1-with-cdr . lists)
