@@ -81,3 +81,22 @@
                        kv)))))
         (apply make-hash (++ (hash:kv-map filt h1) not-there))))
     (else h2)))
+
+
+(define (hash:rename-keys hash new-keys)
+  "Returns the hashmap <par>hash</par> with the keys in <par>new-keys</par>
+   renamed to the vals therein.
+
+   params:
+     - hash: the hashmap to mutate
+     - new-keys: the rename rules
+   complexity: O(n*2) where n is the size of new-keys
+   returns: the mutated hashmap"
+  (hash:kv-reduce
+    (lambda (acc kv)
+      (let ((old (car kv)))
+        (if (in? hash old)
+          (hash:set acc (cadr kv) (get-from hash old))
+          acc)))
+    (reduce hash:remove hash (hash:keys new-keys))
+    new-keys))
