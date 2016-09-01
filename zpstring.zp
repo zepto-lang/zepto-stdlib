@@ -160,23 +160,3 @@
 
 (define (string:take-while f s) "takes elements from s as long as f matches"
   (list->string (list:take-while f (string->list s))))
-
-(defkeywords (string:pluralize num singular) (:plural :default (++ singular "s"))
-  "Return a pluralized phrase, appending an s to the singular form if no plural
-   is provided.
-
-   Example:
-   <zepto>
-     (pluralize 5 \"month\") => \"5 months\"
-     (pluralize 1 \"month\") => \"1 month\"
-     (pluralize 1 \"radius\" :plural \"radii\") => \"1 radius\"
-     (pluralize 9 \"radius\" :plural \"radii\") => \"9 radii\"
-   </zepto>
-
-   params:
-     - num: the number of things
-     - singular: the name of the things
-     - plural: the pluralization (defaults to singular + \"s\")
-   complexity: O(1)
-   returns: the new string"
-  (format "~a ~a" num (if (= 1 num) singular plural)))

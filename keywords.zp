@@ -2,7 +2,6 @@
   (let ((s (cdr (->string a))))
     (eval (macro-expand `(->symbol ,s)))))
 
-
 (define-syntax defkeywords
   (syntax-rules ()
     ((_ nargs kwargs body)
@@ -21,7 +20,7 @@
                     (++ `((,key ,(caddr args))) (treat-keywords (cdddr args)))
                     (++ `((,key)) (treat-keywords (cdr args))))))))
           (eval (eval (macro-expand
-              `(define ,(reduce (flip cons) 'args (reverse 'nargs)) ,docs
+              `(define ,(reduce (flip cons) (cons 'args) (reverse 'nargs)) ,docs
                   (begin
                     (with-environment env
                       (let ((dict (apply make-hash args)))
@@ -32,3 +31,23 @@
                                       (if (in? dict k) (dict k) (eval (get-from % 1)))) env)))
                           (quote ,(treat-keywords 'kwargs)))))
                     ,'body))) env) env))))))
+
+(defkeywords (string:pluralize num singular) (:plural :default (++ singular "s"))
+  "Return a pluralized phrase, appending an s to the singular form if no plural
+   is provided.
+
+   Example:
+   <zepto>
+     (pluralize 5 \"month\") => \"5 months\"
+     (pluralize 1 \"month\") => \"1 month\"
+     (pluralize 1 \"radius\" :plural \"radii\") => \"1 radius\"
+     (pluralize 9 \"radius\" :plural \"radii\") => \"9 radii\"
+   </zepto>
+
+   params:
+     - num: the number of things
+     - singular: the name of the things
+     - plural: the pluralization (defaults to singular + \"s\")
+   complexity: O(1)
+   returns: the new string"
+  (format "~a ~a" num (if (= 1 num) singular plural)))

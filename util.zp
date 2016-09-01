@@ -181,11 +181,11 @@ Caveat: he arguments must be simple values."
   "Traditionally unfold is the 'opposite of reduce': it turns a single
   seed value into a sequence of output values.
 
-  Next is a function that operates on a <par>seed</par>: it should
+  <par>next</par> is a function that operates on a <par>seed</par>: it should
   return a pair, [value new-seed]; the value half of the pair is
   inserted into the resulting list, while the new seed is used to
   continue unfolding. Notably, the value is never passed as an
-  argument to <par>next</par>. If nil is returned instead of a pair,
+  argument to <par>next</par>. If <zepto>nil</zepto> is returned instead of a pair,
   the resulting sequence will terminate.
 
   Example:
