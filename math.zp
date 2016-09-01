@@ -116,7 +116,13 @@
               x y)))))
 
 (define (math:coprime? n m)
-  "Returns true iff n and m are coprime."
+  "Returns true iff <par>n</par> and <par>m</par> are coprime.
+
+   params:
+    - n: the first number to check
+    - m: the second nu,ber to check
+   complexity: see <fun>math:gcd</fun>
+   returns: a boolean"
   (= 1 (math:gcd n m)))
 
 (define (math:prime-below n)
@@ -171,8 +177,37 @@
                    (else (lp (+ i 1)))))))))))
 
 (define (math:prime? n)
+  "checks whether <par>n</par> is a prime.
+
+   params:
+    - n: the number to check (must be a positive integer)
+   complexity: depends on the size: if <par>n</par> < 1e10, then we prove whether it is a prime (using <fun>math:prov-prime?</fun>, otherwise we use heuristics (using <fun>math:prob-prime?</fun>)
+   returns: a boolean"
   (if (> n 1)
        (if (< n 1e10)
            (math:prov-prime? n)
            (math:prob-prime? n 10))
       (error "prime" "prime procedure only works on postive integers")))
+
+(define (math:cross . colls)
+  "computes the cartesian-product of the provided <par>colls</par>.
+   In other words, compute the set of all possible combinations of ways
+   you can choose one item from each coll.
+
+   params:
+     - colls: the collections (vararg)
+   complexity: O(n)
+   returns: a list of products"
+  (if (null? (cdr colls))
+    (map list (car colls))
+    (let ((x (car colls))
+          (y (apply cross (cdr colls))))
+      (let l1 ((x x)
+               (acc []))
+        (if (null? x)
+          acc
+          (let l2 ((y y)
+                   (acc2 []))
+            (if (null? y)
+              (l1 (cdr x) (++ acc acc2))
+              (l2 (cdr y) (++ acc2 (map (curry list (car x)) (car y)))))))))))

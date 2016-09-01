@@ -266,3 +266,31 @@ while <par>pred</par> is true.
       (let ((h (car collec))
             (t (cdr collec)))
         (loop t (hash:set acc h (add1 (get-from acc h 0))))))))
+
+(define (position coll)
+  "returns a hashmap from item to the position of its first occurence in <par>coll</par>.
+
+   params:
+    - coll: the collection to process
+   complexity: O(n*2)
+   returns: a new hashmap"
+  (make-hash (reverse (indexed-map list coll))))
+
+(define (slice n coll)
+  "divides <par>coll</par> into <par>n</par> approximately equal slices.
+
+   params:
+     - n: the number of slices
+     - coll: the collection
+   complexity: O(n)
+   returns: a list of slices"
+   (partition-all (ceil (/. (length coll) n)) coll))
+
+(define (single? coll)
+  "Does the collection have only one element?
+
+   params:
+    - coll: the collection
+   complexity: O(1)
+   returns: a boolean"
+  (and (not (null? coll)) (null? (cdr coll))))

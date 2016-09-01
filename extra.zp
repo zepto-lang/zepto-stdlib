@@ -195,3 +195,14 @@
       (let ((env (current-env)))
         (env:in? env 'name)))))
 
+(define-syntax given
+  (syntax-rules (else)
+    ((_ key (else res))
+      (res key))
+    ((_ key (test result))
+      (if (test key)
+        (res key)))
+    ((_ key (test result) clauses ...)
+      (if (test key)
+        (res key)
+        (given key clauses ...)))))

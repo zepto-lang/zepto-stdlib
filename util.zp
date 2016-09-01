@@ -37,13 +37,6 @@
 (define (product . l) "product of values"
   (fold * 1 l))
 
-(define (case x . cs) 
-         if (null? cs)
-            ("No Case Found")
-            (if (eq? x (caar cs))
-                (cadar cs)
-                (unpack case (join (list x) (cdr cs)))))
-
 (define (unzip1-with-cdr . lists)
   (unzip1-with-cdr-iterative lists '() '()))
 
@@ -133,5 +126,86 @@ Caveat: he arguments must be simple values."
       (else (internal acc (++ tmp (car src)) (cdr src)))))
   (internal [] [] c))
 
-(define (callable? obj) "check whether obj is callable"
+(define (callable? obj)
+  "check whether <par>obj</par> is callable.
+
+   params:
+    - obj: the object to check
+   complexity: O(1)
+   returns: a boolean"
   (or (function? obj) (primitive? obj)))
+
+(define (ignoring pred f)
+  "takes a predicate and a function and returns a function
+   that filters out any argument to f that matches pred before
+   applying them.
+
+   params:
+    - pred: the predicate
+    - f: the function
+   complexity: O(1)
+   returns: a new function as described above"
+  (lambda args
+    (apply f (filter ($ (not (pred %))) args))))
+
+(define (ignoring-nils f)
+  "a specialized version of <par>ignoring</par> that ignores nil values.
+
+   params:
+     - f: the function
+   complexity: O(1)
+   returns: a new function as described in the documentation of <par>ignoring</par>"
+  (ignoring nil? f))
+
+(define (rate-limited f period)
+  "creates a version of the function <par>f</par> which 'refuses' to be called too
+   frequently. If it has successfully been called in the last <par>period</par>
+   milliseconds, calls to it will return nil; if no calls have succeeded in that
+   period, it will be called with the args provided.
+
+   params:
+     - f: the function
+     - period: the number of milliseconds
+   complexity: O(1)
+   returns: a new function as described above"
+  (let ((last-call 0))
+    (lambda args
+      (let* ((time (unix-timestamp))
+             (cur (/ (+ (* (car time) 1000000000) (cadr time)) 1000000)))
+        (if (< (+ period last-call) cur)
+          (begin
+            (set! last-call cur)
+            (apply f args)))))))
+
+(define (unfold next seed)
+  "Traditionally unfold is the 'opposite of reduce': it turns a single
+  seed value into a sequence of output values.
+
+  Next is a function that operates on a <par>seed</par>: it should
+  return a pair, [value new-seed]; the value half of the pair is
+  inserted into the resulting list, while the new seed is used to
+  continue unfolding. Notably, the value is never passed as an
+  argument to <par>next</par>. If nil is returned instead of a pair,
+  the resulting sequence will terminate.
+
+  Example:
+  <zepto>
+  (define (fibs-to n)
+    (unfold (lambda (a b)
+              (if (> b n)
+                (nil)
+                (list a (list b (+ a b)))))
+             [0 1]))
+  </zepto>
+
+  params:
+    - next: the function that produces values
+    - seed: the original seeding value
+  complexity: O(n*k) where k is the complexity of <par>next</par>
+  returns: a list of the values produced by <par>next</par>"
+  (let loop ((acc [])
+             (nval (apply next seed)))
+    (if (nil? nval)
+      acc
+      (loop (++ acc (car nval)) (apply next (cadr nval))))))
+
