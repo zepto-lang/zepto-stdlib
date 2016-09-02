@@ -22,3 +22,12 @@
 
 (define (wrong? x) "is arg wrong"
   (eq? x :wrong))
+
+(define (macro? x)
+  "checks whether <par>x</par is a macro.
+
+  params:
+   - x: the value to check
+  complexity: O(n)
+  returns: a boolean"
+  (and (list? x) (> (length x) 1) (eq? (car x) 'syntax-rules)))

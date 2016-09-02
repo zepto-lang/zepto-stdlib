@@ -1,9 +1,30 @@
 (define (atom->symbol a)
+  "converts an atom to a symbol.
+
+   params:
+    - a: the atom to convert
+   complexity: O(n) where n is the length of <par>a</par>
+   returns: a symbol"
   (let ((s (cdr (->string a))))
     (eval (macro-expand `(->symbol ,s)))))
 
 (define-syntax defkeywords
-  (syntax-rules ()
+  (syntax-rules "defines a function with keywords.
+
+  Example:
+  <zepto>
+   (defkeywords (kw regular-arg) (:kw-wo-default
+                                  :kw-w-default :default 10)
+      (map write (list regular-arg kw-wo-default kw-w-default)))
+  </zepto>
+
+  params:
+    - nargs: the name and normal arguments
+    - kwargs: the keywords arguments
+    - docs : optional documentation
+    - body: the function body
+  complexity: O(1)
+  returns: a function" ()
     ((_ nargs kwargs body)
       (defkeywords nargs kwargs "No documentation available" body))
     ((_ nargs kwargs docs body)

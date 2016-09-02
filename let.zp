@@ -1,5 +1,10 @@
 (define-syntax $
-  (syntax-rules ()
+  (syntax-rules "shorthand for <zepto>(lambda (%) body)</zepto>.
+
+  params:
+    - body: the body for the lambda
+  complexity: O(1)
+  returns: a lambda as specified above" ()
     ((_ body ...)
       (lambda (%) body ...))))
 

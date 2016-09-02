@@ -1,73 +1,79 @@
 ;; All definitions here are "borrowed" from
 ;; husk (github.com/justinethier/husk-scheme).
 (define-syntax cond
-    (syntax-rules (else =>)
-        ((cond (else result1 result2 ...))
-         ((lambda () result1 result2 ...))) 
-        ((cond (test => result))
-         (let ((temp test))
-           (if (truthy? temp) (result temp))))
-        ((cond (test => result) clause1 clause2 ...)
-         (let ((temp test))
-           (if (truthy? temp)
-             (result temp)
-             (cond clause1 clause2 ...))))
-        ((cond (test)) test)
-        ((cond (test) clause1 clause2 ...)
-         (let ((temp test))
-           (if temp
-             temp
-             (cond clause1 clause2 ...))))
-        ((cond (test result1 result2 ...))
-         (if test ((lambda () result1 result2 ...)))) 
-        ((cond (test result1 result2 ...)
-               clause1 clause2 ...)
-         (if test
-           ((lambda () result1 result2 ...)) 
-           (cond clause1 clause2 ...)))))
+  (syntax-rules (else =>)
+    ((cond (else result1 result2 ...))
+     ((lambda () result1 result2 ...))) 
+    ((cond (test => result))
+     (let ((temp test))
+       (if (truthy? temp) (result temp))))
+    ((cond (test => result) clause1 clause2 ...)
+     (let ((temp test))
+       (if (truthy? temp)
+         (result temp)
+         (cond clause1 clause2 ...))))
+    ((cond (test)) test)
+    ((cond (test) clause1 clause2 ...)
+     (let ((temp test))
+       (if temp
+         temp
+         (cond clause1 clause2 ...))))
+    ((cond (test result1 result2 ...))
+     (if test ((lambda () result1 result2 ...)))) 
+    ((cond (test result1 result2 ...)
+           clause1 clause2 ...)
+     (if test
+       ((lambda () result1 result2 ...)) 
+       (cond clause1 clause2 ...)))))
 
 (define-syntax case
   (syntax-rules (else =>)
-                ((case (key ...)
-                   clauses ...)
-                 (let ((atom-key (key ...)))
-                   (case atom-key clauses ...)))
-                ((case key
-                   (else => result))
-                 (result key))
-                ((case key
-                   (else result1 result2 ...))
-                 (if #t ((lambda () result1 result2 ...)))) 
-                ((case key
-                   ((atoms ...) result1 result2 ...))
-                 (if (memv key '(atoms ...))
-                   ((lambda () result1 result2 ...)))) 
-                ((case key
-                   ((atoms ...) => result)
-                   clause clauses ...)
-                 (if (memv key '(atoms ...))
-                   (result key)
-                   (case key clause clauses ...)))
-                ((case key
-                   ((atoms ...) result1 result2 ...)
-                   clause clauses ...)
-                 (if (memv key '(atoms ...))
-                   ((lambda () result1 result2 ...)) 
-                   (case key clause clauses ...)))))
+    ((case (key ...)
+       clauses ...)
+     (let ((atom-key (key ...)))
+       (case atom-key clauses ...)))
+    ((case key
+       (else => result))
+     (result key))
+    ((case key
+       (else result1 result2 ...))
+     (if #t ((lambda () result1 result2 ...)))) 
+    ((case key
+       ((atoms ...) result1 result2 ...))
+     (if (memv key '(atoms ...))
+       ((lambda () result1 result2 ...)))) 
+    ((case key
+       ((atoms ...) => result)
+       clause clauses ...)
+     (if (memv key '(atoms ...))
+       (result key)
+       (case key clause clauses ...)))
+    ((case key
+       ((atoms ...) result1 result2 ...)
+       clause clauses ...)
+     (if (memv key '(atoms ...))
+       ((lambda () result1 result2 ...)) 
+       (case key clause clauses ...)))))
 
 (define-syntax when
-  (syntax-rules ()
-                ((when test result1 result2 ...)
-                 (if test
-                   (begin result1 result2 ...)))))
+  (syntax-rules "when is equivalent to if without an else clause.
+
+  params:
+    - test: the predicate
+    - body: a vararg presenting the body that will be executed if <par>test</par> evaluates to true
+  complexity: O(1)
+  returns: an if clause" ()
+    ((when test result1 result2 ...)
+     (if test
+       (begin result1 result2 ...)))))
 
 (define-syntax letrec*
   (syntax-rules ()
-                ((letrec* ((var1 init1) ...) body1 body2 ...)
-                 (let ((var1 #f) ...)
-                   (set! var1 init1)
-                   ...
-                   (let () body1 body2 ...)))))
+    ((letrec* ((var1 init1) ...) body1 body2 ...)
+     (let ((var1 #f) ...)
+       (set! var1 init1)
+       ...
+       (let () body1 body2 ...)))))
 
 ; The vanilla SRFI 16 implementation
 (define-syntax case-lambda
@@ -115,19 +121,38 @@
 
 ;; These are the only homebrew definitions
 (define-syntax unless
-  (syntax-rules ()
-                ((unless test result1 ...)
-                 (if (not test)
-                   result1
-                   ...))))
+  (syntax-rules "the inverse to if.
+
+  params:
+   - pred: the predicate
+   - body: the clause that should be evaluated if <par>pred</par> is false
+   - else: the clause that should be evaluated otherwise
+  complexity: O(1)
+  returns: an if clause" ()
+    ((unless test result1 ...)
+     (if (not test)
+       result1
+       ...))))
 
 (define-syntax for
-  (syntax-rules ()
-                ((for num (actions ...))
-                 (do ((i 0 (+ i 1))) ((= i num)) actions ...))))
+  (syntax-rules "execute a body <par>n</par> times.
+    Exposes a variable <i>i</i> that evaluates to the current iteration.
+
+    params:
+      - n: the number of times <par>actions</par> should be evaluated
+      - actions: the actions (must be wrapped in <zepto>()</zepto>)
+    complexity: O(1)
+    returns: a <fun>do</fun> clause" ()
+    ((for num (actions ...))
+     (do ((i 0 (+ i 1))) ((= i num)) actions ...))))
 
 (define-syntax <|
-  (syntax-rules ()
+  (syntax-rules "pipe things from right to left.
+  
+  params:
+   - args: a variable number of arguments that pipe into each other
+  complexity: O(1)
+  returns: the result of the last call" ()
     ((<| x) (x))
     ((<| x y) (x (y)))
     ((<| x y ...)
@@ -135,6 +160,13 @@
 
 
 (define (|> y . x)
+  "pipe things from right to left
+
+  params:
+   - y: the first argument
+   - x: a vararg that holds any number of consecutive actions
+  complexity: the complexity of all input actions combined
+  returns: the result of the last call"
   (define (all-but acc l)
             (if (null? (cdr l))
               acc
@@ -150,34 +182,72 @@
                         (lambda formals body ...)))))
 
 (define-syntax comment
-  (syntax-rules ()
+  (syntax-rules "ignore everything within this macro.
+
+  params:
+    - args: any number of arguments
+  complexity: O(1)
+  returns: nil" ()
     ((_ ...) (nil))))
 
-(define (zepto:get-bindings str . env) "get the bindings that match the prefix"
-  (hash:kv-reduce (lambda (acc kv) (if (string:starts-with (car kv) str) (+= acc kv) acc))
+(define (zepto:get-bindings str . env)
+  "get the bindings in <par>env</par> that match the prefix <par>str</par>.
+
+   params:
+     - str: the prefix to match
+     - env: an optional argument that holds the environment in which to match (defaults to the current env)
+   complexity: O(n) where n is the size of the environment
+   returns: a list of <zepto>[name binding]</zepto> bindings"
+  (hash:kv-reduce (lambda (acc kv)
+                    (if (string:starts-with (car kv) str)
+                      (+= acc kv)
+                      acc))
                   []
                   (env->hashmap (if (null? env) (current-env) (car env)))))
 
 (define-syntax forever
-  (syntax-rules ()
+  (syntax-rules "runs <par>body</par> forever.
+
+  params:
+    - body: a variable argument that represents the body of the function to run
+  complexity: O(∞)
+  returns: never" ()
     ((_ body ...)
       (letrec ((forever-fun (lambda () (begin body ... (forever-fun)))))
         (forever-fun)))))
 
 (define-syntax λ
-  (syntax-rules ()
+  (syntax-rules "a shorthand for lambda.
+
+   params:
+    - args: the lambda arguments
+    - body: the lambda body
+   complexity: O(1)
+   returns: a lambda" ()
     ((_ args body)
       (lambda args body))))
 
 (define-syntax ƒ
-  (syntax-rules ()
+  (syntax-rules "define a function.
+
+  params:
+    - args: the function arguments
+    - body: the function body
+   complexity: O(1)
+   returns: a function" ()
     ((_ args body)
       (if (list? 'args)
         (define args body)
         (error "function head must be a list, was" 'args)))))
 
 (define-syntax with-environment
-  (syntax-rules ()
+  (syntax-rules "call <par>body</par> with the current environment bound to <par>var</par>.
+
+  params:
+    - var: the variable name to which the environment is bound
+    - body: the body in which <par>var</par> is defined
+  complexity: O(1)
+  returns: the result of <par>body</par>" ()
     ((with-environment var body)
       (let ((var (current-env)))
         body))))
@@ -190,13 +260,31 @@
              (zip-with cons 'ks vals))))))
 
 (define-syntax defined?
-  (syntax-rules ()
+  (syntax-rules "returns true if <par>name</par> is defined.
+
+  params:
+   - name: the name which is maybe defined
+  complexity: O(n) where n is the size of the environment
+  returns: a boolean" ()
     ((_ name)
       (let ((env (current-env)))
         (env:in? env 'name)))))
 
 (define-syntax given
-  (syntax-rules (else)
+  (syntax-rules "similar to let, but dispatches based on check functions.
+
+  Example:
+  <zepto>
+  (given a-value
+    (number? called-if-number)
+    (hash-map? called-if-hash-map)
+    (else the-wildcard-if-nothing-else-matches))
+  </zepto
+
+  params:
+    - args: varargs of the format described above
+  complexity: O(n*k) where n is the number of checks and k is their complexity
+  returns: the result of the matching function" (else)
     ((_ key (else res))
       (res key))
     ((_ key (test result))
