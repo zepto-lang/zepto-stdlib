@@ -1,14 +1,29 @@
 (define *protocols* #{})
 (define *impls* #{})
 
+; as this is loaded really early in the startup it looks a little hairy.
+; sorry about that. i should probably define at least curry and compose
+; before this is executed, but so far i have not.
 (define-syntax defprotocol
   (syntax-rules ()
     ((_ name functions ...)
       (let ((env (current-env))
             (list:cadr (lambda (x) (list:car (list:cdr x))))
+            (list:caddr (lambda (x) (list:car (list:cdr (list:cdr x)))))
             (str (symbol->string 'name)))
         (begin
           (eval `(define (,(string->symbol (++ str "?")) arg)
+                   ,(++ "checks whether the given object <par>arg</par> implements the " str "
+                         protocol. The following functions are part of this protocol: 
+                         <ul>" (foldl (lambda (acc x)
+                                    (++ acc "<li><fun>" (symbol->string (list:car x)) "</fun></li>\n"))
+                                  ""
+                                  'functions) "</ul>
+
+                         params:
+                          - arg: the object that should be checked
+                         complexity: O(1)
+                         returns: a boolean")
                    (let* ((impls (*impls* ,str))
                           (funs (hash:kv-filter
                                   (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
@@ -19,21 +34,30 @@
             (lambda (x)
               (define strx (symbol->string (list:car x)))
               (eval `(define ,(list:car x) (lambda args
-                        (let ((impls (*impls* ,str))
-                              (arg (list:car args)))
-                          (if (or (eq? (list:length args) ,(list:cadr x))
-                                  (eq? :overloaded ,(list:cadr x)))
-                            (if (nil? impls)
-                              (error "No implementation specified for protocol" ,str)
-                              (let ((funs (hash:kv-filter
-                                            (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
-                                            impls)))
-                                (if (list:null? funs)
-                                  (error "No implementation of protocol" (typeof arg)
-                                         "found that matches" ,str)
-                                  (apply ((list:car (list:cdr (list:car funs))) ,strx) args))))
-                            (error ,strx "takes" ,(list:cadr x) "arguments, but was given" (length args))))))
-                      env))
+                      ,(if (> (list:length x) 2)
+                        (list:caddr x)
+                        (++ "This function is part of the <fun>" str "?</fun> protocol.
+                           Any datatype that uses it needs to implement this protocol.
+
+                           params:
+                            - args: the arguments that need to be passed through (varargs); the first argument is always the datatype
+                           complexity: varies with the implementation
+                           returns: varies with the implementation"))
+                      (let ((impls (*impls* ,str))
+                            (arg (list:car args)))
+                        (if (or (eq? (list:length args) ,(list:cadr x))
+                                (eq? :overloaded ,(list:cadr x)))
+                          (if (nil? impls)
+                            (error "No implementation specified for protocol" ,str)
+                            (let ((funs (hash:kv-filter
+                                          (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
+                                          impls)))
+                              (if (list:null? funs)
+                                (error "No implementation of protocol" (typeof arg)
+                                       "found that matches" ,str)
+                                (apply ((list:car (list:cdr (list:car funs))) ,strx) args))))
+                          (error ,strx "takes" ,(list:cadr x) "arguments, but was given" (length args))))))
+                env))
             'functions)
           (hash:set! *protocols* (symbol->string 'name) 'functions))))))
 
