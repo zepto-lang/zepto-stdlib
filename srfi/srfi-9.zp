@@ -8,19 +8,27 @@
 ; Definition of DEFINE-RECORD-TYPE
 
 (define-syntax define-record-type
-  (syntax-rules ()
-    ((define-record-type type
+  (syntax-rules "creates a new record type.
+
+    params:
+      - name: the type name
+      - constructor: the constructor name
+      - predicate: the predicate name
+      - field-tag: a list of fields and their accessors
+    complexity: O(n)
+    returns: defines the specified functions" ()
+    ((define-record-type name
        (constructor constructor-tag ...)
        predicate
        (field-tag accessor . more) ...)
        (begin
        (define type
-          (make-record-type 'type '(field-tag ...)))
+          (make-record-type 'name '(field-tag ...)))
         (define constructor
-          (record-constructor type '(constructor-tag ...)))
+          (record-constructor 'name type '(constructor-tag ...)))
         (define predicate
-          (record-predicate type))
-        (define-record-field type field-tag accessor . more)
+          (record-predicate 'name type))
+        (define-record-field 'name type field-tag accessor . more)
         ...))))
 
 ; An auxilliary macro for define field accessors and modifiers.
@@ -28,12 +36,12 @@
 
 (define-syntax define-record-field
   (syntax-rules ()
-    ((define-record-field type field-tag accessor)
-     (define accessor (record-accessor type 'field-tag)))
+    ((define-record-field name type field-tag accessor)
+     (define accessor (record-accessor name type 'field-tag)))
     ((define-record-field type field-tag accessor modifier)
      (begin
-       (define accessor (record-accessor type 'field-tag))
-       (define modifier (record-modifier type 'field-tag))))))
+       (define accessor (record-accessor name type 'field-tag))
+       (define modifier (record-modifier name type 'field-tag))))))
 
 ;;;;
 ;;;; Section 3 - Records
@@ -168,41 +176,67 @@
 ; Now we are ready to define RECORD-CONSTRUCTOR and the rest of the
 ; procedures used by the macro expansion of DEFINE-RECORD-TYPE.
 
-(define (record-constructor type tags)
+(define (record-constructor name type tags)
   (let ((size (length (record-type-field-tags type)))
         (arg-count (length tags))
         (indexes (map (lambda (tag)
                         (field-index type tag))
                       tags)))
-    (lambda args
-      (if (= (length args)
-             arg-count)
-          (let ((new (make-record (+ size 1))))
-            (record-set! new 0 type)
-            (for arg-count ((record-set! new (list:ref indexes i) (list:ref args i))))
-            new)
-          (error (list "wrong number of arguments to constructor" type args))))))
+    (eval (macro-expand `(lambda args
+      ,(++ "creates a " (->string name) " type. Takes the arguments "
+           (string:join (map ->string tags) ", ") ".
 
-(define (record-predicate type)
-  (lambda (thing)
+           arguments:
+             - args: varargs specified above
+           complexity: O(1)
+           returns: a " (->string name) " type")
+      (if (= (length args)
+             ,arg-count)
+          (let ((new (make-record (+ ,size 1))))
+            (record-set! new 0 type)
+            (for arg-count ((record-set! new (list:ref ,indexes i) (list:ref args i))))
+            new)
+          (error (list "wrong number of arguments to constructor" ,type args))))))))
+
+(define (record-predicate name type)
+  (eval (macro-expand `(lambda (thing)
+    ,(++ "check whether <par>thing</par> is a " (->string name) " type.
+
+          params:
+            - thing: the thing to check
+          complexity: O(1)
+          returns: a boolean")
     (and (record? thing)
          (eq? (record-type thing)
-              type))))
+              ,type))))))
 
-(define (record-accessor type tag)
+(define (record-accessor name type tag)
   (let ((index (field-index type tag)))
-    (lambda (thing)
+    (eval (macro-expand `(lambda (thing)
+      ,(++ "gets " (->string tag) " from a " (->string name) " type.
+
+            params:
+              - thing: a " (->string name) " object
+            complexity: O(1)
+            returns: the value of " (->string tag))
       (if (and (record? thing)
                (eq? (record-type thing)
-                    type))
-          (record-ref thing index)
-          (error "accessor applied to bad value" type tag thing)))))
+                    ,type))
+          (record-ref thing ,index)
+          (error "accessor applied to bad value" ,type ,tag thing)))))))
 
-(define (record-modifier type tag)
+(define (record-modifier type name tag)
   (let ((index (field-index type tag)))
-    (lambda (thing value)
+    (eval (macro-expand `(lambda (thing value)
+      ,(++ "sets " (->string tag) " in a " (->string name) " type.
+
+            params:
+              - thing: a " (->string name) " object
+              - value: the value to set
+            complexity: O(1)
+            returns: the value of " (->string tag))
       (if (and (record? thing)
                (eq? (record-type thing)
-                    type))
-          (record-set! thing index value)
-          (error "modifier applied to bad value" type tag thing)))))
+                    ,type))
+          (record-set! thing ,index value)
+          (error "modifier applied to bad value" ,type ,tag thing)))))))

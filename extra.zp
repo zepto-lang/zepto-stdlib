@@ -294,3 +294,24 @@
       (if (test key)
         (res key)
         (given key clauses ...)))))
+
+(define-syntax defmacro
+  (syntax-rules "simple version of the Common Lisp defmacro form.
+
+  params:
+   - name: the macro name
+   - args: the macro args
+   - docs: optional docstring
+   - form: the macro body
+  complexity: O(1)
+  returns: a macro" ()
+    ((_ name (args ...) form)
+      (define-syntax name
+        (syntax-rules ()
+          ((name args ...)
+            (eval (macro-expand `form))))))
+    ((_ name (args ...) docs form)
+      (define-syntax name
+        (syntax-rules docs ()
+          ((name args ...)
+            (eval (macro-expand `form))))))))

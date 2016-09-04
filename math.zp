@@ -201,7 +201,7 @@
   (if (null? (cdr colls))
     (map list (car colls))
     (let ((x (car colls))
-          (y (apply cross (cdr colls))))
+          (y (apply math:cross (cdr colls))))
       (let l1 ((x x)
                (acc []))
         (if (null? x)
