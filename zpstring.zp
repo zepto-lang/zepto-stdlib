@@ -25,7 +25,9 @@
     (car (string->list (substring s (- l 1) l)))))
 
 (define (string:in? s el) "is element in string?"
-  (/= -1 (string:find s el)))
+  (given el
+    (regex? ($ (regex:in? % s)))
+    (($ (or (string? %) (char? %))) ($ (/= -1 (string:find s %))))))
 
 (define (string:head s)
   "gets head of a string, i.e. first character (as character, not string)"

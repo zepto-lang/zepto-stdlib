@@ -289,10 +289,10 @@
       (res key))
     ((_ key (test result))
       (if (test key)
-        (res key)))
+        (result key)))
     ((_ key (test result) clauses ...)
       (if (test key)
-        (res key)
+        (result key)
         (given key clauses ...)))))
 
 (define-syntax defmacro
