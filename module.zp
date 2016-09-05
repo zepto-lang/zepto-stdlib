@@ -18,6 +18,7 @@
 (load "zpconversion.zp")
 (load "zphash.zp")
 (load "zpnumbers.zp")
+(load "zpregex.zp")
 (load "zpstring.zp")
 (load "zpvalues.zp")
 (load "zpvector.zp")

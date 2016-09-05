@@ -1,0 +1,29 @@
+(define (regex:in? r pattern)
+  "checks whether a regex <par>r</par> is in a string <par>pattern</par>.
+
+   params:
+    - r: the regex to match against
+    - pattern: the pattern to check
+   complexity: derived from <fun>regex:scan</fun>
+   returns: a boolean"
+  (|> (regex:scan r pattern) null? not))
+
+(define (regex:group-match r pattern)
+  "gets match groups of the scan of <par>r<par> over the <par>pattern</par>.
+
+   params:
+    - r: the regex to match against
+    - pattern: the pattern to check
+   complexity: derived from <fun>regex:scan</fun>
+   returns: a list of the groups defined in <par>r</par> as found in <par>pattern</par>"
+  (map cdr (regex:scan r pattern)))
+
+(define (regex:matches r pattern)
+  "gets all matches of the scan of <par>r<par> over the <par>pattern</par>.
+
+   params:
+    - r: the regex to match against
+    - pattern: the pattern to check
+   complexity: derived from <fun>regex:scan</fun>
+   returns: a list of the matches"
+  (map car (regex:scan r pattern)))
