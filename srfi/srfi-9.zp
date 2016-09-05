@@ -194,7 +194,7 @@
              ,arg-count)
           (let ((new (make-record (+ ,size 1))))
             (record-set! new 0 type)
-            (for arg-count ((record-set! new (list:ref ,indexes i) (list:ref args i))))
+            (for arg-count ((record-set! new (list:ref (quote ,indexes) i) (list:ref args i))))
             new)
           (error (list "wrong number of arguments to constructor" ,type args))))))))
 
