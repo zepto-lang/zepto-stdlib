@@ -13,8 +13,48 @@
 (defprotocol ord (compare 2))
 (defimpl ord number? ((compare (lambda (a b) (if (= a b) 0 (if (< a b) -1 1))))))
 
-(define (lt a b) (eq? (compare a b) -1))
-(define (gt a b) (eq? (compare a b) 1))
-(define (eq a b) (eq? (compare a b) 0))
-(define (ge a b) (or (eq? (compare a b) 0) (eq? (compare a b) 1)))
-(define (le a b) (or (eq? (compare a b) 0) (eq? (compare a b) -1)))
+(define (lt a b)
+  "a less-than function using the <fun>equality?</fun> protocol.
+
+   params:
+    - a: the first operand
+    - b: the second operand
+   complexity: derived by <fun>compare</fun>
+   returns: a boolean"
+  (eq? (compare a b) -1))
+(define (gt a b)
+  "a greater-than function using the <fun>equality?</fun> protocol.
+
+   params:
+    - a: the first operand
+    - b: the second operand
+   complexity: derived by <fun>compare</fun>
+   returns: a boolean"
+  (eq? (compare a b) 1))
+(define (eq a b)
+  "an equality function using the <fun>equality?</fun> protocol.
+
+   params:
+    - a: the first operand
+    - b: the second operand
+   complexity: derived by <fun>compare</fun>
+   returns: a boolean"
+  (eq? (compare a b) 0))
+(define (ge a b)
+  "a greater-than-or-equal function using the <fun>equality?</fun> protocol.
+
+   params:
+    - a: the first operand
+    - b: the second operand
+   complexity: derived by <fun>compare</fun>
+   returns: a boolean"
+  (or (eq? (compare a b) 0) (eq? (compare a b) 1)))
+(define (le a b)
+  "a less-than-or-equal function using the <fun>equality?</fun> protocol.
+
+   params:
+    - a: the first operand
+    - b: the second operand
+   complexity: derived by <fun>compare</fun>
+   returns: a boolean"
+  (or (eq? (compare a b) 0) (eq? (compare a b) -1)))

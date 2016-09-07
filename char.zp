@@ -46,3 +46,16 @@
   "is character whitespace?"
   (let ((code (char->integer c)))
     (in? '(32 9 10 11 12 13) code)))
+
+(define (char:hex? char)
+  "checks whether a character is a valid hexadecimal sigit.
+
+   params:
+    - char: the character to check
+   complexity: O(1)
+   returns: a boolean"
+  (let ((num (char->integer char)))
+    (or (char:num? char)
+        (and (> num 96) (< num 103))
+        (and (> num 64) (< num 71)))))
+
