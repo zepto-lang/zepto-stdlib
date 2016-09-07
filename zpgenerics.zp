@@ -94,6 +94,7 @@
 (defimpl stringify string? ((->string id)))
 (defimpl stringify regex? ((->string (lambda (r) (++ "/" (regex:pattern r) "/")))))
 (defimpl stringify number? ((->string number->string)))
+(defimpl stringify opaque? ((->string (lambda (_) "<opaque>"))))
 (defimpl stringify pair?
          ((->string
             (lambda (el)
