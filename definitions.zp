@@ -8,21 +8,6 @@
 (define true #t)
 (define false #f)
 
-(define (ok? x) "is arg ok"
-  (eq? x :ok))
-
-(define (error? x) "is arg error"
-  (eq? x :error))
-
-(define (yes? x) "is arg yes"
-  (eq? x :yes))
-
-(define (no? x) "is arg no"
-  (eq? x :no))
-
-(define (wrong? x) "is arg wrong"
-  (eq? x :wrong))
-
 (define (macro? x)
   "checks whether <par>x</par is a macro.
 
