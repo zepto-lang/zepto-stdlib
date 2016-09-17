@@ -2,3 +2,10 @@
   (if (null? code) (exit 1) (exit (car code))))
 (define (exit-success) "ends zepto program with status code 0"
   (exit 0))
+
+(define (error:print-and-throw . args)
+  "prints an error to stderr and then throws it as an exception"
+  (begin
+    (apply error args)
+    (error:throw (make-error (string:join (map ->string args) "")))))
+
