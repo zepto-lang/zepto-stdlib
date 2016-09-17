@@ -3,9 +3,23 @@
 (define (exit-success) "ends zepto program with status code 0"
   (exit 0))
 
+(define (error:from-string . strs)
+  "takes one or multiple strings (or objects coercible to strings)
+   and throws an error with it as message.
+
+   params:
+     - strs: the error message as one or more strings (will be joined with a space)
+   complexity: O(1)
+   returns: a thrown error"
+  (error:throw (make-error (string:join (map ->string strs) " "))))
+
 (define (error:print-and-throw . args)
-  "prints an error to stderr and then throws it as an exception"
+  "prints an error to stderr and then throws it as an exception.
+
+   params:
+    - args: varagrs to print and throw
+   complexity: O(n)
+   returns: a thrown error"
   (begin
     (apply error args)
-    (error:throw (make-error (string:join (map ->string args) "")))))
-
+    (apply error:from-string args)))

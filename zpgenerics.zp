@@ -16,7 +16,9 @@
                    ,(++ "checks whether the given object <par>arg</par> implements the " str "
                          protocol. The following functions are part of this protocol: 
                          <ul>" (foldl (lambda (acc x)
-                                    (++ acc "<li><fun>" (symbol->string (list:car x)) "</fun></li>\n"))
+                                    (++ acc "<li><fun>"
+                                        (symbol->string (list:car x))
+                                        "</fun></li>\n"))
                                   ""
                                   'functions) "</ul>
 
@@ -26,7 +28,9 @@
                          returns: a boolean")
                    (let* ((impls (*impls* ,str))
                           (funs (hash:kv-filter
-                                  (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
+                                  (lambda (kv)
+                                    (eval (list (string->symbol (list:car kv))
+                                                'arg)))
                                   (if (truthy? impls) impls (make-hash)))))
                     (not (list:null? funs))))
                 env)
@@ -48,15 +52,23 @@
                         (if (or (eq? (list:length args) ,(list:cadr x))
                                 (eq? :overloaded ,(list:cadr x)))
                           (if (nil? impls)
-                            (error "No implementation specified for protocol" ,str)
+                            (error "No implementation specified for protocol"
+                                   ,str)
                             (let ((funs (hash:kv-filter
-                                          (lambda (kv) (eval (list (string->symbol (list:car kv)) 'arg)))
+                                          (lambda (kv)
+                                            (eval
+                                              (list
+                                                (string->symbol (list:car kv))
+                                                'arg)))
                                           impls)))
                               (if (list:null? funs)
-                                (error "No implementation of protocol" (typeof arg)
-                                       "found that matches" ,str)
-                                (apply ((list:car (list:cdr (list:car funs))) ,strx) args))))
-                          (error ,strx "takes" ,(list:cadr x) "arguments, but was given" (length args))))))
+                                (error "No implementation of protocol"
+                                       ,str "found for type" (typeof arg))
+                                (apply
+                                  ((list:car (list:cdr (list:car funs))) ,strx)
+                                  args))))
+                          (error ,strx "takes" ,(list:cadr x)
+                                 "arguments, but was given" (length args))))))
                 env))
             'functions)
           (hash:set! *protocols* (symbol->string 'name) 'functions))))))
@@ -67,8 +79,9 @@
       (let ((proto (map list:car (*protocols* (symbol->string 'name))))
             (given (map list:car 'funcs))
             (wrong-forms (filter (lambda (x) (/= 2 (list:length x))) 'funcs))
-            (nfuncs (map (lambda (x) (list (symbol->string (list:car x))
-                                           (eval (macro-expand (list:car (list:cdr x))))))
+            (nfuncs (map (lambda (x)
+                           (list (symbol->string (list:car x))
+                                 (eval (macro-expand (list:car (list:cdr x))))))
                          'funcs)))
         (if (list:null? wrong-forms)
           (if (nil? proto)
@@ -77,9 +90,13 @@
               (hash:update! *impls* (symbol->string 'name)
                          (lambda (x) 
                             (let ((x (if (truthy? x) x #{})))
-                              (hash:set! x (symbol->string 'pred) (make-hash nfuncs)))))
-              (error "protocol" 'name "expects" proto "to be defined, was given" given)))
-          (error "wrong forms" wrong-forms "; expect forms to be of the form (name implementation)"))))))
+                              (hash:set! x
+                                         (symbol->string 'pred)
+                                         (make-hash nfuncs)))))
+              (error "protocol" 'name "expects" proto
+                     "to be defined, was given" given)))
+          (error "wrong forms" wrong-forms
+                 "; expect forms to be of the form (name implementation)"))))))
 
 (defprotocol stringify (->string 1))
 
@@ -158,77 +175,20 @@
 (defimpl stringify env? ((->string (lambda (env) "<env>"))))
 (defimpl stringify nil? ((->string (lambda (n) "nil"))))
 
-(define (pprint obj . args)
-  "pretty print a data object obj; the output is configurable via a hashmap args;
-   parameter :indent (width as integer) :max-width (as integer) and :data (currently unused)
-   are supported"
-  (let* ((dflt #{:indent 2 :max-width 80 :data #t})
-         (args (if (> (list:length args) 0) (make-hash dflt (car args)) dflt)))
-  (define (internal-code obj i w)
-    (define (soft-break i w)
-      (if (>= w (args :max-width))
-        (begin
-          (display (++ "\n" (string:replicate i #\space)))
-          (internal-code (string:tail obj) i 0))
-        (internal-code (string:tail obj) i w)))
-    (if (string:empty? obj)
-      (write "")
-      (let ((w (add1 w)))
-        (begin
-          (display (string (string:head obj)))
-          (case (string:head obj)
-            ((#\space)
-              (soft-break i w))
-            ((#\tab)
-              (soft-break i w))
-            ((#\()
-              (soft-break (+ i (args :indent)) w))
-            ((#\))
-              (soft-break (- i (args :indent)) w))
-            (else (internal-code (string:tail obj) i w)))))))
-  (define (internal obj i w)
-    (define (soft-break i w)
-      (if (>= w (args :max-width))
-        (begin
-          (display (++ "\n" (string:replicate i #\space)))
-          (internal (string:tail obj) i 0))
-        (internal (string:tail obj) i w)))
-    (if (string:empty? obj)
-      (write "")
-      (let ((w (add1 w)))
-        (begin
-          (display (string (string:head obj)))
-          (case (string:head obj)
-            ((#\space)
-              (soft-break i w))
-            ((#\tab)
-              (soft-break i w))
-            ((#\{)
-              (soft-break w w))
-            ((#\[)
-              (soft-break w w))
-            ((#\()
-              (soft-break (+ w (args :indent)) w))
-            ((#\})
-              (soft-break w w))
-            ((#\])
-              (soft-break w w))
-            ((#\))
-              (soft-break (- w (args :indent)) w))
-            (else (internal (string:tail obj) i w)))))))
-  (if (args :data)
-    (internal (->string obj) 0 0)
-    (internal-code (->string obj) 0 0))))
-
 (defprotocol bytify (->bytes 1))
-(defimpl bytify nil? ((->bytes (lambda (x) b{0}))))
+(defimpl bytify nil? ((->bytes ($ b{0}))))
 (defimpl bytify byte-vector? ((->bytes id)))
 (defimpl bytify number? ((->bytes number->bytes)))
 (defimpl bytify string? ((->bytes string->byte-vector)))
 (defimpl bytify hash-map? ((->bytes
          (lambda (x)
-            (hash:kv-reduce (lambda (acc kv) (++ acc (->bytes (car kv)) (->bytes (cadr kv)))) b{} x)))))
-(defimpl bytify list? ((->bytes (lambda (x) (reduce (lambda (acc x) (++ acc (->bytes x))) b{} x)))))
+            (hash:kv-reduce
+              (lambda (acc kv) (++ acc (->bytes (car kv)) (->bytes (cadr kv))))
+              b{}
+              x)))))
+(defimpl bytify list?
+         ((->bytes
+           (lambda (x) (reduce (lambda (acc x) (++ acc (->bytes x))) b{} x)))))
 (defimpl bytify char? ((->bytes (lambda (x) (->bytes (string x))))))
 (defimpl bytify port? ((->bytes (lambda (x) b{0}))))
 (defimpl bytify boolean? ((->bytes (lambda (x) (if x b{1} b{0})))))

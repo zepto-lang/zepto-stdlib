@@ -31,7 +31,7 @@
                     res))))
 
 (define (error . args) "prints an error to stderr"
-  (write (string:join (cons "Error: " (map ->string args)) "") :stderr))
+  (write (string:join (cons "Error: " (map ->string args)) " ") :stderr))
 
 (define (read-line . port) "reads a line from the input port port"
   (let loop ((line "")

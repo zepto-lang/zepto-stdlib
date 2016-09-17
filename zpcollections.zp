@@ -181,7 +181,7 @@ or all items if there are fewer than <par>n</par>.
       (if (= i n)
         c
         (internal (add1 i) (cdr c)))))
-  (if (>= 0 n)
+  (if (<= 0 n)
     (internal 0 c)
     c))
 

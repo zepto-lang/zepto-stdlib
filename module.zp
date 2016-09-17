@@ -16,6 +16,7 @@
 (load "sort.zp")
 (load "zpcont.zp")
 (load "zpconversion.zp")
+(load "zperror.zp")
 (load "zphash.zp")
 (load "zpnumbers.zp")
 (load "zpregex.zp")
