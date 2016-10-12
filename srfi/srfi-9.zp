@@ -38,7 +38,7 @@
   (syntax-rules ()
     ((define-record-field name type field-tag accessor)
      (define accessor (record-accessor name type 'field-tag)))
-    ((define-record-field type field-tag accessor modifier)
+    ((define-record-field name type field-tag accessor modifier)
      (begin
        (define accessor (record-accessor name type 'field-tag))
        (define modifier (record-modifier name type 'field-tag))))))
@@ -165,12 +165,13 @@
 
 (define (field-index type tag)
   (let loop ((i 1) (tags (record-type-field-tags type)))
-    (cond ((null? tags)
-           (begin (error (string:join (list "record type has no such field" (inspect type) (symbol->string tag)))) (exit)))
-          ((eq? tag (car tags))
-           i)
-          (else
-           (loop (+ i 1) (cdr tags))))))
+    (cond
+      ((null? tags)
+        (error:from-string "record type has no such field: "
+                           (symbol->string tag)
+                           "\ntype was: " (inspect type)))
+      ((eq? tag (car tags)) i)
+      (else (loop (+ i 1) (cdr tags))))))
 
 ;----------------
 ; Now we are ready to define RECORD-CONSTRUCTOR and the rest of the
@@ -194,9 +195,12 @@
              ,arg-count)
           (let ((new (make-record (+ ,size 1))))
             (record-set! new 0 type)
-            (for arg-count ((record-set! new (list:ref (quote ,indexes) i) (list:ref args i))))
+            (for arg-count
+                 ((record-set! new (list:ref (quote ,indexes) i)
+                               (list:ref args i))))
             new)
-          (error (list "wrong number of arguments to constructor" ,type args))))))))
+          (error:from-string "wrong number of arguments to constructor"
+                             ,type args)))))))
 
 (define (record-predicate name type)
   (eval (macro-expand `(lambda (thing)
@@ -223,9 +227,10 @@
                (eq? (record-type thing)
                     ,type))
           (record-ref thing ,index)
-          (error "accessor applied to bad value" ,type ,tag thing)))))))
+          (error:from-string "accessor applied to bad value" ,type ,tag
+                             thing)))))))
 
-(define (record-modifier type name tag)
+(define (record-modifier name type tag)
   (let ((index (field-index type tag)))
     (eval (macro-expand `(lambda (thing value)
       ,(++ "sets " (->string tag) " in a " (->string name) " type.
@@ -239,4 +244,5 @@
                (eq? (record-type thing)
                     ,type))
           (record-set! thing ,index value)
-          (error "modifier applied to bad value" ,type ,tag thing)))))))
+          (error:from-string "modifier applied to bad value" ,type ,tag
+                             thing)))))))

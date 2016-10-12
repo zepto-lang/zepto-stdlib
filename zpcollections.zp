@@ -89,11 +89,23 @@
               (update-in collec (car elems) (lambda args (delete-from ret (cdr elems))))
               collec)))))))
 
-(defprotocol traversable-collec (car 1) (cdr 1) (null? 1))
-(defimpl traversable-collec list? ((car list:car) (cdr list:cdr) (null? list:null?)))
-(defimpl traversable-collec vector? ((car vector:head) (cdr vector:tail) (null? vector:empty?)))
-(defimpl traversable-collec byte-vector? ((car byte-vector:head) (cdr byte-vector:tail) (null? byte-vector:empty?)))
-(defimpl traversable-collec string? ((car string:head) (cdr string:tail) (null? string:empty?)))
+(defprotocol traversable-collec (car 1) (cdr 1) (null? 1) (empty 1))
+(defimpl traversable-collec list? ((car list:car)
+                                   (cdr list:cdr)
+                                   (null? list:null?)
+                                   (empty (lambda (l) []))))
+(defimpl traversable-collec vector? ((car vector:head)
+                                     (cdr vector:tail)
+                                     (null? vector:empty?)
+                                     (empty (lambda (v) {}))))
+(defimpl traversable-collec byte-vector? ((car byte-vector:head)
+                                          (cdr byte-vector:tail)
+                                          (null? byte-vector:empty?)
+                                          (empty (lambda (b) b{}))))
+(defimpl traversable-collec string? ((car string:head)
+                                     (cdr string:tail)
+                                     (null? string:empty?)
+                                     (empty (lambda (s) ""))))
 
 (define head car)
 (define tail cdr)
@@ -164,8 +176,8 @@ or all items if there are fewer than <par>n</par>.
       acc
       (internal (add1 i) (++ acc (car c)) (cdr c))))
   (if (< 0 n)
-    (internal 0 [] c)
-    []))
+    (internal 0 (empty c) c)
+    (empty c)))
 
 (define (drop n c)
   "elides the first <par>n</par> values from the collection <par>c</par>.
@@ -201,7 +213,7 @@ while <par>pred</par> is true.
         (if (pred f)
           (internal (++ acc f) (cdr c))
           acc))))
-  (internal [] c))
+  (internal (empty c) c))
 
 (define (drop-while pred c)
   "elides values from the collection <par>c</par> as long as <par>pred</par> is true.
@@ -229,7 +241,7 @@ while <par>pred</par> is true.
     (if (null? c)
       acc
       (internal (add1 i) (++ acc (if (eq? 0 (mod i n)) (car c) [])) (cdr c))))
-  (internal 0 [] c))
+  (internal 0 (empty c) c))
 
 (define (split-at n c)
   "equivalent to chaining <fun>take</fun> and <fun>drop</fun>

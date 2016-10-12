@@ -42,7 +42,8 @@
 (defimpl traversable-collec set:set?
   ((car (lambda (set) (car (set:get-elems set))))
    (cdr (lambda (set) (set:make-set (cdr (set:get-elems set)))))
-   (null? (lambda (set) (null? (set:get-elems set))))))
+   (null? (lambda (set) (null? (set:get-elems set))))
+   (empty (lambda (set) (set:empty :container (empty (set:get-elems set)))))))
 
 (defimpl collec set:set?
   ((length (lambda (set) (length (set:get-elems set))))

@@ -2,3 +2,4 @@
 (load "data/queue")
 (load "data/dequeue")
 (load "data/set")
+(load "data/controlhash")

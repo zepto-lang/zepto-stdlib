@@ -7,7 +7,7 @@
 (define-syntax stream:cons
   (syntax-rules ()
     ((_ elem stream)
-      (stream:make-stream (delay (cons elem (stream:get-l stream)))))))
+      (stream:make-stream (delay (cons elem (force (stream:get-l stream))))))))
 
 (define (stream:reverse stream) "reverse the stream"
   (define (internal l r)
@@ -20,5 +20,6 @@
          ((->string (lambda (stream) "<stream>"))))
 (defimpl traversable-collec stream:stream?
          ((car   (lambda (stream) (list:car (force (stream:get-l stream)))))
-          (cdr   (lambda (stream) (stream:make-stream (list:cdr (force (stream:get-l stream))))))
-          (null? stream:empty?)))
+          (cdr   (lambda (stream) (stream:make-stream (delay (list:cdr (force (stream:get-l stream)))))))
+          (null? stream:empty?)
+          (empty (lambda (stream) (stream:empty)))))

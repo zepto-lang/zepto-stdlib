@@ -22,7 +22,7 @@
 
 (define (string:last s) "get last element of string"
   (let ((l (string:length s)))
-    (car (string->list (substring s (- l 1) l)))))
+    (string:ref s (sub1 l))))
 
 (define (string:in? s el) "is element in string?"
   (given el
@@ -31,7 +31,7 @@
 
 (define (string:head s)
   "gets head of a string, i.e. first character (as character, not string)"
-  (head (string->list (substring s 0 1))))
+  (string:ref s 0))
 
 (define (string:tail s)
   "gets tail of a string, i.e. everything except for the first element"

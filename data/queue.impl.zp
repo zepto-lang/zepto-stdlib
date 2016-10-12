@@ -17,8 +17,8 @@
 
 (define (queue:empty) (queue:make-queue (stream:empty) 0 (stream:empty) 0))
 
-(define (queue:length queue) (+ (dequeue:get-lenf dequeue)
-                                (dequeue:get-lenr dequeue)))
+(define (queue:length queue) (+ (queue:get-lenf queue)
+                                (queue:get-lenr queue)))
 
 (defimpl queue queue:queue?
   ((queue:empty? (lambda (q) (and (null? (queue:get-f q))
@@ -40,4 +40,5 @@
   ((->string (lambda (d) (++ "<queue (" (->string (queue:length d)) ")>")))))
 (defimpl traversable-collec queue:queue? ((car   queue:head)
                                           (cdr   queue:tail)
-                                          (null? queue:empty?)))
+                                          (null? queue:empty?)
+                                          (empty (lambda (q) (queue:empty)))))

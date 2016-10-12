@@ -32,7 +32,8 @@
   ((car (lambda (h) (car (controlhash:get-elems h))))
    (cdr (lambda (h) (controlhash:make-set (controlhash:get-fun h)
                                           (cdr (controlhash:get-elems h)))))
-   (null? (lambda (h) (null? (controlhash:get-elems set))))))
+   (null? (lambda (h) (null? (controlhash:get-elems set))))
+   (empty (lambda (h) (controlhash:empty (controlhash:get-fun h))))))
 
 (defimpl collec controlhash:controlhash?
   ((length (lambda (h) (length (controlhash:get-elems h))))

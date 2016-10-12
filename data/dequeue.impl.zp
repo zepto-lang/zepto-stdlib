@@ -65,4 +65,5 @@
                                     ")>")))))
 (defimpl traversable-collec dequeue:dequeue? ((car   dequeue:head)
                                               (cdr   dequeue:tail)
-                                              (null? dequeue:empty?)))
+                                              (null? dequeue:empty?)
+                                              (empty (lambda (d) (dequeue:empty)))))
