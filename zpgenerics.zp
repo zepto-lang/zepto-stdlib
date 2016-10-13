@@ -52,8 +52,9 @@
                         (if (or (eq? (list:length args) ,(list:cadr x))
                                 (eq? :overloaded ,(list:cadr x)))
                           (if (nil? impls)
-                            (error "No implementation specified for protocol"
-                                   ,str)
+                            (error:from-string
+                              "No implementation specified for protocol"
+                              ,str)
                             (let ((funs (hash:kv-filter
                                           (lambda (kv)
                                             (eval
@@ -62,12 +63,13 @@
                                                 'arg)))
                                           impls)))
                               (if (list:null? funs)
-                                (error "No implementation of protocol"
+                                (error:from-string
+                                       "No implementation of protocol"
                                        ,str "found for type" (typeof arg))
                                 (apply
                                   ((list:car (list:cdr (list:car funs))) ,strx)
                                   args))))
-                          (error ,strx "takes" ,(list:cadr x)
+                          (error:from-string ,strx "takes" ,(list:cadr x)
                                  "arguments, but was given" (length args))))))
                 env))
             'functions)
@@ -85,7 +87,7 @@
                          'funcs)))
         (if (list:null? wrong-forms)
           (if (nil? proto)
-            (error "protocol" 'name "not defined.")
+            (error:from-string "protocol" 'name "not defined.")
             (if (eq? proto given)
               (hash:update! *impls* (symbol->string 'name)
                          (lambda (x) 
@@ -93,9 +95,9 @@
                               (hash:set! x
                                          (symbol->string 'pred)
                                          (make-hash nfuncs)))))
-              (error "protocol" 'name "expects" proto
-                     "to be defined, was given" given)))
-          (error "wrong forms" wrong-forms
+              (error:from-string "protocol" 'name "expects" proto
+                                 "to be defined, was given" given)))
+          (error:from-string "wrong forms" wrong-forms
                  "; expect forms to be of the form (name implementation)"))))))
 
 (defprotocol stringify (->string 1))
