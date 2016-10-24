@@ -4,11 +4,13 @@
 ; as this is loaded really early in the startup it looks a little hairy.
 ; sorry about that. i should probably define at least curry and compose
 ; before this is executed, but so far i have not.
+; here be dragons.
 (define-syntax defprotocol
   (syntax-rules ()
     ((_ name functions ...)
       (let ((env (current-env))
             (list:cadr (lambda (x) (list:car (list:cdr x))))
+            (list:caadr (lambda (x) (list:car (list:car (list:cdr x)))))
             (list:caddr (lambda (x) (list:car (list:cdr (list:cdr x)))))
             (str (symbol->string 'name)))
         (begin
@@ -59,7 +61,7 @@
                                           (lambda (kv)
                                             (eval
                                               (list
-                                                (string->symbol (list:car kv))
+                                                (,list:caadr kv)
                                                 'arg)))
                                           impls)))
                               (if (list:null? funs)
@@ -67,7 +69,8 @@
                                        "No implementation of protocol"
                                        ,str "found for type" (typeof arg))
                                 (apply
-                                  ((list:car (list:cdr (list:car funs))) ,strx)
+                                  ((list:car (list:cdr (list:car (list:cdr (list:car funs)))))
+                                      ,strx)
                                   args))))
                           (error:from-string ,strx "takes" ,(list:cadr x)
                                  "arguments, but was given" (length args))))))
@@ -94,7 +97,7 @@
                             (let ((x (if (truthy? x) x #{})))
                               (hash:set! x
                                          (symbol->string 'pred)
-                                         (make-hash nfuncs)))))
+                                         (list pred (make-hash nfuncs))))))
               (error:from-string "protocol" 'name "expects" proto
                                  "to be defined, was given" given)))
           (error:from-string "wrong forms" wrong-forms
