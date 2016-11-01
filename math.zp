@@ -1,63 +1,223 @@
 ;; a lot of this is taken almost straight out of SICP
 
-(define negate ($ (- %)))
+(define negate -)
 (define exact? integer?)
 (define math:pi 245850922/78256779)
 (define math:tau (* 245850922/78256779 2))
 (define math:e 438351041/161260336)
-(define (inexact? x) "is inexact number" (and (real? x) (not (integer? x))))
-(define (math:even? n) "is even" (= (remainder n 2) 0))
-(define (math:odd? n) "is odd" (not (math:even? n)))
-(define (zero? n) "is zero" (= n 0))
-(define (positive? n) "is positive" (> n 0))
-(define (negative? n) "is negative" (< n 0))
+
+(define (inexact? x)
+  "checks whether <par>x</par> is an inexact number.
+
+   params:
+    - x: the object to check
+   complexity: O(1)
+   returns: a boolean"
+  (and (real? x) (not (integer? x))))
+
+(define (math:even? n)
+  "checks whether <par>n</par> is an even number.
+
+   params:
+     - n: the number to check
+   complexity: O(1)
+   returns: a boolean"
+  (= (remainder n 2) 0))
+
+(define (math:odd? n)
+  "checks whether <par>n</par> is an odd number.
+
+   params:
+     - n: the number to check
+   complexity: O(1)
+   returns: a boolean"
+  (not (math:even? n)))
+
+(define (zero? n)
+  "checks whether <par>n</par> is zero.
+
+   params:
+     - n: the number to check
+   complexity: O(1)
+   returns: a boolean"
+  (= n 0))
+
+(define (positive? n)
+  "checks whether <par>n</par> is a positive number.
+
+   params:
+     - n: the number to check
+   complexity: O(1)
+   returns: a boolean"
+  (> n 0))
+
+(define (negative? n)
+  "checks whether <par>n</par> is a negative number.
+
+   params:
+     - n: the number to check
+   complexity: O(1)
+   returns: a boolean"
+  (< n 0))
+
 (define complex? number?)
-(define (/. . l) (foldl (lambda (x y) (/ (exact->inexact x) y)) (car l) (cdr l)))
-(define (add1 x) (+ x 1))
-(define (sub1 x) (- x 1))
-(define (abs n) "absolute value of number" (if (>= n 0) n (- n)))
-(define (exact->inexact n) "make inexact number from exact" (* n 1.0))
-(define (integer->float n) "make float from integer" (* n 1.0))
-(define (<> n1 n2) "not equal" (not (= n1 n2)))
-(define (math:divmod n d) "divmod operation" (list (/ n d) (mod n d)))
-(define (>> n d) "right shift" (arithmetic-shift n (- d)))
-(define (<< n d) "left shift" (arithmetic-shift n d))
 
-(define (math:list-sum x) "calculate the sum of all elements in list"
-  (reduce (lambda (acc x) (+ acc x)) 0 x))
+(define (/. . l)
+  "division of all arguments <par>l</par>, returning at least a float
+   or something higher up the numeric tower.
 
-(define (math:list-sum x) "calculate the sum of all elements in list"
-  (reduce (lambda (acc x) (+ acc x)) 0 x))
+   params:
+    - l: the list of numbers to divide (vararg)
+   complexity: O(n)
+   returns: a float or complex number"
+  (foldl / (exact->inexact (car l)) (cdr l)))
 
-(define (succ x) "next integer number" (+ (floor x) 1))
-(define (pred x) "previous integer number" (- (floor x) 1))
+(define add1 ($ (+ % 1)))
+(define sub1 ($ (- % 1)))
 
-(define (safe-div x y) "performs division; in case of division by zero it returns inf/-inf"
+(define (abs n)
+  "gets the absolute value of the number <par>n</par>.
+
+   params:
+     - n: the input number
+   complexity: O(1)
+   returns: the absolute of <par>n</par>"
+  (if (< n 0) (- n) n))
+
+(define (exact->inexact n)
+  "coerces <par>n</par> into an inexact number.
+
+   params:
+     - n: the input number
+   complexity: O(1)
+   returns: the inexact of <par>n</par>"
+  (* n 1.0))
+
+(define integer->float exact->inexact)
+
+(define <> /=)
+
+(define (math:divmod n d)
+  "return a list of the division of <par>n</par> and </par>d</par>
+   and the remainder.
+
+   params:
+    - n: the divident
+    - d: the divider
+   complexity: O(1)
+   returns: <zepto>[(/ n d) (mod n d)]</zepto>"
+  (list (/ n d) (mod n d)))
+
+(define (>> n d)
+  "shift <par>n</par> right by <par>d</par> bits.
+
+   params:
+    - n: the number to shift
+    - d: the number of bits
+   complexity: O(1)
+   returns: n shifted right by d bits"
+  (arithmetic-shift n (- d)))
+
+(define (<< n d)
+  "shift <par>n</par> left by <par>d</par> bits.
+
+   params:
+    - n: the number to shift
+    - d: the number of bits
+   complexity: O(1)
+   returns: n shifted left by d bits"
+  (arithmetic-shift n d))
+
+(define (math:list-sum x)
+  "calculate the sum of all elements in list <par>x/par>.
+
+   params:
+    - x: the list to sum
+   complexity: O(n)
+   returns: the sum of x"
+  (apply + x))
+
+(define (succ x)
+  "return next integer number for input <par>x</par>.
+
+   params:
+     - x: the input number
+   complexity: O(1)
+   returns: the next integer for <par>x</par>"
+  (add1 (floor x)))
+
+(define (pred x)
+  "return prior integer number for input <par>x</par>.
+
+   params:
+     - x: the input number
+   complexity: O(1)
+   returns: the prior integer for <par>x</par>"
+  (sub1 (floor x)))
+
+(define (safe-div x y)
+  "perform safe version of  division, i.e. in case of division by
+   zero it returns inf/-inf.
+
+   params:
+    - x: the divident
+    - y: the divisor
+   complexity: O(1)
+   returns: <zepto>(/ x y)</zepto> if y is not 0, otherwise return inf/-inf"
   (if (= y 0)
         (if (> x 0) (inf) (- (inf)))
         (/ x y)))
 
-(define (math:gcd a b) "Greatest Common Divisor"
+(define (math:gcd a b)
+  "Find the Greatest Common Divisor for <par>a</par> and <par>b</par>.
+
+   params:
+    - a: TODO
+    - b: TODO
+   complexity: O(log(<par>a</par>*<par>b</par>))
+   returns: the GCD of a and b"
   (let ((aa (abs a))
     (bb (abs b)))
      (if (= bb 0)
           aa
           (math:gcd bb (remainder aa bb)))))
 
-(define (math:lcm a b) "Least Common Multiple"
+(define (math:lcm a b)
+  "Find the Least Common Multiple for <par>a</par> and <par>b</par>.
+
+   params:
+    - a: TODO
+    - b: TODO
+   complexity: O(log(<par>a</par>*<par>b</par>))
+   returns: the LCM of a and b"
      (if (or (= a 0) (= b 0))
           0
           (abs (* (quotient a (math:gcd a b)) b))))
 
-(define (math:fact n) "A tail-recursive version of factorial."
+(define (math:fact n)
+  "Calculate the factorial of <par>n</par>. Tail-recursive version (naive).
+
+   params:
+    - n: the input number
+   complexity: O(n)
+   returns: the factorial of <par>n</par>"
   (define (fact-aux n a)
     (if (< n 2) a (fact-aux (- n 1) (* n a))))
     (fact-aux n 1))
 
-(define (math:fib n) "A version of fibonacci that runs in logarithmic time"
+(define (math:fib n)
+  "Calculate the fibonacci of <par>n</par>. Tail-recursive and fast.
+
+   params:
+    - n: the input number
+   complexity: O(log(n))
+   returns: the fibonacci number of <par>n</par>"
   (define (fib-aux a b p q count)
     (cond ((= count 0) b)
-          ((math:even? count) (fib-aux a b (+ (pow p 2) (pow q 2)) (+ (* 2 p q) (pow q 2)) (/ count 2)))
+          ((math:even? count)
+            (fib-aux a b (+ (pow p 2) (pow q 2))
+                     (+ (* 2 p q) (pow q 2))
+                     (/ count 2)))
           (else (fib-aux (+ (* b q) (* a q) (* a p))
                           (+ (* b p) (* a q))
                           p
@@ -65,18 +225,52 @@
                           (- count 1)))))
   (fib-aux 1 0 0 1 n))
 
-(define (math:ncr n r) "Calculate nCr"
+(define (math:ncr n r)
+  "Calculate <par>n</par>C<par>r</par>, i.e. the number of subsets of
+  size <par>r</par> in a set of length <par>n</par>.
+
+   params:
+    - n: the length of the set
+    - r: the length of the subset
+   complexity: O(n)
+   returns: nCr"
   (truncate (/ (math:fact n) (math:fact r) (math:fact (- n r)))))
 
-(define (math:npr n r) "Calculate nPr"
+(define (math:npr n r)
+  "Calculate <par>n</par>P<par>r</par>, i.e. the number of subsets of
+   size <par>r</par> in a set of length <par>n</par>, where the order
+   of the elements matters.
+
+   params:
+    - n: the length of the set
+    - r: the length of the subset
+   complexity: O(n)
+   returns: nPr"
   (truncate (/ (math:fact n) (math:fact (- n r)))))
 
-(define (math:modpow base exp m) "calculates the exponential of a number modulo another number"
-  (cond ((= exp 0) 1)
-        ((math:even? exp) (remainder (pow (math:modpow base (/ exp 2) m) 2) m))
-        (else (remainder (* base (math:modpow base (- exp 1) m)) m))))
+(define (math:modpow base exp m)
+   "Calculate the exponential <par>exp</par> of a number <par>base</par>
+    modulo another number <par>m</par>.
 
-(define (math:prob-prime? n times) "calculates whether number is probably a prime using fermat's theorem; not as good as miller-rabin"
+    params:
+     - base: the base of the exponetiation
+     - exp: the exponent
+     - m: the number to use for the modulus
+    complexity: O(1)
+    returns: <par>base</par>^<par>exp</par>%<par>m</par>"
+  (if (= exp 0)
+      1
+      (mod (pow base exp) m)))
+
+(define (math:prob-prime? n times)
+  "Calculate whether number is probably a prime using fermat's
+   primality test; not as good as miller-rabin.
+
+   params:
+    - n: the number to check
+    - times: the number of times to check the number
+   complexity: O(<par>times</par>*log(n)*log(log(n))*log(log(log(n))))
+   returns: a boolean"
   (define (fermat n)
     (define (prm a)
       (= (math:modpow a n n) a))
@@ -87,13 +281,32 @@
 
 ; TODO: make tail recursive
 (define (math:sigma term a n b op)
-  "make a sigma sum (specified by op) produced by the values from a to b (as produced by n) applied to term;
-   for a use case type (inspect math:integral-approx)"
+  "Make a sigma sum (specified by <par>op</par>) produced by the values
+   from <par>a</par> to <par>b</par> (as produced by </par>n</par>) applied
+   to <par>term</par>; for a use case type <zepto>(inspect math:simpson)</zepto>.
+
+   params:
+    - term: the function to apply to the values
+    - a: the start value
+    - n: the step function
+    - b: the stop value
+    - op: the summation function
+   complexity: O(n*O(<par>term</par>)+n*O(<par>op</par>)+n*O(<par>n</par>))
+   returns: the sigma sum (default is 0)"
   (if (> a b) 0 (op (term a) (math:sigma term (n a) n b op))))
 
 (define (math:simpson f a b n)
-  "calculates the approximate integral of function f with limits a and b
-  where n is the approximation (the higher the better); uses simpson's rule"
+  "Calculates the approximate integral of the function <par>f</par> with
+   limits <par>a</par> and <par>b</par> where n is the approximation (i.e.
+   the higher the better the result.); uses simpson's rule.
+
+   params:
+    - f: the function to integrate
+    - a: the lower bound
+    - b: the upper bound
+    - n: the error (also known as epsilon)
+   complexity: see <fun>math:sigma</fun>
+   returns: the approximate integral of f"
   (let ((h (/. (- b a) n)))
     (define (y k)
       (f (+ a (* k h))))
@@ -105,8 +318,15 @@
     (/. (* h (math:sigma term 0 add1 n +)) 3)))
 
 ; Those definitions are from https://github.com/ashinn/chibi-scheme/blob/23ac772e3ac347d01647952621fbc83b4293448b/lib/chibi/math/prime.scm
+; Partially heavily edited
 (define (math:modular-inverse a b)
-  "Returns the multiplicative inverse of a modulo b."
+  "Returns the multiplicative inverse of <par>a</par> modulo <par>b</par>.
+
+   params:
+    - a: TODO
+    - b: TODO
+   complexity: varies (TODO)
+   returns: <zepto>(multinv (mod a b))</zepto>"
   (let lp ((a1 a) (b1 b) (x 0) (y 1) (last-x 1) (last-y 0))
     (if (zero? b1)
         (if (negative? last-x) (+ last-x b) last-x)
@@ -126,21 +346,32 @@
   (= 1 (math:gcd n m)))
 
 (define (math:prime-below n)
-  "Returns the first prime less than or equal to n, or #f if
-   there are no such primes."
+  "Returns the first prime less than or equal to <par>n</par>,
+   or #f if there are no such primes.
+
+   params:
+    - n: the upper bounds
+   complexity: depends on the size. A few times <fun>math:prime?</fun>
+   returns: a prime below n or false if there is none"
   (if (>= n 3)
     (let lp ((n (if (math:even? n) (- n 1) n)))
       (if (math:prime? n) n (lp (- n 2))))
     #f))
 
-(define (math:prime-above n . o)
-  "Returns the first prime greater than or equal to n. If the
-   optional limit is given and not false, returns #f
-   if no such primes exist below limit."
-  (let ((limit (if (pair? o) (car o) #f)))
+(define (math:prime-above n . limit)
+  "Returns the first prime greater than or equal to <par>n</par>.
+   If the optional limit is given and not false, returns #f if no
+   such primes exist below limit.
+
+   params:
+    - n: the lower bounds
+    - limit: the upper bounds
+   complexity: depends on the size. A few times <fun>math:prime?</fun>
+   returns: a prime above n or false if no prime exists below the limit"
+  (let ((limit (if (pair? limit) (car limit) #f)))
     (let lp ((n (if (math:even? n) (+ n 1) n)))
       (cond
-       ((and limit (>= n limit)) #f)
+       ((and (truthy? limit) (>= n limit)) #f)
        ((math:prime? n) n)
        (else (lp (+ n 2)))))))
 
@@ -157,24 +388,31 @@
     887 907 911 919 929 937 941 947 953 967 971 977 983 991 997))
 
 (define (math:prov-prime? n)
-  "Returns true iff n is definitely prime. May take an
-   impossibly long time for large values."
-  (if (or (math:even? n) (<= n 2))
-      (= 2 n)
+  "Returns true iff <par>n</par> is definitely prime.
+   May take an impossibly long time for large values (> 1e10).
+
+   params:
+     - n: the number to check
+   complexity: O(1) on even number, O(sqrt(n)) on odd numbers
+   returns: a boolean "
+  (begin
+    (let ((limit (ceiling (sqrt (* n 1/1)))))
+      (define (by-twos d)
+        (cond ((> d limit) #t)
+              ((zero? (mod n d)) #f)
+              (else (by-twos (+ d 2))))))
+
+    (if (or (math:even? n) (<= n 2))
+      (= n 2)
       (let ((limit (ceiling (sqrt (* n 1/1)))))
-        (define (by-twos d)
-          (cond ((> d limit) #t)
-                ((zero? (remainder n d)) #f)
-                (else (by-twos (+ d 2)))))
-        (let ((len (vector:length math:prime-table)))
-          (let lp ((i 0))
-            (if (>= i len)
-                (by-twos (vector:ref math:prime-table (- len 1)))
-                (let ((d (vector:ref math:prime-table i)))
-                  (cond
-                   ((> d limit) #t)
-                   ((zero? (remainder n d)) #f)
-                   (else (lp (+ i 1)))))))))))
+        (let loop ((t math:prime-table))
+          (if (null? t)
+            (by-twos (vector:last math:prime-table))
+            (let ((d (car t)))
+              (cond
+               ((> d limit) #t)
+               ((zero? (mod n d)) #f)
+               (else (loop (cdr t)))))))))))
 
 (define (math:prime? n)
   "checks whether <par>n</par> is a prime.
