@@ -1,55 +1,136 @@
-(define (read? x) "read from a file if it is an input file, else return #f"
+(define (read? x)
+  "read from a file if it is an input file, else return #f.
+
+   params:
+    - x: the file to read from
+   complexity: O(1)
+   returns: a line of the file if it is a fil, else false"
   (if (input-port? x)
     (read x)
     #f))
 
-(define (write? x s) "write s to a file if it is an output file, else return #f"
+(define (write? x s)
+  "write <par>s</par> to a file if it is an output file, else return #f.
+
+   params:
+    - x: the output file
+    - s: the thing to write out
+   complexity: O(1)
+   returns: nil if it succeeded, false if it did not"
   (if (output-port? x)
-    (write x s)
+    (write s x)
     #f))
 
-(define (newline . port) "print newline to port or stdout if none is given"
+(define (newline . port)
+  "print newline to <par>port</par> or stdout if no port is given.
+
+   params:
+     - port: the port to write to (optional)
+     - complexity: O(1)
+   returns: nil if it could write, false if not or if the input arguments were malformed"
   (cond
     ((null? port) (write ""))
-    ((eq? (list:length port) 1) (write "" (car port)))
+    ((eq? (length port) 1) (write? (car port) ""))
     (else #f)))
 
-(define (with-input-file s p) "open an input file s and apply a function to it, then close the file"
-     (let ((inport (open-input-file s)))
-          (if (eq? inport #f)
-               #f
-               (let ((res (p inport)))
-                    (close-input-file inport)
-                    res))))
+(define (with-input-file s p)
+  "open an input file of name <par>s</par> and apply a procedure <par>p</par>
+   to it, then close the file.
 
-(define (with-output-file s p) "open an output file s and apply a function to it, then close the file"
-     (let ((outport (open-output-file s)))
-          (if (eq? outport #f)
-               #f
-               (let ((res (p outport)))
-                    (close-output-file outport)
-                    res))))
+   params:
+     - s: the filename
+     - p: the procedure to call
+   complexity: O(n) (where n is the complexity of p)
+   returns: the return value of <par>p</par> or false if the file could not be opened"
+  (let ((inport (open-input-file s)))
+    (if (eq? inport #f)
+      inport
+      (let ((res (p inport)))
+        (close-input-file inport)
+        res))))
 
-(define (error . args) "prints an error to stderr"
-  (write (string:join (cons "Error: " (map ->string args)) " ") :stderr))
+(define (with-output-file s p)
+  "open an output file of name <par>s</par> and apply a procedure <par>p</par>
+   to it, then close the file.
 
-(define (read-line . port) "reads a line from the input port port"
+   params:
+     - s: the filename
+     - p: the procedure to call
+   complexity: O(n) (where n is the complexity of p)
+   returns: the return value of <par>p</par> or false if the file could not be opened"
+  (let ((outport (open-output-file s)))
+    (if (eq? outport #f)
+      outport
+      (let ((res (p outport)))
+        (close-output-file outport)
+        res))))
+
+(define (error . args)
+  "print an error to stderr.
+
+   params:
+    - args: the things to print (vararg)
+   complexity: O(n)
+   returns: nil"
+  (write (string:join (cons "Error:" (map ->string args)) " ") :stderr))
+
+(define (read-line . port)
+  "reads a line from the input port <par>port</par>. If no port is given, the standard
+   input will be used.
+
+   params:
+     - port: the input port to use (optional)
+   complexity: O(n) where n is the length of the line
+   returns: the line that was read"
   (let loop ((line "")
              (char (apply read-char port)))
       (if (or (boolean? char) (eq? char #\newline) (eq? char #\carriage))
         line
         (loop (++ line char) (apply read-char port)))))
 
-(define (file-exists? file) "test whether file exists"
+(define (file-exists? file)
+  "test whether the file with the name <par>file</par> exists.
+   It will not work on directories.
+
+   params:
+    - file: the name of the file to check
+   complexity: O(1)
+   returns: a boolean"
   (not (boolean? (open-input-file file))))
 
-(define (escape-sequence code str? output) "sends escape sequence to output channel (default: stdout)"
+(define (escape-sequence code str? output)
+  "send escape sequence <par>code</par> to output channel <par>output</par>.
+   If <par>str?</par> is true, it will not be printed but returned as a string.
+
+   params:
+     - code: the escape sequence
+     - str?: a boolean signalling whether we want to print the result or return it as a string
+     - output: the output channel (can be nil if <par>str?</par> is set)
+   complexity: O(1)
+   returns: a string if <par>str?</par> is true, else nil"
   (let ((str (++ (string #\x1b) "[" (->string code) "m")))
     (if str?
       str
       (display str output))))
 
-(define (color col . args) "colors output to output channel (default: stdout)"
+(define (color col . args)
+  "color output using <par>col</par> to output channel (default: stdout).
+
+   Example:
+   <zepto>
+     ; colors the output to stdout blue
+     (color :blue)
+     ; colors the background of the output to stderr black
+     (color :bg-black #{:output :stderr})
+     ; returns the ANSI escape sequence to make the output italic as a string
+     (color :italic #{:to-str #t})
+   </zepto>
+
+  params:
+    - col: an atom representing the color/style
+    - args: optional configuration arguments as hashmap (understands keys :output and :to-str)
+  complexity: O(1)
+  returns: a string if :to-str in <par>args</par> is set, else nil"
   (define colors #{:black 30
                    :red 31
                    :green 32
@@ -80,7 +161,14 @@
       (escape-sequence col str? output)))
 
 (define-syntax with-output-to-file
-  (syntax-rules ()
+  (syntax-rules "call the function <par>fun</par> with the standard output set to
+  a port pointing to the file at <par>fname</par>.
+
+  params:
+    - fname: the file name of the file to use
+    - fun: the function to execute
+  complexity: O(n) (where n is the complexity of <par>fun</par>)
+  returns: the result of <par>fun</par>" ()
     ((_ fname fun)
       (let ((f (open-output-file fname)))
         (begin
