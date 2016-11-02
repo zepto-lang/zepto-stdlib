@@ -395,16 +395,14 @@
      - n: the number to check
    complexity: O(1) on even number, O(sqrt(n)) on odd numbers
    returns: a boolean "
-  (begin
     (let ((limit (ceiling (sqrt (* n 1/1)))))
       (define (by-twos d)
         (cond ((> d limit) #t)
               ((zero? (mod n d)) #f)
-              (else (by-twos (+ d 2))))))
+              (else (by-twos (+ d 2)))))
 
-    (if (or (math:even? n) (<= n 2))
-      (= n 2)
-      (let ((limit (ceiling (sqrt (* n 1/1)))))
+      (if (or (math:even? n) (<= n 2))
+        (= n 2)
         (let loop ((t math:prime-table))
           (if (null? t)
             (by-twos (vector:last math:prime-table))
@@ -412,7 +410,7 @@
               (cond
                ((> d limit) #t)
                ((zero? (mod n d)) #f)
-               (else (loop (cdr t)))))))))))
+               (else (loop (cdr t))))))))))
 
 (define (math:prime? n)
   "checks whether <par>n</par> is a prime.
