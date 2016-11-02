@@ -1,4 +1,13 @@
-(define (foldl func accum l) "fold left"
+(define (foldl func accum l)
+  "fold left over a list <par>l</par> using <par>func</par> and an initial
+   accumulator <par>accum</par>.
+
+   params:
+    - func: the function used for folding
+    - accum: the initial accumulator
+    - l: the list to fold over
+   complexity: O(n*k) (where n is the length of the list and k is the complexity of <par>fun</par>)
+   returns: whatever <par>fun</par> reduces"
   (if (list:null? l)
     accum
     (foldl func (func accum (list:car l)) (list:cdr l))))

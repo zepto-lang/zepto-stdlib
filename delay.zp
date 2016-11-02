@@ -1,24 +1,42 @@
 ;; All implementations here are "borrowed" from 
 ;; husk-scheme (github.com/justinethier/husk-scheme).
-(define force
-    (lambda (object)
-        (object)))
+(define (force object)
+  "forces an expression created with <fun>delay</fun> to be evaluated.
+
+   params:
+     - objects: the delayed object to evaluate
+   complexity: defined entirely by the expression in the delayed object
+   returns: whatever the delayed expression returns"
+  (object))
 
 (define-syntax delay
-    (syntax-rules ()
-        ((delay expression)
-            (make-promise (lambda () expression)))))
+  (syntax-rules "delay the execution of an expression. Will create
+  a callable that caches the result of the expression enclosed by delay.
 
-(define make-promise
-    (lambda (proc)
-        (let ((result-ready? #f)
-                (result #f))
-            (lambda ()
-                (if result-ready?
-                    result
-                (let ((x (proc)))
-                    (if result-ready?
-                        result
-                    (begin (set! result x)
-                        (set! result-ready? #t)
-                            result))))))))
+  params:
+    - expression: the expression to delay
+  complexity: O(1)
+  returns: a callable that is cached" ()
+    ((delay expression)
+      (make-promise (lambda () expression)))))
+
+(define (make-promise proc)
+  "create a promise from a procedure, i.e. make it a cached
+   callable. Internal function to delay, but might be usable
+   in a different context as well.
+
+   params:
+     - proc: the procedure to wrap
+   complexity: O(1)
+   returns: a function that caches its result"
+  (let ((result-ready? #f)
+        (result        #f))
+      (lambda ()
+          (if result-ready?
+              result
+          (let ((x (proc)))
+              (if result-ready?
+                  result
+              (begin (set! result x)
+                  (set! result-ready? #t)
+                      result)))))))
