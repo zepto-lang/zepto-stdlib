@@ -1,59 +1,179 @@
-(define (char:cmp? cmp a b) "compares two chars with a compare option cmp"
+(define (char:cmp? cmp a b)
+  "compares two chars with a compare option cmp.
+  params:
+   - compare option
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
      (cmp (char->integer a) (char->integer b)))
 
-(define (char:ci-cmp? cmp a b) "compares two chars case insensitive with a compare option cmp"
-     (cmp (char->integer (char:lower-case a)) (char->integer (char:lower-case b)))) 
+(define (char:ci-cmp? cmp a b)
+  "compares two chars  with a compare option cmp; case insensitive.
+  params:
+   - compare option
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (cmp (char->integer (char:lower-case a)) (char->integer (char:lower-case b)))) 
 
-(define (char=? a b) "are chars equal" (char:cmp? = a b))
-(define (char<? a b) "is char less than" (char:cmp? < a b))
-(define (char>? a b) "is char greater than" (char:cmp? > a b))
-(define (char<=? a b) "is char less than or equal to" (char:cmp? <= a b))
-(define (char>=? a b) "is char greater than or equal to" (char:cmp? >= a b))
-(define (char/=? a b) "is char not equal to" (char:cmp? /= a b))
+(define (char=? a b)
+  "checks whether two chars 'a' and 'b' are equal.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? = a b))
+(define (char<? a b)
+  "checks whether a character 'a' is less than a character 'b'.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? < a b))
+(define (char>? a b)
+  "checks if a character 'a' is greater than a character 'b'.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? > a b))
+(define (char<=? a b)
+  "checks whether a character 'a' is less than or equal to a character 'b'.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? <= a b))
+(define (char>=? a b)
+  "checks whether a character 'a' is greater than or equal to a character 'b'.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? >= a b))
+(define (char/=? a b)
+  "checks whether a character 'a' is not equal to a character 'b'.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
+  (char:cmp? /= a b))
 
-(define (char-ci=? a b) "are chars equal; case insensitive" 
+(define (char-ci=? a b)
+  "checks whether two characters 'a' and 'b' are equal; case insensitive.
+  params:
+   - character 'a': the first character to compare
+   - character 'b': the second character to compare
+  complexity: O(1)
+  returns: boolean"
   (char:ci-cmp? = a b))
-(define (char-ci<? a b) "is char less than; case insensitive" 
+(define (char-ci<? a b)
+  "checks whether a character 'a' is less than a character 'b'; case insensitive.
+  params:
+   - character 'a': the character to compare
+   - character 'b': the character to compare against
+  complexity: O(1)
+  returns: boolean" 
   (char:ci-cmp? < a b))
-(define (char-ci>? a b) "is char greater than; case insensitive" 
+(define (char-ci>? a b)
+  "checks whether a character 'a' is greater than a character 'b'; case insensitive.
+  params:
+   - character 'a': the character to compare
+   - character 'b': the character to compare against
+  complexity: O(1)
+  returns: boolean" 
   (char:ci-cmp? > a b))
-(define (char-ci<=? a b) "is char less than or equal to; case insensitive" 
+(define (char-ci<=? a b)
+  "checks whether a character 'a' is less than or equal to a character 'b'; case insensitive.
+  params:
+   - character 'a': the character to compare
+   - character 'b': the character to compare against
+  complexity: O(1)
+  returns: boolean" 
   (char:ci-cmp? <= a b))
-(define (char-ci>=? a b) "is char greater than or equal to; case insensitive" 
+(define (char-ci>=? a b)
+  "checks whether a character 'a' is greater than or equal to a character 'b'; case insensitive.
+  params:
+   - character 'a': the character to compare
+   - character 'b': the character to compare against
+  complexity: O(1)
+  returns: boolean"
   (char:ci-cmp? >= a b))
-(define (char-ci/=? a b) "is char not equal to; case insensitive" 
+(define (char-ci/=? a b)
+  "checks whether a character 'a' is not equal to the character 'b'; case insensitive.
+  params:
+   - character 'a': the first character to check
+   - character 'b': the second character to check
+  complexity: O(1)
+  returns: boolean"
   (char:ci-cmp? /= a b))
 
-(define (char:upper? c) "is char uppercase"
+(define (char:upper? c)
+  "checks whether the character is uppercase.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (let ((x (char->integer c)))
     (and (> x 64) (< x 91))))
 
-(define (char:lower? c) "is char lowercase"
+(define (char:lower? c)
+  "checks whether the character is lowercase.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (let ((x (char->integer c)))
     (and (> x 96) (< x 123))))
 
-(define (char:alpha? c) "is char alphabetical"
+(define (char:alpha? c)
+  "checks whether the character is alphabetical.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (or (char:upper? c) (char:lower? c)))
 
-(define (char:num? c) "is char numerical"
+(define (char:num? c)
+  "checks whether the character is numerical.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (let ((x (char->integer c)))
     (and (> x 47) (< x 58))))
 
-(define (char:alphanum? c) "is char alphanumerical"
+(define (char:alphanum? c)
+  "checks whether the character is alphanumerical.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (or (char:alpha? c) (char:num? c)))
 
 (define (char:whitespace? c)
-  "is character whitespace?"
+  "checks whether a character is a  whitespace.
+  params:
+   - character: the character to check
+  complexity: O(1)
+  returns: boolean"
   (let ((code (char->integer c)))
     (in? '(32 9 10 11 12 13) code)))
 
 (define (char:hex? char)
   "checks whether a character is a valid hexadecimal sigit.
-
    params:
     - char: the character to check
    complexity: O(1)
-   returns: a boolean"
+   returns: boolean"
   (let ((num (char->integer char)))
     (or (char:num? char)
         (and (> num 96) (< num 103))
