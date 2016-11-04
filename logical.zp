@@ -1,17 +1,41 @@
-(define (nor . lst) "logical nor on multiple values" (fold (lambda (x y) (&& (not y) x))  #t lst))
+(define (nor . lst)
+  "logical nor operation on multiple values.
+
+   params:
+    - lst: the values to test (varargs)
+   complexity: O(n)
+   returns: boolean"
+  (fold (lambda (x y) (and (not y) x))  #t lst))
 
 (define-syntax and
-  (syntax-rules ()
+  (syntax-rules "logical and operation on multiple values. Short circuits.
+
+  params:
+    - lst: a list of values to test (varargs); if none are given, return true
+  complexity: O(n)
+  returns: boolean" ()
     ((and) #t)
     ((and x y) (if x y x))
     ((and x y ...)
       (if x (and y ...) x))))
 
 (define-syntax or
-  (syntax-rules ()
+  (syntax-rules "logical or operation on multiple values. Short circuits.
+
+  params:
+    - lst: a list of values to test (varargs); if none are given, return true
+  complexity: O(n)
+  returns: boolean" ()
     ((or) #t)
     ((or x y) (if x x y))
     ((or x y ...)
       (if x x (or y ...)))))
 
-(define (not x) "logical not" (if x #f #t))
+(define (not x)
+  "logical negation operation on one value <par>x</par>.
+
+   params:
+    - x: the value to negate
+   complexity: O(1)
+   returns: boolean"
+  (if x #f #t))

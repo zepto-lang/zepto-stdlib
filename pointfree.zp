@@ -1,7 +1,14 @@
 (define-syntax define-compose
-  (syntax-rules ()
-    ((_ name f ...)
-      (define name (compose f ...)))))
+  (syntax-rules "define a symbol <par>name</par> to be the composition of
+  the functions <par>fs</par>.
+
+  params:
+    - name: the symbol to which the composition should be bound
+    - fs: the functions to <par>compose</par> together
+  complexity: O(1)
+  returns: the composition of <par>fs</par>" ()
+    ((_ name fs ...)
+      (define name (compose fs ...)))))
 
 (define-syntax arg-count
   (syntax-rules ()
@@ -16,6 +23,12 @@
       (define name (arg-count n expr)))))
 
 (define (until-fixpoint f)
+  "run a given function <par>f</par> until it reaches its fixpoint.
+
+   params:
+    - f: the function to run
+   complexity: O(n*k) where n is the complexity of the function and k is the number of times we run it
+   returns: the fixpoint of <par>f</par>"
   (define (fixpoint-f v)
     (let ((fv (f v)))
       (if (eq? fv v)
@@ -24,8 +37,31 @@
   fixpoint-f)
 
 (define (join . fs)
-  (define (app f . vs) (apply f vs))
-  (lambda vs (apply values (for-each app fs vs))))
+  "join a number of functions <par>fs</par> with their inputs.
+
+   Example:
+   <zepto>
+    (define addsub (join add1 sub1))
+    (addsub [1 1]) ; [2 0]
+   </zepto>
+
+   params:
+    - fs: the functions to join
+   complexity: O(1)
+   returns: a function that takes in a list of inputs to join with <par>fs</par>"
+  (lambda vs (apply values (for-each apply fs vs))))
 
 (define (join* f)
+  "join one function <par>f</par> over a list of inputs.
+
+   Example:
+    <zepto>
+      (define addall (join* add1))
+      (addall [0 1 2]) ; [1 2 3]
+    </zepto>
+
+   params:
+     - f: the function to join
+   complexity: O(1)
+   returns: a function that takes in a list of inputs to join over <par>f</par>"
   (lambda vs (apply values (map f vs))))
