@@ -1,5 +1,24 @@
 (define-syntax define-struct
-  (syntax-rules ()
+  (syntax-rules "define a data type <par>id</par> with the fields <par>fields</par>.
+  The macro also automatically defines field accessor, a type predicate and a constructor.
+
+  Example:
+  <zepto>
+    (define-struct pair (fst snd))
+    ; this will define the functions:
+    ; (pair:make-pair fst snd) (constructor)
+    ; (pair:pair? obj) (type predicate)
+    ; (pair:get-fst pair) (field getter)
+    ; (pair:set-fst pair) (field setter)
+    ; (pair:get-snd pair) (field getter)
+    ; (pair:set-snd pair) (field setter)
+  </zepto>
+
+  params:
+    - id: the name of the data type
+    - fields: a list of field names
+  complexity: O(n) where n is the length of <par>fields</par>
+  returns: the last function" ()
     ((define-struct "intern" id (field))
       (list `(field ,(->symbol id ":get-" field) ,(->symbol id ":set-" field))))
     ((define-struct "intern" id (field fields ...))

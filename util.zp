@@ -1,20 +1,73 @@
-(define (id obj) "returns an object"
+(define (id obj)
+  "take anything and return it as is.
+
+   params:
+    - obj: what to return; can be anything
+   complexity: O(1)
+   returns: <par>obj</par>"
   obj)
 
-(define (inf? obj) "ist object infinite?"
+(define (inf? obj)
+  "check whether <par>obj</par> is <zepto>inf</zepto>.
+
+   params:
+     - obj: the object to check
+   complexity: O(1)
+   returns: boolean"
   (if (and (number? obj) (inexact? obj))
     (= obj (* obj 10))
     #f))
 
-(define (flip func) "flips two arguments for a function"
-  (lambda (arg1 arg2)
-    (func arg2 arg1)))
+(define (flip func)
+  "take a function <par>func</par> and return a function that
+   applies the arguments to <par>func</par> in reverse.
 
-(define (curry f . y) "curry a function"
-  (lambda z
-    (apply f (++ y z))))
+   params:
+    - func: the function to change
+   complexity: O(1)
+   returns: the flipped function"
+  (lambda args
+    (func (reverse args))))
 
-(define (compose f g . args) "compose two functions"
+(define (curry f . args)
+  "curry a function <par>f</par> by providing any number of arguments.
+   It will return a function that takes any number of arguments and then
+   applies the first and second set of arguments together to <par>f</par>.
+
+   Example:
+   <zepto>
+    (define plus10 (curry + 10))
+    (plus10 40) ; 50
+   </zepto>
+
+   params:
+     - f: the function to curry
+     - args: the first set of arguments to apply to <par>f</par>
+   complexity: O(1)
+   returns: the curried function"
+  (lambda inner
+    (apply f (++ args inner))))
+
+(define (compose f g . args)
+  "compose two functions <par>f</par> and <par>g</par> together.
+   If arguments are provided, it gets applied right away. If no arguments
+   are provided, a function is returned that takes any number of arguments,
+   calls <par>g</par> with them and then pipes it into <par>f</par>.
+
+   Example:
+   <zepto>
+     (define incrfirst (compose add1 head))
+     (incrfirst [1 2 3]) ; => 2
+
+     (compose sub1 list:last [4 5 6]) ; => 5
+  </zepto>
+
+  params:
+    - f: the outer function
+    - g: the inner function
+    - args: any number of arguments (optional); if provided, the composition gets evaluated right away
+  complexity: O(1)
+  returns: the composition of <par>f</par> and <par>g</par> or the applied version"
   (let ((constructed (lambda args (f (apply g args)))))
     (if (null? args)
       constructed
