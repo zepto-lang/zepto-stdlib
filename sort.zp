@@ -1,4 +1,12 @@
-(define (sort:sorted? seq . ord) "is sequence sorted? Optionally takes an order function, default is lt"
+(define (sort:sorted? seq . ord)
+  "checks whether sequence is sorted. Optionally takes an order function,
+   the default is <fun>lt</fun>.
+
+   params:
+     - seq: the sequence to sort
+     - ord: the order function (default: <fun>lt</fun>)
+   complexity: O(n)
+   returns: boolean"
   (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (if (< (length seq) 2)
     #t
@@ -11,8 +19,16 @@
                         (_split (cddr l) (cdr ls1) (cons (car ls1) ls2)))
     (_split l l '()))
 
-(define (sort:merge a b . ord) 
-  "merge two sorted lists; optionally takes an order function, default is lt"
+(define (sort:merge a b . ord)
+  "Merge two sorted sequences. Optionally takes an order function,
+   the default is <fun>lt</fun>.
+
+   params:
+     - a: the first sequence
+     - b: the second sequence
+     - ord: the order function (default <fun>lt</fun>)
+   complexity: O(n)
+   returns: the merged sequence"
   (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (cond
     ((null? a) b)
@@ -31,7 +47,14 @@
             (cons x (loop (car a) (cdr a) y b)))))))))
 
 (define (sort:quicksort l . ord)
-  "sort a list with quicksort scheme; optionally takes an order function, default is lt"
+  "sort a list with quicksort scheme. Optionally takes an order function,
+   the default is <fun>lt</fun>.
+
+   params:
+     - l: the list to sort
+     - ord: the order function (default is <fun>lt</fun>)
+   complexity: O(n*log(n))
+   returns: the sorted list"
   (let ((ord (if (null? ord) lt (list:ref ord 0)))
         (i (randint 0 (length l))))
   (if (< (length l) 2)
@@ -44,7 +67,14 @@
           (loop left (++ right (list (car t))) h (cdr t))))))))
 
 (define (sort:mergesort l . ord)
-  "sort a list with mergesort scheme; optionally takes an order function, default is lt"
+  "sort a list with mergesort scheme. Optionally takes an order function,
+   the default is <fun>lt</fun>.
+
+   params:
+     - l: the list to sort
+     - ord: the order function (default: <fun>lt</fun>)
+   complexity: O(n*log(n))
+   returns: the sorted list"
   (let ((ord (if (null? ord) lt (list:ref ord 0))))
   (if (< (length l) 2)
     l
@@ -64,7 +94,14 @@
               (cons y (insert x ys)))))))
 
 (define (sort:insertionsort lst . ord)
-  "sort a list with insertionsort scheme (slow!); optionally takes an order function, default is lt"
+  "sort a list with insertionsort scheme. Optionally takes an order function,
+   the default is <fun>lt</fun>. It is really slow.
+
+   params:
+     - l: the list to sort
+     - ord: the order function (default: <fun>lt</fun>)
+   complexity: O(n^2)
+   returns: the sorted list"
   (let ((ord (if (null? ord) lt (list:ref ord 0))))
     (if (null? lst)
         '()
