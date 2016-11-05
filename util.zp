@@ -20,14 +20,14 @@
 
 (define (flip func)
   "take a function <par>func</par> and return a function that
-   applies the arguments to <par>func</par> in reverse.
+   applies the arguments to <par>func</par> in reverse. Assumes a binary function.
 
    params:
     - func: the function to change
    complexity: O(1)
    returns: the flipped function"
-  (lambda args
-    (func (reverse args))))
+  (lambda (arg1 arg2)
+    (func arg2 arg1)))
 
 (define (curry f . args)
   "curry a function <par>f</par> by providing any number of arguments.
