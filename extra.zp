@@ -77,10 +77,24 @@
 
 ; The vanilla SRFI 16 implementation
 (define-syntax case-lambda
-  (syntax-rules ()
+  (syntax-rules "a version of lambda that allows for overloaded definitions.
+
+  Example:
+  <zepto>
+    (case-lambda
+      ((x)   (write \"called with one argument\"))
+      ((x y) (write \"called with two arguments\"))
+      (r     (write (++ \"called neither with one or two arguments, but \"
+                        (->string (length r))))))
+  </zepto>
+
+  params:
+    - kvs: any amount of headers and bodys
+  complexity: O(n) where n is the amount of definitions
+  returns: A callable" ()
     ((case-lambda)
      (lambda args
-       (error "CASE-LAMBDA without any clauses.")))
+       (error:from-string "case-lambda without any clauses.")))
     ((case-lambda 
       (?a1 ?e1 ...) 
       ?clause1 ...)
@@ -107,7 +121,7 @@
      (let ((?a1 ?args))
        ?e1 ...))
     ((case-lambda "CLAUSE" ?args ?l)
-     (error "Wrong number of arguments to CASE-LAMBDA."))
+     (error:from-string "Wrong number of arguments to case-lambda."))
     ((case-lambda "IMPROPER" ?args ?l ?k ?al ((?a1 . ?ar) ?e1 ...)
       ?clause1 ...)
      (case-lambda "IMPROPER" ?args ?l (+ ?k 1) ?al (?ar ?e1 ...) 
@@ -148,7 +162,7 @@
 
 (define-syntax <|
   (syntax-rules "pipe things from right to left.
-  
+
   params:
    - args: a variable number of arguments that pipe into each other
   complexity: O(1)
@@ -253,11 +267,20 @@
         body))))
 
 (define-syntax defmatch
-  (syntax-rules ()
+  (syntax-rules "matches <par>ks</par> with <par>vals</par> where vals can be
+  a regular list or expression.
+
+  params:
+    - ks: the names to bind to
+    - vals: the values to bind
+  complexity: O(n+k) (where n is the number of keys and k is the complexity of the expression in vals)
+  returns: nil" ()
     ((defmatch ks vals)
       (with-environment env
-        (map (lambda (kv) (eval `(define ,(list:car kv) ,(list:cdr kv)) env))
-             (zip-with cons 'ks vals))))))
+        (begin
+          (map ($ (eval `(define ,(list:car %) ,(list:cdr %)) env))
+               (zip-with cons 'ks vals))
+          (nil))))))
 
 (define-syntax defined?
   (syntax-rules "returns true if <par>name</par> is defined.
