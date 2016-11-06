@@ -1,4 +1,10 @@
 (define (integer:digits num)
+  "get the number of digits from an integer <par>num</par>.
+
+   params:
+    - num: the number to check
+   complexity: O(n)
+   returns: the number of digits in <par>num</par>"
   (define (internal n l)
     (let ((x (/ n 10)))
       (if (> x 0)
