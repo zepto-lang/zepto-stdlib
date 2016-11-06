@@ -1,6 +1,17 @@
-(define (exit-failure . code) "ends zepto program with status code 1 or a supplied error code"
+(define (exit-failure . code)
+  "end the program with status code 1 or a supplied error code.
+
+   params:
+     - code: the error code to use (optional)
+   complexity: O(1)
+   returns: this procedure ends the program"
   (if (null? code) (exit 1) (exit (car code))))
-(define (exit-success) "ends zepto program with status code 0"
+
+(define (exit-success)
+  "end the program with status code 0.
+
+   complexity: O(1)
+   returns: this procedure ends the program"
   (exit 0))
 
 (define (error:from-string . strs)
