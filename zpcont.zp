@@ -1,8 +1,14 @@
 (define (cps-prim f)
- (lambda args
-  (let ((r (reverse args)))
-   ((car r) (apply f
-             (reverse (cdr r)))))))
+  "transform a function <par>f</par> into its CPS (Continuation passing style)
+   form.
+
+   params:
+     - f: the function to transform
+   complexity: O(1)
+   returns: the transformed function"
+  (lambda args
+    (let ((r (reverse args)))
+      ((car r) (apply f (reverse (cdr r)))))))
 
 (define *& (cps-prim *))
 (define +& (cps-prim +))
@@ -19,5 +25,22 @@
 (define (get/cc) (call/cc id))
 
 (define values list)
+
 (define (call-with-values producer consumer)
+  "call <par>producer</par>, and pass the values that this generator produces
+   as arguments to <par>receiver</par>. Thus, <fun>call-with-values</fun>
+   creates a continuation that accepts any number of values that the consumer
+   can accept. The <par>consumer</par> procedure is called in tail position
+   with respect to the <par>call-with-values</par> call.
+
+   Example:
+   <zepto>
+    (call-with-values (lambda () (values 1 2)) +) ; 3
+   </zepto>
+
+   params:
+     - producer: the producer of the values that should be passed
+     - consumer: the consumer of the values
+   complexity: O(n+m) where n is the complexity of the consumer and m is the complexity of the producer
+   returns: the return value of the <par>consumer</par> function"
   (apply consumer (producer)))

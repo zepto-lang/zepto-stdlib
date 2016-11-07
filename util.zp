@@ -1,56 +1,153 @@
-(define (id obj) "returns an object"
+(define (id obj)
+  "take anything and return it as is.
+
+   params:
+    - obj: what to return; can be anything
+   complexity: O(1)
+   returns: <par>obj</par>"
   obj)
 
-(define (inf? obj) "ist object infinite?"
+(define (inf? obj)
+  "check whether <par>obj</par> is <zepto>inf</zepto>.
+
+   params:
+     - obj: the object to check
+   complexity: O(1)
+   returns: boolean"
   (if (and (number? obj) (inexact? obj))
     (= obj (* obj 10))
     #f))
 
-(define (flip func) "flips two arguments for a function"
+(define (flip func)
+  "take a function <par>func</par> and return a function that
+   applies the arguments to <par>func</par> in reverse. Assumes a binary function.
+
+   params:
+    - func: the function to change
+   complexity: O(1)
+   returns: the flipped function"
   (lambda (arg1 arg2)
     (func arg2 arg1)))
 
-(define (curry f . y) "curry a function"
-  (lambda z
-    (apply f (++ y z))))
+(define (curry f . args)
+  "curry a function <par>f</par> by providing any number of arguments.
+   It will return a function that takes any number of arguments and then
+   applies the first and second set of arguments together to <par>f</par>.
 
-(define (compose f g . args) "compose two functions"
+   Example:
+   <zepto>
+    (define plus10 (curry + 10))
+    (plus10 40) ; 50
+   </zepto>
+
+   params:
+     - f: the function to curry
+     - args: the first set of arguments to apply to <par>f</par>
+   complexity: O(1)
+   returns: the curried function"
+  (lambda inner
+    (apply f (++ args inner))))
+
+(define (compose f g . args)
+  "compose two functions <par>f</par> and <par>g</par> together.
+   If arguments are provided, it gets applied right away. If no arguments
+   are provided, a function is returned that takes any number of arguments,
+   calls <par>g</par> with them and then pipes it into <par>f</par>.
+
+   Example:
+   <zepto>
+     (define incrfirst (compose add1 head))
+     (incrfirst [1 2 3]) ; => 2
+
+     (compose sub1 list:last [4 5 6]) ; => 5
+  </zepto>
+
+  params:
+    - f: the outer function
+    - g: the inner function
+    - args: any number of arguments (optional); if provided, the composition gets evaluated right away
+  complexity: O(1)
+  returns: the composition of <par>f</par> and <par>g</par> or the applied version"
   (let ((constructed (lambda args (f (apply g args)))))
     (if (null? args)
       constructed
       (apply compose (cons constructed args)))))
 
-(define (foldr func end l) "fold right"
+(define (foldr func end l)
+  "fold right over a list <par>l</par> using <par>func</par> and an initial
+   accumulator <par>accum</par>.
+
+   params:
+    - func: the function used for folding
+    - accum: the initial accumulator
+    - l: the list to fold over
+   complexity: O(n*k) (where n is the length of the list and k is the complexity of <par>fun</par>)
+   returns: whatever <par>fun</par> reduces"
   (if (list:null? l)
     end
     (func (list:car l) (foldr func end (list:cdr l)))))
 
-(define (foldr1 func l) "fold right, assume first element is accumulator"
+(define (foldr1 func l)
+  "fold right over a list <par>l</par> using <par>func</par>. Assume the first element
+   of <par>l</par> is the valid accumulator.
+
+   params:
+    - func: the function used for folding
+    - l: the list to fold over
+   complexity: O(n*k) (where n is the length of the list and k is the complexity of <par>fun</par>)
+   returns: whatever <par>fun</par> reduces"
   (foldr func (car l) (cdr l)))
 
-(define (foldl1 func l) "fold left, assume first element is accumulator"
+(define (foldl1 func l)
+  "fold left over a list <par>l</par> using <par>func</par>. Assume the first element
+   of <par>l</par> is the valid accumulator.
+
+   params:
+    - func: the function used for folding
+    - l: the list to fold over
+   complexity: O(n*k) (where n is the length of the list and k is the complexity of <par>fun</par>)
+   returns: whatever <par>fun</par> reduces"
   (foldl func (car l) (cdr l)))
 
-(define (sum . l) "sum of values"
+(define (sum . l)
+  "calculate the sum of the values provided to <par>l</par>.
+
+   params:
+     - l: the values that should be summed (varargs)
+   complexity: O(n)
+   returns: the sum of all values in <par>l</par>"
   (fold + 0 l))
 
-(define (product . l) "product of values"
+(define (product . l)
+  "calculate the product of the values provided to <par>l</par>.
+
+   params:
+     - l: the values that should be multiplied (varargs)
+   complexity: O(n)
+   returns: the product of all values in <par>l</par>"
   (fold * 1 l))
 
-(define (unzip1-with-cdr . lists)
-  (unzip1-with-cdr-iterative lists '() '()))
+(define (for-each proc . lists)
+  "applies a function <par>proc</par> to a variable number of lists
+   and return a list of lists. Returns when the shortest list is traversed.
 
-(define (unzip1-with-cdr-iterative lists cars cdrs)
-  (if (null? lists)
-      (cons cars cdrs)
-      (let ((car1 (caar lists))
-        (cdr1 (cdar lists)))
-    (unzip1-with-cdr-iterative 
-     (cdr lists) 
-     (append cars car1)
-     (append cdrs cdr1)))))
+   params:
+     - proc: the function to apply
+     - lists: a number of lists (varargs)
+   complexity: O(n*m*k) where n is the length of the shortest list, m is the number of lists, and k is the complexity of <par>k</par>
+   returns: a list of lists"
+  (define (unzip1-with-cdr . lists)
+    (unzip1-with-cdr-iterative lists '() '()))
+  (define (unzip1-with-cdr-iterative lists cars cdrs)
+    (if (null? lists)
+        (cons cars cdrs)
+        (let ((car1 (caar lists))
+          (cdr1 (cdar lists)))
+      (unzip1-with-cdr-iterative 
+       (cdr lists) 
+       (append cars car1)
+       (append cdrs cdr1)))))
 
-(define (for-each proc . lists) "applies a function to a bunch of arguments"
   (if (null? lists)
       []
       (if (any? null? lists)
@@ -62,7 +159,15 @@
             (apply proc cars)
             (apply for-each (cons proc cdrs)))))))
 
-(define (falsy? val) "is object falsy: empty if collection, 0 if number, #f if boolean"
+(define (falsy? val)
+  "checks whether <par>val</par> is falsy, i.e. empty if it is a
+   collection, 0 if it is a number, and false if it is a boolean.
+   TODO: make this a protocol
+
+   params:
+     - val: the value to check
+   complexity: O(1)
+   returns: boolean"
   (cond
     ((boolean? val) (not val))
     ((hash-map? val) (list:null? (hash:keys val)))
@@ -73,25 +178,50 @@
     ((number? val) (eqv? 0 val))
     (else #t)))
 
-(define (truthy? val) "is object truthy: not empty if collection, !0 if number #t if boolean"
+(define (truthy? val)
+  "checks whether <par>val</par> is truthy, i.e. not empty if it is a
+   collection, !0 if it is a number, and true if it is a boolean.
+   TODO: make this a protocol
+
+   params:
+     - val: the value to check
+   complexity: O(1)
+   returns: boolean"
   (not (falsy? val)))
 
-(define (constantly x) "takes any number of arguments and returns the first argument"
+(define (constantly x)
+  "takes an argument <par>x</par> and returns a function that takes
+   any number of arguments and returns <par>x</par>.
+
+   params:
+     - x: the argument to return
+   complexity: O(1)
+   returns: a function that returns <par>x</par>"
   (lambda args x))
 
 (define (juxt . fs)
   "takes a set of functions and returns a function that is the juxtaposition
-of those functions. The returned function takes a variable number of args, and
-returns a vector containing the result of applying each given function to the
-args (left-to-right)."
+   of those functions. The returned function takes a variable number of args,
+   and returns a vector containing the result of applying each given function
+   to the args (left-to-right).
+
+   params:
+    - fs: the functions to juxtapose (varargs)
+   complexity: O(1)
+   returns: the juxtaposition of <par>fs</par>"
   (lambda args (map ($ (apply % args)) fs)))
 
 (define (memoize f)
-  "returns a memoized version of a referentially function. The
-memoized version of the function keeps a cache of the mapping from arguments
-to results and, when calls with the same arguments are repeated often, has
-higher performance at the expense of higher memory use.
-Caveat: he arguments must be simple values."
+  "returns a memoized version of a referentially transparent function. The
+   memoized version of the function keeps a cache of the mapping from arguments
+   to results and, when calls with the same arguments are repeated often, has
+   higher performance at the expense of higher memory use.
+   Caveat: the arguments must be simple values.
+
+   params:
+     - f: the function to memoize
+   complexity: O(1)
+   returns: a memoized version of <par>f</par>"
   (let ((cache #{}))
     (lambda args
       (let ((sargs (make-simple-list args)))
@@ -103,7 +233,13 @@ Caveat: he arguments must be simple values."
               res)))))))
 
 (define (partition n c)
-  "returns a list of lists of n items each."
+  "returns a list of lists of <par>n</par> items each, throws away the rest.
+
+   params:
+    - n: the size of the slices
+    - c: the source collection (can be any collection type)
+   complexity: O(n)
+   returns: a list of lists"
   (define (internal acc tmp src)
     (cond
       ((null? src) acc)

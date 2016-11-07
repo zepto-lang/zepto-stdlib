@@ -1,13 +1,31 @@
-(define file:OS_DELIM #\/) ; TODO: I need a real way to get that
+(define file:OS_DELIM #\/) ; TODO: we need a real way to get that
 
-(define (file:extension fname) "get extension from filename"
+(define (file:extension fname)
+  "get extension of filename <par>fname</par>.
+
+   params:
+     - fname: the filename
+   complexity: O(n)
+   returns: the extenstion as a string"
   (let ((flist (string:split fname #\.)))
     (list:ref flist (- (length flist) 1))))
 
-(define (file:filename fname) "get filename from path"
+(define (file:filename fname)
+  "get file name of path <par>fname</par>.
+
+   params:
+     - fname: the filename
+   complexity: O(n)
+   returns: the file name as a string"
   (let ((flist (string:split fname file:OS_DELIM)))
     (list:ref flist (- (length flist) 1))))
 
-(define (file:dirname fname) "get dirname from path"
+(define (file:dirname fname)
+  "get directory name of path <par>fname</par>.
+
+   params:
+     - fname: the filename
+   complexity: O(n)
+   returns: the directory name as a string"
   (let ((len (length (file:filename fname))))
     (substring fname 0 (- (length fname) len))))

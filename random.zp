@@ -4,6 +4,13 @@
 (define random
   (let ((a 69069.0) (c 1) (m (expt 2 32)) (seed 19380110))
     (lambda new-seed
+      "generate a new random number or reseeds the random number generator if
+       an argument <par>new-seed</par> is provided.
+
+       params:
+         - new-seed: seed to reseed the RNG with (optional)
+       complexity: O(1)
+       returns: a random floating point number between 0 and 1"
       (begin
         (if (and (not (null? new-seed)) (number? (car new-seed)))
           (set! seed (car new-seed))
@@ -11,16 +18,38 @@
         (/. seed m)))))
 
 
-(define randint 
+(define randint
   (let ((precomp (pow 2 1023)))
-    (lambda args "generate a random integer between the given args (the lower range is optional)"
-      (cond ((= (length args) 1) (randint 0 (car args)))
-            ((= (length args) 2)
-              (+ (car args) (/ (* (floor (* (random) precomp)) (- (cadr args) (car args))) precomp)))
+    (lambda (lo . hi)
+      "generate a random integer between the given range (the lower range is optional).
+       The upper range is exclusive, the lower range inclusive.
+
+       Example:
+       <zepto>
+          (randint 10) ; generate a random number between 0 and 10
+          (randint 1 5) ; generate a random number between 1 and 5
+       </zepto>
+
+       params:
+         - lo: the lower range (optional)
+         - hi: the upper range
+       complexity: O(1)
+       returns: a random number in the range"
+      (cond ((null? hi) (randint 0 lo))
+            ((= (length hi) 1)
+              (+ lo (/ (* (floor (* (random) precomp)) (- (car hi) lo)) precomp)))
             (else (error "randint" "usage: (randint [lo] hi)"))))))
 
 (define (random-list n lo . hi)
-  "generate a list of random integers between the given args (the lower range is optional)"
+  "generate a list of random integers (of length <par>n</par>)
+   between the given args (the lower range is optional).
+
+   params:
+     - n: the length of the list
+     - lo: the lower range (optional)
+     - hi: the upper range
+   complexity: O(n)
+   returns: a list of random integers"
   (if (< n 1)
     '()
     (if (truthy? hi)
@@ -29,7 +58,13 @@
 
 ; This has been taken from https://github.com/ashinn/chibi-scheme/blob/23ac772e3ac347d01647952621fbc83b4293448b/lib/chibi/math/prime.scm
 (define (random-prime lo hi)
-  "Returns a random prime between lo (inclusive) and hi (exclusive)."
+  "Returns a random prime between lo (inclusive) and hi (exclusive).
+
+   params:
+    - lo: the lower range
+    - hi: the upper range
+   complexity: random
+   returns: a random prime"
   (if (> lo hi)
       (error "random-prime" "bad range: " lo hi))
   (let* ((n (bitwise-or 1 (randint lo hi)))
@@ -39,8 +74,15 @@
           (math:prime-above lo n))))
 
 (define (random-prime-distinct-from lo hi p)
-  "Variant of random-prime which ensures the result is
-   distinct from p."
+  "Variant of <fun>random-prime</fun> which ensures the result is
+   distinct from <par>p</par>.
+
+   params:
+     - lo: the lower range
+     - hi: the upper range
+     - p: the prime that the random prime should be distinct from
+   complexity: random
+   returns: a random prime distinct from <par>p</par>"
   (let ((q (random-prime lo hi)))
     (if (= q p)
         (random-prime-distinct-from lo hi p)

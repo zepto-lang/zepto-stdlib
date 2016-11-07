@@ -1,21 +1,54 @@
-(define (bash:command x . args) "runs a bash command x and returns its' stdout"
-  (cadr (if (null? args) (system x) (system x (car args)))))
-(define (bash:ls . args) (apply bash:command (cons "ls" args)))
-(define (bash:pwd) (bash:command "pwd"))
-(define (bash:uname) (bash:command "uname"))
-(define (bash:date) (bash:command "date"))
+(define (bash:command x . args)
+  "runs a bash command <par>x</par> with the arguments <par>args</par>
+   and returns its stdout output.
 
-(define (bash:cd . dir) "returns the value of `cd`" (bash:command "cd" dir))
-(define (bash:ps . args) "returns the output of `ps` as a string" (bash:command "ps" args))
-(define (bash:rm . args) "returns the output of `rm` as a string" (bash:command "rm" args))
+   params:
+     - x: the command to run
+     - args: the arguments to pass to <par>x</par>
+   complexity: the complexity of <par>x</par>
+   returns: the stdout output of <par>x</par>"
+  (cadr (if (null? args) (system x) (system x (car args)))))
+
+(define bash:ls (curry bash:command "ls"))
+
+(define (bash:pwd)
+  "runs the bash command pwd and returns its stdout output.
+
+   complexity: O(1)
+   returns: the stdout output of pwd"
+  (bash:command "pwd"))
+
+(define (bash:uname)
+  "runs the bash command uname and returns its stdout output.
+
+   complexity: O(1)
+   returns: the stdout output of uname"
+  (bash:command "uname"))
+
+(define (bash:date)
+  "runs the bash command date and returns its stdout output.
+
+   complexity: O(1)
+   returns: the stdout output of date"
+  (bash:command "date"))
+
+(define bash:cd (curry bash:command "cd"))
+(define bash:ps (curry bash:command "ps"))
+(define bash:rm (curry bash:command "rm"))
 
 (define (bash:unix-timestamp)
-  "returns the current unix timestamp as a number"
+  "returns the current unix timestamp as a number.
+
+   complexity: O(1)
+   returns: the current unix timestamp"
   (string->number (bash:command "date" ["+%s"])))
 
 (define (bash:unix-timestamp-with-nano)
-  "returns a list constituting of the unix timestamp and current nanoseconds;
-   only works if the bash date (or gdate) command supports the %N option"
+  "returns a list constituted of the unix timestamp and current nanoseconds;
+   only works if the bash date (or gdate) command supports the %N option.
+
+   complexity: O(1)
+   returns: <zepto>[unix-timestamp nanoseconds]</zepto>"
   (let* ((stamp (bash:command "date" ["+%s%N"]))
          (stampl (- (length stamp) 1))
          (divide (- stampl 9)))
