@@ -39,3 +39,13 @@
    complexity: O(1)
    returns: boolean"
   (if x #f #t))
+
+(define-syntax nand
+  (syntax-rules "logical nand operation on multiple values. Short circuits.
+
+   params:
+     - lst: a list of values to test (varargs); if none are given, return true
+   complexity: O(n)
+   returns boolean" ()
+    ((_) #t)
+    ((_ lst ...) (not (and lst ...)))))
