@@ -108,11 +108,14 @@
 (defimpl stringify hash-map?
          ((->string
            (lambda (el)
-            (let ((s (hash:keys-reduce (lambda (acc x)
-                                            (++ acc (->string x) " " (->string (el x)) ", "))
-                                       "#{"
-                                       el)))
-              (++ (substring s 0 (- (string:length s) 2)) "}"))))))
+            (if (eq? #{} el)
+              "#{}"
+              (let ((s (hash:keys-reduce (lambda (acc x)
+                                            (++ acc (->string x) " "
+                                                (->string (el x)) ", "))
+                                         "#{"
+                                         el)))
+                (++ (substring s 0 (- (string:length s) 2)) "}")))))))
 (defimpl stringify string? ((->string id)))
 (defimpl stringify regex? ((->string (lambda (r) (++ "/" (regex:pattern r) "/")))))
 (defimpl stringify number? ((->string number->string)))
@@ -204,4 +207,3 @@
   (syntax-rules ()
     ((->symbol xs ...)
       (string->symbol (reduce ++ "" (map ->string '(xs ...)))))))
-
