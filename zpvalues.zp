@@ -11,7 +11,16 @@
 (defimpl equality symbol? ((equal? eq?)))
 
 (defprotocol ord (compare 2))
-(defimpl ord number? ((compare (lambda (a b) (if (= a b) 0 (if (< a b) -1 1))))))
+(defimpl ord number? ((compare (lambda (a b) (if (= a b)
+                                                0
+                                                (if (< a b) -1 1))))))
+(defimpl ord char? ((compare (lambda (a b) (if (char=? a b)
+                                              0
+                                              (if (char<? a b) -1 1))))))
+(defimpl ord string? ((compare (lambda (a b)
+                                  (cond ((null? a) -1)
+                                        ((null? b) 1)
+                                        (else (compare (car a) (car b))))))))
 
 (define (lt a b)
   "a less-than function using the <fun>equality?</fun> protocol.
