@@ -189,7 +189,7 @@ or all items if there are fewer than <par>n</par>.
    returns: a list of the arguments from <par>n</par> on."
   (define (internal i c)
     (if (null? c)
-      []
+      (empty c)
       (if (= i n)
         c
         (internal (add1 i) (cdr c)))))
