@@ -23,11 +23,11 @@
           body1 body2 ...)
         ((lambda (name1) (let ((name2 val2) ...) body1 body2 ...)) val1))
       ((_ name ((x v) ...) e1 e2 ...)
-        (let* ((f (lambda (name) (lambda (x ...) e1 e2 ...)))
-               (ff ((lambda (proc) (f (lambda (x ...) ((proc proc)
-                      x ...))))
-                      (lambda (proc) (f (lambda (x ...) ((proc proc)
-                        x ...)))))))
+        (let ((f (lambda (name) (lambda (x ...) e1 e2 ...)))
+              (ff ((lambda (proc) (f (lambda (x ...) ((proc proc)
+                     x ...))))
+                     (lambda (proc) (f (lambda (x ...) ((proc proc)
+                       x ...)))))))
           (ff v ...)))))
 
 (define-syntax let*
