@@ -12,29 +12,27 @@
 ;; husk-scheme (github.com/justinethier/husk-scheme).
 (define-syntax let
     (syntax-rules ()
-        ((_ (((x ...) v) ...) e1 e2 ...)
-            (apply (lambda (x ...) e1 e2 ...) v ...))
-        ((_ ((x v) ...) e1 e2 ...)
-            ((lambda (x ...) e1 e2 ...) v ...))
-        ((_ name ((x v) ...) e1 e2 ...)
-            (let*
-                ((f (lambda (name)
-                    (lambda (x ...) e1 e2 ...)))
-                (ff ((lambda (proc) (f (lambda (x ...) ((proc proc)
-                        x ...))))
-                    (lambda (proc) (f (lambda (x ...) ((proc proc)
+      ((_ () body1 body2 ...)
+        ((lambda () body1 body2 ...)))
+      ((_ (((name1 ...) val1) (name2 val2) ...)
+          body1 body2 ...)
+       (apply
+         (lambda (name1 ...) (let ((name2 val2) ...) body1 body1 ...))
+          val1))
+      ((_ ((name1 val1) (name2 val2) ...)
+          body1 body2 ...)
+        ((lambda (name1) (let ((name2 val2) ...) body1 body2 ...)) val1))
+      ((_ name ((x v) ...) e1 e2 ...)
+        (let* ((f (lambda (name) (lambda (x ...) e1 e2 ...)))
+               (ff ((lambda (proc) (f (lambda (x ...) ((proc proc)
+                      x ...))))
+                      (lambda (proc) (f (lambda (x ...) ((proc proc)
                         x ...)))))))
-                (ff v ...)))))
+          (ff v ...)))))
 
 (define-syntax let*
-    (syntax-rules ()
-       ((let* () body1 body2 ...)
-        (let () body1 body2 ...))
-       ((let* ((name1 val1) (name2 val2) ...)
-          body1 body2 ...)
-        (let ((name1 val1))
-          (let* ((name2 val2) ...)
-            body1 body2 ...)))))
+  (syntax-rules ()
+    ((_ val ...) (let val ...))))
 
 (define-syntax letrec
   (syntax-rules ()

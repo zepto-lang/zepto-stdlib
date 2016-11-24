@@ -82,7 +82,7 @@
   (syntax-rules ()
     ((_ name pred funcs)
       (let ((proto (map list:car (*protocols* (symbol->string 'name))))
-            (given (map list:car 'funcs))
+            (givn  (map list:car 'funcs))
             (wrong-forms (filter (lambda (x) (/= 2 (list:length x))) 'funcs))
             (nfuncs (map (lambda (x)
                            (list (symbol->string (list:car x))
@@ -91,7 +91,7 @@
         (if (list:null? wrong-forms)
           (if (nil? proto)
             (error:from-string "protocol" 'name "not defined.")
-            (if (eq? proto given)
+            (if (eq? proto givn)
               (hash:update! *impls* (symbol->string 'name)
                          (lambda (x) 
                             (let ((x (if (truthy? x) x #{})))
@@ -99,7 +99,7 @@
                                          (symbol->string 'pred)
                                          (list pred (make-hash nfuncs))))))
               (error:from-string "protocol" 'name "expects" proto
-                                 "to be defined, was given" given)))
+                                 "to be defined, was given" givn)))
           (error:from-string "wrong forms" wrong-forms
                  "; expect forms to be of the form (name implementation)"))))))
 
