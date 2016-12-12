@@ -49,7 +49,9 @@
                           ($ (let* ((k (car %))
                                     (s (atom->symbol k)))
                             (eval (+= [define] s
-                                      (if (in? dict k) (dict k) (eval (get-from % 1)))) env)))
+                                      (if (in? dict k)
+                                        (list 'quote (dict k))
+                                        (eval (get-from % 1)))) env)))
                           (quote ,(treat-keywords 'kwargs)))))
                     ,'body))) env) env))))))
 
