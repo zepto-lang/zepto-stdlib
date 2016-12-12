@@ -124,12 +124,12 @@
 (defimpl stringify pair?
          ((->string
             (lambda (el)
-              (if (null? el)
+              (if (list:null? el)
                 "pair[]"
                 (++ "pair["
                      (reduce (lambda (acc x) (++ acc ", " (->string x)))
-                             (->string (head el))
-                             (tail el))
+                             (->string (list:car el))
+                             (list:cdr el))
                      "]"))))))
 (defimpl stringify list?
          ((->string
