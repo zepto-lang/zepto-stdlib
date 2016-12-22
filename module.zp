@@ -39,4 +39,6 @@
 
 (load "struct.zp")
 
+(load "compile")
+
 "Prelude loaded!\n"
