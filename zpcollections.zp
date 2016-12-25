@@ -94,6 +94,10 @@
                                    (cdr list:cdr)
                                    (null? list:null?)
                                    (empty (lambda (l) []))))
+(defimpl traversable-collec pair? ((car list:car)
+                                   (cdr list:cdr)
+                                   (null? list:null?)
+                                   (empty (lambda (l) []))))
 (defimpl traversable-collec vector? ((car vector:head)
                                      (cdr vector:tail)
                                      (null? vector:empty?)
@@ -306,3 +310,18 @@ while <par>pred</par> is true.
    complexity: O(1)
    returns: a boolean"
   (and (not (null? coll)) (null? (cdr coll))))
+
+(define (but-last coll)
+  "return everything but the last element.
+
+   params:
+    - coll: the collection
+   complexity: O(n)
+   returns: a collection"
+  (define (internal coll acc)
+    (if (null? (cdr coll))
+      acc
+      (internal (cdr coll) (++ acc (car coll)))))
+  (if (null? coll)
+    coll
+    (internal coll (empty coll))))
