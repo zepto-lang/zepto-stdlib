@@ -312,7 +312,8 @@ while <par>pred</par> is true.
   (and (not (null? coll)) (null? (cdr coll))))
 
 (define (but-last coll)
-  "return everything but the last element.
+  "return everything but the last element of a traversable collection
+   <par>coll</par>.
 
    params:
     - coll: the collection
@@ -325,3 +326,15 @@ while <par>pred</par> is true.
   (if (null? coll)
     coll
     (internal coll (empty coll))))
+
+(define (last coll)
+  "return the last element of a collection <par>coll</par>.
+
+  params:
+    - coll: the collection
+  complexity: O(1)
+  returns: the last element"
+  (let ((len (length coll)))
+    (if (zero? len)
+      (error:from-string "Trying to get last element of an empty collection")
+      (get-from coll (sub1 len)))))

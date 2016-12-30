@@ -345,3 +345,13 @@
       acc
       (loop (++ acc (car nval)) (apply next (cadr nval))))))
 
+(define (alleq? . arguments)
+  "test whether all the arguments are equal to each other.
+
+   params:
+     - arguments: varargs to test
+   complexity: O(n)
+   returns: boolean"
+   (if (null? arguments)
+    #t
+    (all? (curry eq? (car arguments)) (cdr arguments))))

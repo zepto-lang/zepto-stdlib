@@ -22,7 +22,7 @@
      - n: the number to check
    complexity: O(1)
    returns: a boolean"
-  (= (remainder n 2) 0))
+  (= (bitwise-and n 1) 0))
 
 (define (math:odd? n)
   "checks whether <par>n</par> is an odd number.
