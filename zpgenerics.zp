@@ -182,6 +182,8 @@
 (defimpl stringify function? ((->string (lambda (p) (++ "<function: " (doc p) ">")))))
 (defimpl stringify env? ((->string (lambda (env) "<env>"))))
 (defimpl stringify nil? ((->string (lambda (n) "nil"))))
+(defimpl stringify list-comprehension? ((->string (lambda (n) "<list comprehension>"))))
+(defimpl stringify hash-comprehension? ((->string (lambda (n) "<hash comprehension>"))))
 
 (defprotocol bytify (->bytes 1))
 (defimpl bytify nil? ((->bytes ($ b{0}))))
