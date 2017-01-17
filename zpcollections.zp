@@ -94,6 +94,10 @@
                                    (cdr list:cdr)
                                    (null? list:null?)
                                    (empty (lambda (l) []))))
+(defimpl traversable-collec pair? ((car list:car)
+                                   (cdr list:cdr)
+                                   (null? list:null?)
+                                   (empty (lambda (l) []))))
 (defimpl traversable-collec vector? ((car vector:head)
                                      (cdr vector:tail)
                                      (null? vector:empty?)
@@ -306,3 +310,31 @@ while <par>pred</par> is true.
    complexity: O(1)
    returns: a boolean"
   (and (not (null? coll)) (null? (cdr coll))))
+
+(define (but-last coll)
+  "return everything but the last element of a traversable collection
+   <par>coll</par>.
+
+   params:
+    - coll: the collection
+   complexity: O(n)
+   returns: a collection"
+  (define (internal coll acc)
+    (if (null? (cdr coll))
+      acc
+      (internal (cdr coll) (++ acc (car coll)))))
+  (if (null? coll)
+    coll
+    (internal coll (empty coll))))
+
+(define (last coll)
+  "return the last element of a collection <par>coll</par>.
+
+  params:
+    - coll: the collection
+  complexity: O(1)
+  returns: the last element"
+  (let ((len (length coll)))
+    (if (zero? len)
+      (error:from-string "Trying to get last element of an empty collection")
+      (get-from coll (sub1 len)))))
